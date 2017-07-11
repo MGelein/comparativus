@@ -1,5 +1,7 @@
 /**BLAST seed size*/
 var K = 4;
+var startChar = '⁑';
+var endChar = '‡';
 
 /**
 Called when messaged by the main thread
@@ -45,7 +47,7 @@ function prepareText(name, text, config){
   }
   //then try to strip all punctuation
   if(config.stripPunctuation){
-    chars = ['。', '』', '」', '，', '《', '》', '：', '『', '？', '「', '；'];
+    chars = ['。', '』', '」', '，', '《', '》', '：', '『', '？', '「', '；', ',', '.', '!', '?'];
     result = removeAndKeepTrack(text, edits, chars);
     edits = result.edits;
     text = result.text;
@@ -89,76 +91,86 @@ function removeAndKeepTrackOfChar(text, edits, c){
 }
 
 /**
+Inserts a character at a given index of a given  string
+**/
+function insertAt(text, index, newSubStr) {
+    return text.slice(0, index) + newSubStr + text.slice(index);
+}
+
+/**
 Decorates the text and once it is done returns the result
 **/
 function decorateText(name, text, matches, edits){
-  var parts = [];
+  console.log("Starting text decoration of " + name);
   var max = matches.length;
   var m;
   var getA = (name == 'a');
-  var startIndex = 0;
-  var endIndex = 0;
-  var lastIndex = 0;
-
-  //sort the array based on the indeces
-  if(getA){
-    matches.sort(function(a, b){
-      b.indexA - a.indexA;
-    });
-  }else{
-    matches.sort(function(a, b){
-      b.indexB - a.indexB;
-    });
-  }
-  for(var i = 0 ; i < max; i++){
+  var indexOffset = 0;
+  for(var i = 0; i < max; i++){
     m = matches[i];
-    if(getA) startIndex = m.indexA;
-    else startIndex = m.indexB;
-    endIndex = startIndex + m.l;
-    parts.push(text.substring(lastIndex, startIndex));
-    parts.push(text.substring(startIndex, endIndex));
-    lastIndex = endIndex;
+    if(getA){
+      text = insertAt(text, m.indexA + indexOffset, startChar);
+      indexOffset ++;
+      //text = insertAt(text, m.indexA + m.l + indexOffset, endChar)
+      //indexOffset ++;
+    }else{
+      text = insertAt(text, m.indexB + indexOffset, startChar);
+      indexOffset ++;
+    //  text = insertAt(text, m.indexB + m.l + indexOffset, endChar)
+    //  indexOffset ++;
+    }
   }
-  max = parts.length;
-  //add back the trailing bit to the end of the text after the last match
-  parts.push(text.substring(lastIndex, text.length - 1));
+  //now split on the start of every match
+  var parts = text.split(startChar);
   //undo all the edits that have been done
   parts = undoEdit(parts, edits);
+  //add all the startCharacters back in
+  text = parts.join(startChar);
+
+  //keep track of the match ID
   var matchID = 0;
-  //array to add all the bits to. Makes it faster then string concatenation
-  var bits = [];
-  for(var i = 0; i < max; i+=2){
-    bits.push(parts[i] + "<span id='match-" + matchID + name + "' class='matchSpan' onmouseover='onMatchMouseOver(this)' onmouseout='onMatchMouseOut(this)'>");
-    matchID ++;
-    bits.push(parts[i + 1] + "</span>");
+  //replace all startCharacters
+  while(text.indexOf(startChar) != -1){
+      text = text.replace(startChar, "<span id='match-" + matchID + name + "' class='matchSpan' onmouseover='onMatchMouseOver(this)' onmouseout='onMatchMouseOut(this)'>" + matchID + "</span>");
+      matchID++;
   }
-  //rebuild the text
-  message('DecorateDone', {'textName':name, 'result':bits.join()});
+
+  message('DecorateDone', {'textName':name, 'result': text});
 }
 
 /**
 Adds all the edits back into the text at the right index
 **/
 function undoEdit(parts, edits){
+  /*console.log("-------------------");
+  console.log("Starting UNDO:")
+  console.log("-------------------");
+  console.log("parts:");
+  console.log(parts);
+  console.log("edits:");
+  console.log(edits);*/
   var cEdit; var index = 0;
-  var i = 0; var iOffset = 0;
+  var i = 0;
   var editPart;
+
+  //Keep looping untill all edits have been processed
   while(edits.length != 0){
     cEdit = edits.pop();
-    //find the right part to put the edit in
-    index = 0; i = 0;
-    while(i <= parts.length && index + parts[i].length < cEdit.index){
-      index += parts[i].length;
+    //keep removing part lengths from the edit index to create the local offset
+    i = 0;
+    while(cEdit.index > 0){
+      editPart = parts[i];
       i++;
+      cEdit.index -= editPart.length;
     }
-    //only decrement if the loop above has affected the i variable
-    if(i > 0) i--;
+    //add back the one part that tipped the scales
+    cEdit.index += editPart.length;
+    i--;
 
-    iOffset = cEdit.index - index;
-    console.log('i: ' + i + '\ncedit.charac: ' + cEdit.character + '\niOffset: ' + iOffset);
-    editPart = parts[i];
-    parts[i] = editPart.substring(0, iOffset) + cEdit.character + editPart.substring(iOffset, editPart.length);
+    //now add the character at that index
+    parts[i] = insertAt(editPart, cEdit.index, cEdit.character);
   }
+
   return parts;
 }
 

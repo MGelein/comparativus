@@ -146,19 +146,21 @@ function expandMatch(iA, iB){
     cMatch = matches[i];
     if((iA < cMatch.indexA + cMatch.l) && (iA > cMatch.indexA)){
       if((iB < cMatch.indexB + cMatch.l) && (iB > cMatch.indexB)){
+        //console.log("Embedded match, ignore");
         //this matching seed is inside of a match we already found
         return;
       }
     }
   }
+  //console.log("Expand the match: "+ iA + "; " + iB);
 
   var matchLength = 10;
   var sA = texts.a.substr(iA, matchLength);
   var sB = texts.b.substr(iB, matchLength);
   var strikes = 0;
 
-  //diminish to the left
-  while(levDistRatio(sA, sB) < 0.8){
+  //diminish to the left (if the 10 char expansion made the levDist to low)
+  while(levDistRatio(sA, sB) < 0.8 && matchLength > 0){
     matchLength --;
     sA = texts.a.substr(iA, matchLength);
     sB = texts.b.substr(iB, matchLength);
@@ -174,6 +176,7 @@ function expandMatch(iA, iB){
     matchLength++;
     sA = texts.a.substr(iA, matchLength);
     sB = texts.b.substr(iB, matchLength);
+    if(iA + matchLength > texts.a.length || iB + matchLength > texts.b.length) break;
   }
   //take off the three chars we added to much.
   matchLength -= 3;
@@ -191,19 +194,25 @@ function expandMatch(iA, iB){
     matchLength++;
     iA --;
     iB --;
+    if(iA < 0 || iB < 0){
+      iA = iB = 0;
+      break;
+    }
     sA = texts.a.substr(iA, matchLength);
     sB = texts.b.substr(iB, matchLength);
   }
   //return the three chars we add too much
-  iA += 3; iB += 3;
-  matchLength -= 3;
+  iA += strikes; iB += strikes;
+  matchLength -= strikes;
   sA = texts.a.substr(iA, matchLength);
   sB = texts.b.substr(iB, matchLength);
 
   //now it has been fully expanded. Add it to the matches object if the length
   //is greater than minLength
   if(matchLength >= minMatchLength){
-    matches.push({l:matchLength, indexA:iA, indexB:iB, textA:sA, textB:sB, r:levDistRatio(sA, sB)});
+    var m = {l:matchLength, indexA:iA, indexB:iB, textA:sA, textB:sB, r:levDistRatio(sA, sB)};
+    matches.push(m);
+    //console.log("Match found: " + m.l);
   }
 }
 
