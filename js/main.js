@@ -18,7 +18,7 @@ Starts after document load.
 **/
 $(document).ready(function (){
   //create a new thread
-  thread = new Worker('js/thread.js?v=10');
+  thread = new Worker('js/thread.js?v=11');
   thread.onmessage = function(event){
     //it is assumed that any communication from a worker assigns these values
     var action = event.data.action;
