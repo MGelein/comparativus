@@ -74,9 +74,8 @@ function addUIListeners(){
     RUNNING = 1;
     setComparisonButtonText('Preparing texts for comparison...');
     showLoadingAnimation(true);
-    loadDataFile('a', $('#textA').html());
-    loadDataFile('b', $('#textB').html());
-
+    loadDataFile('a', $('#textA').text());
+    loadDataFile('b', $('#textB').text());
   });
 }
 

@@ -134,11 +134,18 @@ function decorateText(name, text, matches, edits){
   var matchID = 0;
   //replace all startCharacters
   while(text.indexOf(startChar) != -1){
-      text = text.replace(startChar, "<span id='match-" + matchID + name + "' class='matchSpan' onmouseover='onMatchMouseOver(this)' onmouseout='onMatchMouseOut(this)'>" + matchID + "</span>");
+      text = text.replace(startChar, generateLeftMatchMark(matchID + name));
       matchID++;
   }
 
   message('DecorateDone', {'textName':name, 'result': text});
+}
+
+/**
+Generates the left id mark and sets the id to the provided id
+**/
+function generateLeftMatchMark(id){
+    return "<span id='match-" + id + "' class='matchSpanLeft' onmouseover='onMatchMouseOver(this)' onmouseout='onMatchMouseOut(this)'></span>";
 }
 
 /**
