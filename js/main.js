@@ -42,6 +42,7 @@ $(document).ready(function (){
           setComparisonButtonText('(Re)Compare Texts');
           showLoadingAnimation(false);
           RUNNING = 0;
+          createVisualization(createJSONFile(matches, false));
         }
       break;
       case 'PrepareDone':

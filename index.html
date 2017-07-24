@@ -7,6 +7,7 @@
 	<title>Text Comparison Utility</title>
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/style.min.css" rel="stylesheet">
+	<link href="css/vis.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/animate.css">
 </head>
 <body>
@@ -93,6 +94,11 @@
 	</div>
 	</div><br>
 	<div class="row">
+		<div class="col-xs-12" id="svgDiv">
+			<svg width='900' height='300' class="svg-canvas"/>
+		</div>
+	</div>
+	<div class="row">
 		<div class="col-xs-6">
 			<div class="panel panel-warning" id="panelA">
 				<div class="panel-heading"><i class="glyphicon glyphicon-list"></i>&nbsp;
@@ -118,5 +124,7 @@
 <script src="js/main.min.js"></script>
 <script src="js/data.min.js"></script>
 <script src="js/guicontrols.min.js"></script>
+<script src="js/d3/d3.min.js"></script>
+<script src="js/tree.js"></script>
 </body>
 </html>

@@ -10,7 +10,9 @@ function createTSVFile(tsvParts){
 /**
 Creates a JSON file describing the foudn matches and the compared texts
 **/
-function createJSONFile(matches){
+function createJSONFile(matches, doDownload){
+  //if not specified set to true
+  if(doDownload === undefined) doDownload = true;
   //convert the matches object to nodes and links
   jsonFile = {};
   jsonFile.texts = [];
@@ -70,9 +72,12 @@ function createJSONFile(matches){
     cLink.r = cMatch.r;
     jsonFile.links.push(cLink);
   }
-
-  createFileDownloadLink(getFileDownloadName('.json'),
-  "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonFile)));
+  if(doDownload){
+    createFileDownloadLink(getFileDownloadName('.json'),
+    "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonFile)));
+  }
+  //return the json String for internal use
+  return jsonFile;
 }
 
 /**
