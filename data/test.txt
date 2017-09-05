@@ -1,3 +1,0 @@
-We have one line, with a comma in it
-The second line is identical
-The third line is different

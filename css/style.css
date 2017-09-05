@@ -38,7 +38,9 @@ BOOTSTRAP OVERRIDES
 
 .panel{
   border-radius: 0;
+  margin-bottom: 0;
 }
+
 /**
 CUSTOM CLASSES
 **/
