@@ -109,7 +109,7 @@
         showResultTable: function(matches){            
         //now show all matches in the browser
         var parts = [];
-        parts.push("<thead><tr><th>IndexA</th><th>IndexB</th><th>Length</th><th>Likeness</th><th>TextA</th><th>TextB</th></tr></thead><tbody>");
+        parts.push("<thead><tr><th>IndexA</th><th>IndexB</th><th>Length</th><th>TextA</th><th>TextB</th></tr></thead><tbody>");
         var tsvParts = [];
         var cMatch; var max = matches.length;
         $('#matchesAmt').html(max);
@@ -117,7 +117,7 @@
             cMatch = matches[i];
             parts.push("<tr><td><a class='matchLink' href='#match-" + i + 'a' + "'>" + cMatch.indexA +
             "</a></td><td><a class='matchLink' href='#match-" + i + 'b' + "'>" + cMatch.indexB +
-            "</td><td>" + cMatch.l + "</td><td> " + cMatch.r  + "</td><td>" + cMatch.textA + "</td><td>"
+            "</td><td>" + cMatch.l + "</td><td>" + cMatch.textA + "</td><td>"
             + cMatch.textB + "</td></tr>");
             tsvParts.push(cMatch.indexA + '\t' + cMatch.indexB + '\t' + cMatch.l + '\t' + cMatch.r + '\t' + cMatch.textA + '\t' + cMatch.textB);
         }

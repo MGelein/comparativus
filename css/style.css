@@ -27,6 +27,13 @@ pre {
 /**
 BOOTSTRAP OVERRIDES
 **/
+.col-xs-12, .col-xs-11, .col-xs-10, .col-xs-9,
+.col-xs-8, .col-xs-7, .col-xs-6, .col-xs-5,
+.col-xs-4, .col-xs-3, .col-xs-2, .col-xs-1{
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 .popover{
     max-width: 20%; /* Max Width of the popover (depending on the container!) */
 }
@@ -39,6 +46,10 @@ BOOTSTRAP OVERRIDES
 .panel{
   border-radius: 0;
   margin-bottom: 0;
+}
+
+.panel-body{
+  padding: 5px;
 }
 
 /**
@@ -83,6 +94,7 @@ CUSTOM CLASSES
 .topRow{
   height: 30vh;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .matchSpanLeft {
@@ -151,6 +163,10 @@ ID's
   -webkit-transform: rotate(270deg) translate(5px, -20px);
   -ms-transform: rotate(270deg) translate(5px, -20px);
   transform: rotate(270deg) translate(5px, -20px);
+}
+
+#resultTable{
+  font-size: 80%;
 }
 
 #mousePointer{
