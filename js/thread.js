@@ -105,18 +105,15 @@ function decorateText(name, text, matches, edits){
   var max = matches.length;
   var m;
   var getA = (name == 'a');
-  console.log("this is a " + getA);
   var indexOffset = 0;
   for(var i = 0; i < max; i++){
     m = matches[i];
     if(getA){
-      console.log("insertAt (A): " + m.indexA);
       text = insertAt(text, m.indexA + indexOffset, startChar);
       indexOffset ++;
       //text = insertAt(text, m.indexA + m.l + indexOffset, endChar)
       //indexOffset ++;
     }else{
-      console.log("insertAt (B): " + m.indexB);
       text = insertAt(text, m.indexB + indexOffset, startChar);
       indexOffset ++;
     //  text = insertAt(text, m.indexB + m.l + indexOffset, endChar)

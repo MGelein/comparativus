@@ -1,0 +1,597 @@
+"use strict";
+
+/**
+ * This is the main global comparativus object. This is used
+ * to hide all methods, objects and variables from the global 
+ * namespace to prevent polluting it.
+ */
+var comparativus = {
+    build: '1.11.1',
+    author: "Mees Gelein"
+};
+
+(function(_c){
+    /**
+     * The minimum lenght a match should be to be added to the results
+     */
+    _c.minMatchLength = 10;
+    /**
+     * Contains the array of matches that have been found
+     */
+    _c.matches = [];
+    /**
+     * Reference to the single thread we're currently running
+     */
+    _c.thread;
+    /**
+     * Data object that holds all the texts
+     */
+    _c.texts = {};
+
+    /**
+     * Data object that holds the dictionaries that have been generated
+     */
+    _c.dicts = {};
+
+    /**
+     * Edits object. When the text is prepared, all the spaces and special
+     * characters are removed from the file and are kept in order in this file
+     * together with their index. Using this object we can re-add the edits back in.
+     */
+    _c.edits = {};
+
+    /**
+     * Called to start the comparison between the two texts
+     */
+    _c.startComparison = function(){
+        comparativus.ui.setComparisonButtonText('Running Comparison');
+        comparativus.minMatchLength = comparativus.ui.getMinMatchSize();
+
+        comparativus.matches = [];
+        var dictA = comparativus.dicts['a'];
+        var dictB = comparativus.dicts['b'];
+        var seeds = Object.keys(dictA);
+        var seedAmt = seeds.length;
+        var overlap = [];
+        var overlapSeedAmt = 0;
+        var totalSeedAmt = 0;
+        for(var i = 0; i < seedAmt; i++){
+        totalSeedAmt += dictA[seeds[i]].length;
+            if(seeds[i] in dictB){
+                overlapSeedAmt += dictA[seeds[i]].length + dictB[seeds[i]].length;
+                overlap.push(seeds[i]);
+                comparativus.expandAllMatches(dictA[seeds[i]], dictB[seeds[i]]);
+            }
+        }
+        //also add all seeds of text B to the total amount of seeds
+        seeds = Object.keys(dictB);
+        seedAmt = seeds.length;
+        for(var i = 0; i < seedAmt; i++){
+        totalSeedAmt += dictB[seeds[i]].length;
+        }
+        console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
+        comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt)
+        comparativus.ui.showResultTable(comparativus.matches);
+        comparativus.texts.toDecorate = 2;
+        comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.texts.toDecorate + ' left)');
+        comparativus.worker.decorateText('a', comparativus.matches, comparativus.edits['a']);
+        comparativus.worker.decorateText('b', comparativus.matches, comparativus.edits['b']);
+    };
+
+    /**
+     * Expands a single match from two indeces
+     * @param {Integer} iA 
+     * @param {Integer} iB 
+     */
+    var expandMatch = function(iA, iB){
+        //first check if this match is inside another match
+        var max = comparativus.matches.length;
+        var cMatch;
+        for(var i = 0; i < max; i++){
+            cMatch = comparativus.matches[i];
+            if((iA < cMatch.indexA + cMatch.l) && (iA > cMatch.indexA)){
+                if((iB < cMatch.indexB + cMatch.l) && (iB > cMatch.indexB)){
+                //console.log("Embedded match, ignore");
+                //this matching seed is inside of a match we already found
+                return;
+                }
+            }
+        }
+        //console.log("Expand the match: "+ iA + "; " + iB);
+
+        var matchLength = 10;
+        var sA = comparativus.texts.a.substr(iA, matchLength);
+        var sB = comparativus.texts.b.substr(iB, matchLength);
+        var strikes = 0;
+
+        //diminish to the left (if the 10 char expansion made the levDist to low)
+        while(comparativus.util.levDistRatio(sA, sB) < 0.8 && matchLength > 0){
+            matchLength --;
+            sA = comparativus.texts.a.substr(iA, matchLength);
+            sB = comparativus.texts.b.substr(iB, matchLength);
+        }
+
+        //expand right
+        while(strikes < 3){
+            if(comparativus.util.levDistRatio(sA, sB) < 0.8){
+                strikes ++;
+            }else{
+                strikes = 0;
+            }
+            matchLength++;
+            sA = comparativus.texts.a.substr(iA, matchLength);
+            sB = comparativus.texts.b.substr(iB, matchLength);
+            if(iA + matchLength > comparativus.texts.a.length || iB + matchLength > comparativus.texts.b.length) break;
+        }
+        //take off the three chars we added to much.
+        matchLength -= 3;
+        strikes = 0;
+        sA = comparativus.texts.a.substr(iA, matchLength);
+        sB = comparativus.texts.b.substr(iB, matchLength);
+
+        //expand left
+        while(strikes < 3){
+            if(comparativus.util.levDistRatio(sA, sB) < 0.8){
+                strikes ++;
+            }else{
+                strikes = 0;
+            }
+            matchLength++;
+            iA --;
+            iB --;
+            if(iA < 0 || iB < 0){
+                iA = iB = 0;
+                break;
+            }
+            sA = comparativus.texts.a.substr(iA, matchLength);
+            sB = comparativus.texts.b.substr(iB, matchLength);
+        }
+        //return the three chars we add too much
+        iA += strikes; iB += strikes;
+        matchLength -= strikes;
+        sA = comparativus.texts.a.substr(iA, matchLength);
+        sB = comparativus.texts.b.substr(iB, matchLength);
+
+        //now it has been fully expanded. Add it to the matches object if the length
+        //is greater than minLength
+        if(matchLength >= comparativus.minMatchLength){
+            var m = {l:matchLength, indexA:iA, indexB:iB, textA:sA, textB:sB, r:comparativus.util.levDistRatio(sA, sB)};
+            comparativus.matches.push(m);
+            //console.log("Match found: " + m.l);
+        }
+    }
+
+    /**
+     * Expands all occurrences for a matching seed found in the dictionary
+     */
+    _c.expandAllMatches = function(occA, occB){
+        var maxA = occA.length;
+        var maxB = occB.length;
+        var matchAIndex;
+        var matchBIndex;
+        for(var i = 0; i < maxA; i++){
+            matchAIndex = occA[i];
+            for(var j = 0; j < maxB; j++){
+                matchBIndex = occB[j];
+                expandMatch(matchAIndex, matchBIndex);
+            }
+        }   
+    };
+    
+})(comparativus);;(function(_c){
+    /**
+     * Defines the utility object with some useful
+     * functionality
+     */
+    _c.util = {
+        /**
+         * Returns the levenSthein ratio [0-1] similarity between
+         * the two provided string. 1 means they're identical. 0
+         * means they are completely different
+         */
+        levDistRatio : function(sA, sB){
+            //instantiate vars and cache length
+            var aMax = sA.length;
+            var bMax = sB.length;
+            var matrix = [];
+
+            //increment the first cell of each row and each column
+            for(var i = 0; i <= bMax; i++){matrix[i] = [i];}
+            for(var j = 0; j <= aMax; j++){matrix[0][j] = j;}
+
+            //calculate the rest of the matrix
+            for(i = 1; i <= bMax; i++){
+                for(j = 1; j <= aMax; j++){
+                if(sA.charAt(i-1) == sB.charAt(j-1)){
+                    matrix[i][j] = matrix[i-1][j-1];
+                } else {
+                    matrix[i][j] = Math.min(matrix[i-1][j-1] + 1, // substitution
+                                            Math.min(matrix[i][j-1] + 1, // insertion
+                                                    matrix[i-1][j] + 1)); // deletion
+                }
+                }
+            }
+
+            //0 for no likeness. 1 for complete likeness
+            return 1 - (matrix[bMax][aMax] / aMax);
+        }
+    };
+})(comparativus);;/**
+ * Namespacing
+ */
+(function(_c){
+
+    /** 
+     * Makes sure the messages are always nicely formatted according to my expectations.
+     * Meaing: always define an action and params
+     */
+    var message = function(action, parameters){
+        comparativus.thread.postMessage({'action' : action, 'params' : parameters});
+    };
+
+    /**
+     * Contains the messaging interface with the workers
+     */
+    _c.worker = {
+        /**
+         * Messages the worker to prepare the text for usage
+         * This function loads data files from disk. Just used for 
+         * testing purposes. Don't clean the file again if it is already loaded
+         */
+        loadDataFile: function(name, data){
+            console.log('Loading Data file: ' + name);
+            var config = {
+              'stripWhiteSpace': $('#stripWhiteSpace').val(),
+              'stripPunctuation': $('#stripPunctuation').val()
+            };
+            message('prepareText', {'textName': name, 'text': data, 'config': config});          
+        },
+
+        /**
+         * Messages the worker to start building the dictionary.
+         * Builds the dictionary for the text that is registered under
+         * the provided name
+         */
+        buildDictionary: function(name){
+            message('buildDictionary', {textName:name, text: comparativus.texts[name]});
+        },
+
+        /**
+         * Decorates the text that is registered under the provided
+         * name with the matches found in the comparison. Also 
+         * adds the edits back in the text (the special characters
+         * that were previously taken out)
+         */
+        decorateText: function(name, matches, edits){
+            message('decorateText', {textName:name, text: comparativus.texts[name], match:matches, 'edits': edits});
+        }
+    };
+           
+})(comparativus);;/**
+ * Anonymous namespace of this file to prevent polluting of the global namespace
+ */
+(function(_c){
+
+    _c.ui = {
+        /**
+         * This function adds the event listeners to the ui objects
+         * and inputs.
+         */
+        addListeners: function(){
+            //Handler for the comparisonButton
+            $('#comparisonButton').unbind('click').click(function(){
+                console.log("Asked to start");
+                var aEmpty = ($('#textA').html() == "" );
+                var bEmpty = ($('#textB').html() == "" );
+                if(aEmpty) comparativus.ui.shakeFileInput('a');
+                if(bEmpty) comparativus.ui.shakeFileInput('b');
+                if(aEmpty || bEmpty) return;
+
+                //unbinds the click handler, to prevent more clicking during comparison
+                $(this).unbind('click');
+            
+                comparativus.dicts.toBuild = 2;
+                comparativus.ui.setComparisonButtonText('Preparing texts for comparison...');
+                comparativus.ui.showLoadingAnimation(true);
+                comparativus.worker.loadDataFile('a', $('#textA').text());
+                comparativus.worker.loadDataFile('b', $('#textB').text());
+            });
+
+            //set popover to have with relative to the main body
+            $('[data-toggle="popover"]').unbind('popover').popover({
+                container: 'body'
+            });
+            //activate popovers
+            $('[data-toggle="popover"]').unbind('popover').popover();
+
+            //FIle input change listeners
+            $('#fInputA').unbind('change').change(function(event){comparativus.file.readSingle(event, 'a')});
+            $('#fInputB').unbind('change').change(function(event){comparativus.file.readSingle(event, 'b')});
+            
+        },
+
+        /**
+         * Sets the text on the comparison button to the provided text parameter
+         */
+        setComparisonButtonText : function(text){
+            $('#comparisonButtonText').html(text);
+        },
+
+        /**
+         * Enables or disables the loading animation on the comparison button
+         */
+        showLoadingAnimation: function(enabled){
+            if(enabled){
+                $('#comparisonButtonIcon').removeClass().addClass('glyphicon glyphicon-repeat rotating');
+            }else{
+                $('#comparisonButtonIcon').removeClass().addClass('glyphicon glyphicon-refresh');
+            }
+        },
+
+        /**
+         * Shakes the fileInput with the provided Name
+         */
+        shakeFileInput: function(name){
+            var fInput = $('#panel' + name.toUpperCase());
+            //Start animating it
+            fInput.addClass('animated jello');
+            //Once the animation ends, remove the animated class
+            fInput.one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+              fInput.removeClass('animated jello')
+            });
+        },
+
+        /**
+         * Sets the similarity spane value to the provided value
+         */
+        setSimilarityScore: function(val){
+            $('#simScore').html(val);
+        },
+
+        /**
+         * Sets the file panel with the provided name to the provided content
+         */
+        setFilePanelContent: function(name, content){
+            $('#text' + name.toUpperCase()).html(content);
+        },
+
+        /**
+         * Returns the minimum match size. This is the value
+         * of the minimum match size input element on the GUI.
+         */
+        getMinMatchSize: function(){
+            return Math.round(Number($('#minimumMatchSize').val()));
+        },
+
+        /**
+        Checks the minimumMatchSize value. This should be a valid integer.
+        **/
+        checkMinMatchSize: function(el){
+            el.value = Math.round(Number(el.value));
+            if(el.value == 0) el.value = 10;
+        },
+
+        /**
+         * Loads the provided array of matches into 
+         * the result table
+         */
+        showResultTable: function(matches){            
+        //now show all matches in the browser
+        var parts = [];
+        parts.push("<thead><tr><th>IndexA</th><th>IndexB</th><th>Length</th><th>Likeness</th><th>TextA</th><th>TextB</th></tr></thead><tbody>");
+        var tsvParts = [];
+        var cMatch; var max = matches.length;
+        $('#matchesAmt').html(max);
+        for(var i = 0; i < max; i++){
+            cMatch = matches[i];
+            parts.push("<tr><td><a class='matchLink' href='#match-" + i + 'a' + "'>" + cMatch.indexA +
+            "</a></td><td><a class='matchLink' href='#match-" + i + 'b' + "'>" + cMatch.indexB +
+            "</td><td>" + cMatch.l + "</td><td> " + cMatch.r  + "</td><td>" + cMatch.textA + "</td><td>"
+            + cMatch.textB + "</td></tr>");
+            tsvParts.push(cMatch.indexA + '\t' + cMatch.indexB + '\t' + cMatch.l + '\t' + cMatch.r + '\t' + cMatch.textA + '\t' + cMatch.textB);
+        }
+        $("#resultTable").html(parts.join() + "</tbody>");
+
+        //create the downloadButtons
+        $('#downloadTSVButton').click(function(){createTSVFile(tsvParts);});
+        $('#downloadJSONButton').click(function(){comparativus.file.createJSON(matches);});
+        }
+    }
+})(comparativus);;/**
+ * Anonymous namespace for this file
+ */
+(function(_c){
+    /**
+     * All the file and data manipulation methods
+     */
+    _c.file = {
+        /**
+         * Returns the full filename of the provided text
+         */
+        getName: function(name){
+            return $('#panel' + name.toUpperCase()).find('.fileName').html().replace(/\.[^/.]+$/, "");
+        },
+
+        /**
+         * Reads a single file into the fileInputs
+         */
+        readSingle: function(e, name){
+            //Check the file
+            var file = e.target.files[0];
+            if (!file) {
+              return;
+            }
+
+            //Show that we're loading in case its a big system
+            $(e.target.parentNode).find('.fileName').html('Loading...');
+            
+            //Create the read and the onload response
+            var reader = new FileReader();
+            reader.onload = function(e) {
+              $('#' + 'text' + name.toUpperCase()).html(e.target.result);
+              $('#' + 'info' + name.toUpperCase()).html('Length: ' + e.target.result.length + ' characters');
+              $($('#fInput' + name.toUpperCase()).get(0).parentNode).find('.fileName').html(file.name);
+            };
+          
+            //Start reading the file
+            reader.readAsText(file);
+        },
+
+        /**
+         * Generates the download file name based upon the texts
+         * that have been compared and the file type extension provided
+         */
+        getDownloadName: function(type){
+            var names = "Matches";
+            $('.fileName').each(function(i, val){
+              names += '-' + $(val).html().replace(/\.[^/.]+$/, "");
+            });
+            names += type.toLowerCase();
+            return names;
+        },
+
+        /**
+         * This method takes care of the actual downloading of the file.
+         * It does this by creating a link clicking it and immediately destroying it.
+         */
+        download: function(fileName, href){
+            var link = document.createElement("a");
+            link.download = fileName;
+            link.href = href;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        },
+
+        /**
+         * Creates a JSON file describing the found matches and 
+         * the compared texts. Using the second optional boolean parameter
+         * you can turn off the automatic download feature and
+         * use the file for internal use (D3 visualization).
+         */
+        createJSON: function(matches, doDownload){
+            //if not specified set to true
+            if(doDownload === undefined) doDownload = true;
+            //convert the matches object to nodes and links
+            jsonFile = {};
+            jsonFile.texts = [];
+            jsonFile.texts.push(
+                {
+                name: comparativus.file.getName('a'),
+                textLength: comparativus.texts.a.length,
+                group: 0
+                }
+            );
+            jsonFile.texts.push(
+                {
+                name: comparativus.file.getName('b'),
+                textLength: comparativus.texts.b.length,
+                group: 1
+                }
+            );
+            jsonFile.nodes = [];
+            jsonFile.links = [];
+            var max = matches.length;
+            var unique = true;
+            var cMatch; var cNode = {}; var cLink = {};
+
+            //this function is used to check for duplicates
+            var addNode = function(n){
+                for(var j = 0; j < jsonFile.nodes.length; j++){
+                if(jsonFile.nodes[j].id == n.id) return;
+                }
+                jsonFile.nodes.push(cNode);
+            }
+            for(var i = 0; i < max; i++){
+                cMatch = matches[i];
+
+                //add node A
+                cNode = {};
+                cNode.group = 0;
+                cNode.l = cMatch.l;
+                cNode.index = cMatch.indexA;
+                cNode.id = 'A' + cMatch.indexA;
+                cNode.text = cMatch.textA;
+                addNode(cNode);
+
+                //add node B
+                cNode = {};
+                cNode.group = 3;
+                cNode.l = cMatch.l;
+                cNode.index = cMatch.indexB;
+                cNode.id = 'B' + cMatch.indexB;
+                cNode.text = cMatch.textB;
+                addNode(cNode);
+
+                //add the link
+                cLink = {};
+                cLink.source = 'A' + cMatch.indexA;
+                cLink.target = 'B' + cMatch.indexB;
+                cLink.l = cMatch.l;
+                cLink.r = cMatch.r;
+                jsonFile.links.push(cLink);
+            }
+            if(doDownload){
+                comparativus.file.download(comparativus.file.getDownloadName('.json'),
+                "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonFile)));
+            }
+            //return the json String for internal use
+            return jsonFile;
+        },
+
+        /**
+         * Generates a TSV save file. Use the generated TSV parts to make the
+         * file
+         */
+        createTSV: function(tsvParts){
+            comparativus.file.download(comparativus.file.getDownloadName('.tsv'),
+            'data:text/tsv;charset=utf-8,' + encodeURI(tsvParts.join('\n')));
+        }
+    }
+})(comparativus);;/**
+Starts after document load.
+**/
+$(document).ready(function (){
+    //create a new thread
+    comparativus.thread = new Worker('js/thread.js?v=13');
+    comparativus.thread.onmessage = function(event){
+      //it is assumed that any communication from a worker assigns these values
+      var action = event.data.action;
+      var params = event.data.params;
+  
+      //Switch based on the action parameter
+      switch(action){
+        case 'DictDone':
+          comparativus.dicts.toBuild --;
+          comparativus.dicts[params.textName] = params.dictionary;
+          if(comparativus.dicts.toBuild == 0){
+            console.log('Starting Comparison');
+            comparativus.startComparison();
+          }
+        break;
+        case 'DecorateDone':
+          comparativus.texts.toDecorate --;
+          comparativus.ui.setFilePanelContent(params.textName, params.result);
+          comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.texts.toDecorate + ' left)');
+          if(comparativus.texts.toDecorate == 0){
+            comparativus.ui.setComparisonButtonText('(Re)Compare Texts');
+            comparativus.ui.showLoadingAnimation(false);
+            //Re-add listeners now that we're done with the comparison
+            comparativus.ui.addListeners();
+            //createVisualization(createJSONFile(matches, false));
+          }
+        break;
+        case 'PrepareDone':
+          comparativus.texts[params.textName] = params.text;
+          comparativus.edits[params.textName] = params.edits;
+          $('#info' + name.toUpperCase()).html('Length: ' + comparativus.texts[params.textName].length + ' characters');
+          $('#text' + name.toUpperCase()).html(params.text);
+          comparativus.ui.setComparisonButtonText('Building dictionaries...');
+          comparativus.worker.buildDictionary(params.textName);
+        break;
+      }
+    }
+
+    //Register the global listeners
+    comparativus.ui.addListeners();
+  });
