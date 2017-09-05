@@ -1,3 +1,20 @@
+/**
+ * The main Comparativus global object
+ */
+var comparativus = {
+  version: "1.11.0",
+  author: "Mees Gelein"
+}
+
+/**
+ * Anonymous function namespace of this file. Prevents global namespace pollution and 
+ * naming conflicts
+ */
+(function(_c){
+
+})(comparativus);
+
+
 //Reference to the threads
 var thread;
 //Data object that holds all the texts

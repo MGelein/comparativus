@@ -78,6 +78,11 @@ CUSTOM CLASSES
   animation: rotating 2s linear infinite;
 }
 
+.topRow{
+  height: 30vh;
+  overflow-y: auto;
+}
+
 .matchSpanLeft {
   cursor: pointer;
   border-radius: 1em;
