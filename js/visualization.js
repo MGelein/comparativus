@@ -63,7 +63,7 @@
         var results = [];
         while(i++ < dataset.links.length - 1){
             temp = dataset.links[i];
-            if(temp.source == nodeName  || temp.target == nodeName) results.push(temp);
+            if(temp.source == nodeName || temp.target == nodeName) results.push(temp);
         }
         return results;
     }
@@ -109,10 +109,12 @@
     var highlightMatchPairs = function(dataset,node, nodeData, enabled){
         //Set the values we are setting to the right value depending if we are enabling or disabling
         var opacity = (enabled) ? 1.0 : 0.5;
+        var nodeColor = (enabled) ? 'red' : 'green';
         var strokeWidth = (enabled) ? 2.0: 1.0;
 
         //First set values for the node itself
         d3.select(node).attr('opacity', opacity)
+            .classed('selected', enabled);  
 
         //Get all the links attached to it
         var links = getLinksByNode(dataset, nodeData.id);
@@ -122,11 +124,13 @@
             comparativus.ui.highlightResult(linkID, enabled);
             d3.select('[data-id=' + linkID + "]")
                 .attr('opacity', opacity)
+                .classed('selected', enabled)
                 .attr('stroke-width', strokeWidth);
 
             //Show the other match part better
             d3.select('[data-id=' + linkID.replace(nodeData.id, ''))
-                .attr('opacity', opacity);
+                .attr('opacity', opacity)
+                .classed('selected', enabled)
         }); 
     }
 
@@ -215,7 +219,7 @@
                         .attr('d', function(d){return getPathDirections(dataset, d.source, d.target);});            
             
             //Fade in the canvas
-            $('.svg-canvas').fadeIn();                        
+            $('.svg-canvas').fadeIn(1000);                        
         }
     };
 })(comparativus);

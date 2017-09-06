@@ -69,7 +69,7 @@ var comparativus = {
         for(var i = 0; i < seedAmt; i++){
         totalSeedAmt += dictB[seeds[i]].length;
         }
-        console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
+        //console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
         comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt)
         comparativus.ui.showResultTable(comparativus.matches);
         comparativus.texts.toDecorate = 2;

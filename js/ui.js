@@ -103,14 +103,49 @@
         },
 
         /**
-         * Enables or disables highlighting of the specified row in the rsultTable
+         * Enables or disables highlighting of the specified row in the resultTable
          */
         highlightResult: function(linkID, enabled){
             var row = $('#row' + linkID);
             if(enabled){
-                row.addClass('danger');
+                row.addClass('success');
+                row.get(0).scrollIntoView(false);
             }else{
-                row.removeClass('danger');
+                row.removeClass('success');
+            }
+        },
+
+        /**
+         * Highlight the match. The provided element is the element the mouse hovered over
+         */
+        highLightMatch: function(element, enabled){
+            var elID = $(element).attr('id');
+            var otherName = (elID.startsWith("S") ? "E" : "S") + elID.substring(1);
+            var startMatch = (elID.startsWith("S") ? ('#' + elID) : ('#' + otherName));
+            var endMatch = (elID.startsWith("S") ? ('#' + otherName) : ('#' + elID));
+
+            //Only contents() also picks up on text nodes. 
+            var id; var adding = false;
+            var selection = $();
+            $(startMatch).parent().contents().each(function(){
+                if('#' + $(this).attr('id') == startMatch){//We found the beginning
+                    adding = true;
+                }else if('#' + $(this).attr('id') == endMatch){
+                    adding = false;
+                    selection = selection.add($(this));
+                    return false;
+                }
+                if(adding) selection = selection.add($(this));
+            });
+            
+            if(enabled){
+                selection.wrap('<span class="selectedSpan">');
+                $('.selectedSpan').scrollIntoView(false);
+                $(endMatch).addClass('selected');
+            }else{
+                $(endMatch).removeClass('selected');
+                //remove any selected span that was found
+                $('.selectedSpan').contents().unwrap();
             }
         },
 

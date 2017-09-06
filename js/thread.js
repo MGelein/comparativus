@@ -1,7 +1,6 @@
 /**BLAST seed size*/
 var K = 4;
-var startChar = '⁑';
-var endChar = '‡';
+var matchChar = '⁑';
 
 /**
 Called when messaged by the main thread
@@ -32,7 +31,7 @@ by keeping track of where characters are removed so they can be re-added on a
 later date.
 **/
 function prepareText(name, text, config){
-  console.log('preparing text for use: ' + name);
+  //console.log('preparing text for use: ' + name);
   //an array that will keep track of edit objects
   var edits = [];
   var result;
@@ -43,7 +42,6 @@ function prepareText(name, text, config){
     result = removeAndKeepTrack(text, edits, chars);
     edits = result.edits;
     text = result.text;
-    //text = text.replace(/\s/g,'');
   }
   //then try to strip all punctuation
   if(config.stripPunctuation){
@@ -104,58 +102,62 @@ function decorateText(name, text, matches, edits){
   console.log("Starting text decoration of " + name);
   var max = matches.length;
   var m;
-  var getA = (name == 'a');
+  var index;
   var indexOffset = 0;
+  //list of inserted ID's
+  var inserted = [];
   for(var i = 0; i < max; i++){
-    m = matches[i];
-    if(getA){
-      text = insertAt(text, m.indexA + indexOffset, startChar);
+      m = matches[i];
+      index = (name == 'a') ? m.indexA : m.indexB;
+      text = insertAt(text, index + indexOffset, matchChar);
+      inserted.push({
+        'index': index + indexOffset,
+        'id': 'S' + m.indexA + m.indexB
+      });
       indexOffset ++;
-      //text = insertAt(text, m.indexA + m.l + indexOffset, endChar)
-      //indexOffset ++;
-    }else{
-      text = insertAt(text, m.indexB + indexOffset, startChar);
+      text = insertAt(text, index + indexOffset + m.l, matchChar);
+      inserted.push({
+        'index': index + indexOffset + m.l,
+        'id': 'E' + m.indexA + m.indexB
+      });
       indexOffset ++;
-    //  text = insertAt(text, m.indexB + m.l + indexOffset, endChar)
-    //  indexOffset ++;
-    }
   }
+  //Sort inserted elements by index
+  inserted.sort(function(a, b){return a.index - b.index;});
   //now split on the start of every match
-  var parts = text.split(startChar);
+  var parts = text.split(matchChar);
   //undo all the edits that have been done
   parts = undoEdit(parts, edits);
   //add all the startCharacters back in
-  text = parts.join(startChar);
+  text = parts.join(matchChar);
 
   //keep track of the match ID
   var matchID = 0;
   //replace all startCharacters
-  while(text.indexOf(startChar) != -1){
-      text = text.replace(startChar, generateLeftMatchMark(matchID + name));
+  while(text.indexOf(matchChar) != -1){
+      text = text.replace(matchChar, generateMatchMark(inserted[matchID]));
       matchID++;
   }
-
   message('DecorateDone', {'textName':name, 'result': text});
 }
 
 /**
 Generates the left id mark and sets the id to the provided id
 **/
-function generateLeftMatchMark(id){
-    return "<span id='match-" + id + "' class='matchSpanLeft' onmouseover='onMatchMouseOver(this)' onmouseout='onMatchMouseOut(this)'></span>";
+function generateMatchMark(insertedObj){
+    var start = (insertedObj.id.startsWith('S'));
+    var content = (start) ? "◀" : "▶";
+    var span =  "<span class='matchMark " + ((start) ? 'start' : 'end') 
+    +"' id='" + insertedObj.id + "' onmouseover='comparativus.ui.highLightMatch(this, true)'"
+    + " onmouseout='comparativus.ui.highLightMatch(this, false)'" +">"
+    + content + "</span>";
+    return span;
 }
 
 /**
 Adds all the edits back into the text at the right index
 **/
 function undoEdit(parts, edits){
-  /*console.log("-------------------");
-  console.log("Starting UNDO:")
-  console.log("-------------------");
-  console.log("parts:");
-  console.log(parts);
-  console.log("edits:");
-  console.log(edits);*/
   var cEdit; var index = 0;
   var i = 0;
   var editPart;

@@ -21,7 +21,7 @@
          * testing purposes. Don't clean the file again if it is already loaded
          */
         loadDataFile: function(name, data){
-            console.log('Loading Data file: ' + name);
+            //console.log('Loading Data file: ' + name);
             var config = {
               'stripWhiteSpace': $('#stripWhiteSpace').val(),
               'stripPunctuation': $('#stripPunctuation').val()

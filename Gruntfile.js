@@ -25,13 +25,21 @@ module.exports = function(grunt) {
               'js/visualization.js', 'js/global.js'], //keep global.js as the last file
               dest: 'dist/comparativus.min.comp.js',
             },
+          },
+          watch: {
+            scripts:{
+              files: ['js/*.js'],
+              tasks: ['concat']
+            }
           }
       });
     
       // Load the plugin that provides the "uglify" task.
       grunt.loadNpmTasks('grunt-contrib-uglify');
       grunt.loadNpmTasks('grunt-contrib-concat');
-    
+      grunt.loadNpmTasks('grunt-contrib-watch');
+      
+
       // Default task(s).
       grunt.registerTask('default', ['concat']);
     

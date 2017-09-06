@@ -69,7 +69,7 @@ var comparativus = {
         for(var i = 0; i < seedAmt; i++){
         totalSeedAmt += dictB[seeds[i]].length;
         }
-        console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
+        //console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
         comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt)
         comparativus.ui.showResultTable(comparativus.matches);
         comparativus.texts.toDecorate = 2;
@@ -239,7 +239,7 @@ var comparativus = {
          * testing purposes. Don't clean the file again if it is already loaded
          */
         loadDataFile: function(name, data){
-            console.log('Loading Data file: ' + name);
+            //console.log('Loading Data file: ' + name);
             var config = {
               'stripWhiteSpace': $('#stripWhiteSpace').val(),
               'stripPunctuation': $('#stripPunctuation').val()
@@ -372,14 +372,49 @@ var comparativus = {
         },
 
         /**
-         * Enables or disables highlighting of the specified row in the rsultTable
+         * Enables or disables highlighting of the specified row in the resultTable
          */
         highlightResult: function(linkID, enabled){
             var row = $('#row' + linkID);
             if(enabled){
-                row.addClass('danger');
+                row.addClass('success');
+                row.get(0).scrollIntoView(false);
             }else{
-                row.removeClass('danger');
+                row.removeClass('success');
+            }
+        },
+
+        /**
+         * Highlight the match. The provided element is the element the mouse hovered over
+         */
+        highLightMatch: function(element, enabled){
+            var elID = $(element).attr('id');
+            var otherName = (elID.startsWith("S") ? "E" : "S") + elID.substring(1);
+            var startMatch = (elID.startsWith("S") ? ('#' + elID) : ('#' + otherName));
+            var endMatch = (elID.startsWith("S") ? ('#' + otherName) : ('#' + elID));
+
+            //Only contents() also picks up on text nodes. 
+            var id; var adding = false;
+            var selection = $();
+            $(startMatch).parent().contents().each(function(){
+                if('#' + $(this).attr('id') == startMatch){//We found the beginning
+                    adding = true;
+                }else if('#' + $(this).attr('id') == endMatch){
+                    adding = false;
+                    selection = selection.add($(this));
+                    return false;
+                }
+                if(adding) selection = selection.add($(this));
+            });
+            
+            if(enabled){
+                selection.wrap('<span class="selectedSpan">');
+                $('.selectedSpan').scrollIntoView(false);
+                $(endMatch).addClass('selected');
+            }else{
+                $(endMatch).removeClass('selected');
+                //remove any selected span that was found
+                $('.selectedSpan').contents().unwrap();
             }
         },
 
@@ -627,7 +662,7 @@ var comparativus = {
         var results = [];
         while(i++ < dataset.links.length - 1){
             temp = dataset.links[i];
-            if(temp.source == nodeName  || temp.target == nodeName) results.push(temp);
+            if(temp.source == nodeName || temp.target == nodeName) results.push(temp);
         }
         return results;
     }
@@ -673,10 +708,12 @@ var comparativus = {
     var highlightMatchPairs = function(dataset,node, nodeData, enabled){
         //Set the values we are setting to the right value depending if we are enabling or disabling
         var opacity = (enabled) ? 1.0 : 0.5;
+        var nodeColor = (enabled) ? 'red' : 'green';
         var strokeWidth = (enabled) ? 2.0: 1.0;
 
         //First set values for the node itself
         d3.select(node).attr('opacity', opacity)
+            .classed('selected', enabled);  
 
         //Get all the links attached to it
         var links = getLinksByNode(dataset, nodeData.id);
@@ -686,11 +723,13 @@ var comparativus = {
             comparativus.ui.highlightResult(linkID, enabled);
             d3.select('[data-id=' + linkID + "]")
                 .attr('opacity', opacity)
+                .classed('selected', enabled)
                 .attr('stroke-width', strokeWidth);
 
             //Show the other match part better
             d3.select('[data-id=' + linkID.replace(nodeData.id, ''))
-                .attr('opacity', opacity);
+                .attr('opacity', opacity)
+                .classed('selected', enabled)
         }); 
     }
 
@@ -779,7 +818,7 @@ var comparativus = {
                         .attr('d', function(d){return getPathDirections(dataset, d.source, d.target);});            
             
             //Fade in the canvas
-            $('.svg-canvas').fadeIn();                        
+            $('.svg-canvas').fadeIn(1000);                        
         }
     };
 })(comparativus);;/**
@@ -787,7 +826,7 @@ Starts after document load.
 **/
 $(document).ready(function (){
     //create a new thread
-    comparativus.thread = new Worker('js/thread.js?v=13');
+    comparativus.thread = new Worker('js/thread.js?v=15');
     comparativus.thread.onmessage = function(event){
       //it is assumed that any communication from a worker assigns these values
       var action = event.data.action;
