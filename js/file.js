@@ -74,7 +74,7 @@
             //if not specified set to true
             if(doDownload === undefined) doDownload = true;
             //convert the matches object to nodes and links
-            jsonFile = {};
+            var jsonFile = {};
             jsonFile.texts = [];
             jsonFile.texts.push(
                 {

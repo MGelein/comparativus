@@ -103,6 +103,18 @@
         },
 
         /**
+         * Enables or disables highlighting of the specified row in the rsultTable
+         */
+        highlightResult: function(linkID, enabled){
+            var row = $('#row' + linkID);
+            if(enabled){
+                row.addClass('danger');
+            }else{
+                row.removeClass('danger');
+            }
+        },
+
+        /**
          * Loads the provided array of matches into 
          * the result table
          */
@@ -115,12 +127,14 @@
         $('#matchesAmt').html(max);
         for(var i = 0; i < max; i++){
             cMatch = matches[i];
-            parts.push("<tr><td><a class='matchLink' href='#match-" + i + 'a' + "'>" + cMatch.indexA +
+            var linkID = 'A' + cMatch.indexA + 'B' + cMatch.indexB;
+            parts.push("<tr id='row" + linkID +"'><td><a class='matchLink' href='#match-" + i + 'a' + "'>" + cMatch.indexA +
             "</a></td><td><a class='matchLink' href='#match-" + i + 'b' + "'>" + cMatch.indexB +
             "</td><td>" + cMatch.l + "</td><td>" + cMatch.textA + "</td><td>"
             + cMatch.textB + "</td></tr>");
             tsvParts.push(cMatch.indexA + '\t' + cMatch.indexB + '\t' + cMatch.l + '\t' + cMatch.r + '\t' + cMatch.textA + '\t' + cMatch.textB);
         }
+
         $("#resultTable").html(parts.join() + "</tbody>");
 
         //create the downloadButtons

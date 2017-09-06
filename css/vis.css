@@ -9,22 +9,25 @@
   stroke-width: 1.5px;
 }
 
-/**
-SVG
-**/
+.textInfo{
+  font-size: 12px;
+}
+
 .text-holder rect{
-  fill: rgba(255, 125, 125, 0.3);
-  stroke: none;
+  fill: none;
+  stroke: rgb(45, 45, 45);
 }
 
 .node-holder rect{
+  transition: opacity .4s ease;
   stroke: none;
-  fill: rgba(225, 0, 0, 0.4);
+  fill: rgb(159, 0, 0);
 }
 
 .link-holder path{
+  transition: stroke .4s ease;
   fill: none;
-  stroke: rgba(0, 0, 225, 0.3);
+  stroke: rgb(61, 61, 193);
 }
 
 .svg-canvas{

@@ -21,7 +21,8 @@ module.exports = function(grunt) {
               separator: ';',
             },
             dist: {
-              src: ['js/comparativus.js', 'js/util.js',  'js/worker.js' ,'js/ui.js', 'js/file.js', 'js/global.js'], //keep global.js as the last file
+              src: ['js/comparativus.js', 'js/util.js',  'js/worker.js' ,'js/ui.js', 'js/file.js',
+              'js/visualization.js', 'js/global.js'], //keep global.js as the last file
               dest: 'dist/comparativus.min.comp.js',
             },
           }

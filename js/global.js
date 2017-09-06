@@ -28,7 +28,7 @@ $(document).ready(function (){
             comparativus.ui.showLoadingAnimation(false);
             //Re-add listeners now that we're done with the comparison
             comparativus.ui.addListeners();
-            //createVisualization(createJSONFile(matches, false));
+            comparativus.visualization.draw(comparativus.file.createJSON(comparativus.matches, false));
           }
         break;
         case 'PrepareDone':
@@ -44,4 +44,6 @@ $(document).ready(function (){
 
     //Register the global listeners
     comparativus.ui.addListeners();
+    //Initialize the visualization
+    comparativus.visualization.init();
   });
