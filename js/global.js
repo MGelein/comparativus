@@ -46,4 +46,13 @@ $(document).ready(function (){
     comparativus.ui.addListeners();
     //Initialize the visualization
     comparativus.visualization.init();
+
+    //then load the texts
+    $.ajax('data/Mencius.txt', {success:function(data){
+      comparativus.file.populateFileHolder(data, 'a', 'Mencius.txt');
+    }});
+    $.ajax('data/ZGZY.txt', {success:function(data){
+      comparativus.file.populateFileHolder(data, 'b', 'ZGZY.txt');
+    }});
+    
   });

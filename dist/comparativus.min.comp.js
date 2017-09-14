@@ -372,6 +372,16 @@ var comparativus = {
         },
 
         /**
+         * Highlights a match everywhere (in the visualization, in the text and the resultTable)
+         */
+        highlightEverywhere(linkID, enabled){
+            //linkID is made of indexA + indexB
+            highlightResult(linkID, enabled);
+            highLightMatch($('#S' + linkID), enabled);
+            comparativus.visualization.highlightPair(linkID, enabled);
+        },
+
+        /**
          * Enables or disables highlighting of the specified row in the resultTable
          */
         highlightResult: function(linkID, enabled){
@@ -385,9 +395,19 @@ var comparativus = {
         },
 
         /**
-         * Highlight the match. The provided element is the element the mouse hovered over
+         * Highligths both the A and B occurences of the match
          */
         highLightMatch: function(element, enabled){
+            var id = '#' + $(element).attr('id');
+            //Highlight both the a and b version
+            comparativus.ui.highLightSingleMatch($(id.replace(/.$/, 'a')).get(0), enabled);
+            comparativus.ui.highLightSingleMatch($(id.replace(/.$/, 'b')).get(0), enabled);
+        },
+
+        /**
+         * Highlight one single match. The provided element is the element the mouse hovered over
+         */
+        highLightSingleMatch: function(element, enabled){
             var elID = $(element).attr('id');
             var otherName = (elID.startsWith("S") ? "E" : "S") + elID.substring(1);
             var startMatch = (elID.startsWith("S") ? ('#' + elID) : ('#' + otherName));
@@ -409,13 +429,26 @@ var comparativus = {
             
             if(enabled){
                 selection.wrap('<span class="selectedSpan">');
-                $('.selectedSpan').scrollIntoView(false);
+                //Scroll each of the selected spans into view
+                $('.selectedSpan').each(function(){$(this).get(0).scrollIntoView(false)});
                 $(endMatch).addClass('selected');
+                $(startMatch).addClass('selected');
             }else{
                 $(endMatch).removeClass('selected');
+                $(startMatch).removeClass('selected');
                 //remove any selected span that was found
                 $('.selectedSpan').contents().unwrap();
             }
+        },
+
+        /**
+         * Highlights all matches in the text from the linkID
+         */
+        highlightMatchFromLinkID: function(linkID, enabled){
+            var id = "#S" + linkID.replace(/[AB]/g, '') + 'a'; 
+            console.log(id);
+            comparativus.ui.highLightMatch($(id), enabled);
+            if(enabled) setTimeout(function(){comparativus.ui.highlightMatchFromLinkID(linkID, false);}, 2000);
         },
 
         /**
@@ -432,7 +465,7 @@ var comparativus = {
         for(var i = 0; i < max; i++){
             cMatch = matches[i];
             var linkID = 'A' + cMatch.indexA + 'B' + cMatch.indexB;
-            parts.push("<tr id='row" + linkID +"'><td><a class='matchLink' href='#match-" + i + 'a' + "'>" + cMatch.indexA +
+            parts.push("<tr id='row" + linkID +"'><td><a class='matchLink' onmouseup='comparativus.ui.highlightMatchFromLinkID(\"" + linkID + "\", true);'" + i + 'a' + "'>" + cMatch.indexA +
             "</a></td><td><a class='matchLink' href='#match-" + i + 'b' + "'>" + cMatch.indexB +
             "</td><td>" + cMatch.l + "</td><td>" + cMatch.textA + "</td><td>"
             + cMatch.textB + "</td></tr>");
@@ -484,6 +517,17 @@ var comparativus = {
           
             //Start reading the file
             reader.readAsText(file);
+        },
+
+        /**
+         * 
+         * @param {String} text the text to put into the textfield 
+         * @param {String} name the name of the text field [a-b]
+         */
+        populateFileHolder: function(text, name, filename){
+            $('#' + 'text' + name.toUpperCase()).html(text);
+            $('#' + 'info' + name.toUpperCase()).html('Length: ' + text.length + ' characters');
+            $($('#fInput' + name.toUpperCase()).get(0).parentNode).find('.fileName').html(filename);
         },
 
         /**
@@ -737,6 +781,7 @@ var comparativus = {
      * Holds the public methods for the visualization
      */
     _c.visualization = {
+
         /**
          * Initializes the visualization. Called on document read
          */
@@ -756,6 +801,8 @@ var comparativus = {
             textLength = {};
             //Copy the jsonData
             var dataset = jsonData;
+            //A copy for external use
+            comparativus.visualization.data = jsonData;
             //Create a new text-holder group
             var textHolder = svg.append('g').classed('text-holder', true);
             
@@ -869,4 +916,13 @@ $(document).ready(function (){
     comparativus.ui.addListeners();
     //Initialize the visualization
     comparativus.visualization.init();
+
+    //then load the texts
+    $.ajax('data/Mencius.txt', {success:function(data){
+      comparativus.file.populateFileHolder(data, 'a', 'Mencius.txt');
+    }});
+    $.ajax('data/ZGZY.txt', {success:function(data){
+      comparativus.file.populateFileHolder(data, 'b', 'ZGZY.txt');
+    }});
+    
   });

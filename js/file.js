@@ -39,6 +39,17 @@
         },
 
         /**
+         * 
+         * @param {String} text the text to put into the textfield 
+         * @param {String} name the name of the text field [a-b]
+         */
+        populateFileHolder: function(text, name, filename){
+            $('#' + 'text' + name.toUpperCase()).html(text);
+            $('#' + 'info' + name.toUpperCase()).html('Length: ' + text.length + ' characters');
+            $($('#fInput' + name.toUpperCase()).get(0).parentNode).find('.fileName').html(filename);
+        },
+
+        /**
          * Generates the download file name based upon the texts
          * that have been compared and the file type extension provided
          */

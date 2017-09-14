@@ -135,7 +135,7 @@ CUSTOM CLASSES
   background-color: rgba(200, 0, 0, 0.3);
 }
 
-.matchMark:hover, .matchMark.selected{
+.matchMark.selected{
   opacity: 1.0;
 }
 

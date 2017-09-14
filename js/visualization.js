@@ -138,6 +138,7 @@
      * Holds the public methods for the visualization
      */
     _c.visualization = {
+
         /**
          * Initializes the visualization. Called on document read
          */
@@ -157,6 +158,8 @@
             textLength = {};
             //Copy the jsonData
             var dataset = jsonData;
+            //A copy for external use
+            comparativus.visualization.data = jsonData;
             //Create a new text-holder group
             var textHolder = svg.append('g').classed('text-holder', true);
             

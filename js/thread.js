@@ -112,13 +112,13 @@ function decorateText(name, text, matches, edits){
       text = insertAt(text, index + indexOffset, matchChar);
       inserted.push({
         'index': index + indexOffset,
-        'id': 'S' + m.indexA + m.indexB
+        'id': 'S' + m.indexA + m.indexB + name
       });
       indexOffset ++;
       text = insertAt(text, index + indexOffset + m.l, matchChar);
       inserted.push({
         'index': index + indexOffset + m.l,
-        'id': 'E' + m.indexA + m.indexB
+        'id': 'E' + m.indexA + m.indexB + name
       });
       indexOffset ++;
   }
