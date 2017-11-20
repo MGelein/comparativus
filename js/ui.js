@@ -14,8 +14,8 @@
                 console.log("Asked to start");
                 var aEmpty = ($('#textA').html() == "" );
                 var bEmpty = ($('#textB').html() == "" );
-                if(aEmpty) comparativus.ui.shakeFileInput('a');
-                if(bEmpty) comparativus.ui.shakeFileInput('b');
+                //if(aEmpty) comparativus.ui.shakeFileInput('a');
+                //if(bEmpty) comparativus.ui.shakeFileInput('b');
                 if(aEmpty || bEmpty) return;
 
                 //unbinds the click handler, to prevent more clicking during comparison
