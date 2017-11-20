@@ -466,7 +466,7 @@ var comparativus = {
             cMatch = matches[i];
             var linkID = 'A' + cMatch.indexA + 'B' + cMatch.indexB;
             parts.push("<tr id='row" + linkID +"'><td><a class='matchLink' onmouseup='comparativus.ui.highlightMatchFromLinkID(\"" + linkID + "\", true);'" + i + 'a' + "'>" + cMatch.indexA +
-            "</a></td><td><a class='matchLink' href='#match-" + i + 'b' + "'>" + cMatch.indexB +
+            "</a></td><td><a class='matchLink' onmouseup='comparativus.ui.highlightMatchFromLinkID(\"" + linkID + "\", true);'" + i + 'a' + "'>" + cMatch.indexB +
             "</td><td>" + cMatch.l + "</td><td>" + cMatch.textA + "</td><td>"
             + cMatch.textB + "</td></tr>");
             tsvParts.push(cMatch.indexA + '\t' + cMatch.indexB + '\t' + cMatch.l + '\t' + cMatch.r + '\t' + cMatch.textA + '\t' + cMatch.textB);
