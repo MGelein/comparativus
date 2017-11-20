@@ -121,7 +121,6 @@
         links.forEach(function(link, index){
             //Show the link better
             var linkID = link.source + link.target + "";
-            comparativus.ui.highlightResult(linkID, enabled);
             d3.select('[data-id=' + linkID + "]")
                 .attr('opacity', opacity)
                 .classed('selected', enabled)

@@ -10,7 +10,7 @@
          * Returns the full filename of the provided text
          */
         getName: function(name){
-            return $('#panel' + name.toUpperCase()).find('.fileName').html().replace(/\.[^/.]+$/, "");
+            return $('#fInput' + name.toUpperCase()).parent().find('.fileName').html().replace(/\.[^/.]+$/, "");
         },
 
         /**

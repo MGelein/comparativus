@@ -283,8 +283,6 @@ var comparativus = {
                 console.log("Asked to start");
                 var aEmpty = ($('#textA').html() == "" );
                 var bEmpty = ($('#textB').html() == "" );
-                //if(aEmpty) comparativus.ui.shakeFileInput('a');
-                //if(bEmpty) comparativus.ui.shakeFileInput('b');
                 if(aEmpty || bEmpty) return;
 
                 //unbinds the click handler, to prevent more clicking during comparison
@@ -491,7 +489,7 @@ var comparativus = {
          * Returns the full filename of the provided text
          */
         getName: function(name){
-            return $('#panel' + name.toUpperCase()).find('.fileName').html().replace(/\.[^/.]+$/, "");
+            return $('#fInput' + name.toUpperCase()).parent().find('.fileName').html().replace(/\.[^/.]+$/, "");
         },
 
         /**
@@ -764,7 +762,6 @@ var comparativus = {
         links.forEach(function(link, index){
             //Show the link better
             var linkID = link.source + link.target + "";
-            comparativus.ui.highlightResult(linkID, enabled);
             d3.select('[data-id=' + linkID + "]")
                 .attr('opacity', opacity)
                 .classed('selected', enabled)
