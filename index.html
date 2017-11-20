@@ -37,36 +37,47 @@
   <div class="row">
     <div id="mainPanel" class="col-xs-8">
 
-      <!-- Title panel A -->
-      <div class="col-xs-6">
-        <i class="glyphicon glyphicon-list"></i>&nbsp;
-        <label>
-          <span class="fileName">Choose File</span>
-          <input style="display:none" type="file" id="fInputA"/>
-        </label>
-        <span id="infoA" class="small"></span>
+      <ul class="nav nav-tabs">
+        <!-- Title panel A -->
+        <li class="active">
+          <a data-toggle="tab" href="#textAHolder">
+            <i class="glyphicon glyphicon-list"></i>&nbsp;
+            <label>
+              <span class="fileName">Choose File</span>
+              <input style="display:none" type="file" id="fInputA"/>
+            </label>
+            <span id="infoA" class="small"></span>
+          </a>
+        </li>
+
+        <!-- Title Panel B -->
+        <li>
+          <a data-toggle="tab" href="#textBHolder">
+            <i class="glyphicon glyphicon-list"></i>&nbsp;
+            <label>
+              <span class="fileName">Choose File</span>
+              <input style="display:none" type="file" id="fInputB"/>
+            </label>
+            <span id="infoB" class="small"></span>
+          </a>
+        </li>
+      </ul>
+
+      <!-- Actual text of the focused text -->
+      <div class="tab-content">
+
+        <!-- Text input A -->
+        <div id="textAHolder" class="tab-pane fade in active">
+          <pre id="textA"></pre>
+        </div>
+  
+        <!-- Text input B -->
+        <div id="textBHolder" class="tab-pane fade">
+          <pre id="textB"></pre>
+        </div>      
       </div>
 
-      <!-- Title Panel B -->
-      <div class="col-xs-6">
-        <i class="glyphicon glyphicon-list"></i>&nbsp;
-        <label>
-          <span class="fileName">Choose File</span>
-          <input style="display:none" type="file" id="fInputB"/>
-        </label>
-        <span id="infoB" class="small"></span>
-      </div>
-
-      <!-- Actual text of focused text -->
-      <div>  
-        <pre id="textA"></pre>
-      </div>
-
-      <!-- Hidden second file input -->
-      <div class="col-xs-6 hidden">
-        <pre id="textB"></pre>
-      </div>
-
+      
     </div>
       
     <!-- Side Content -->
@@ -78,20 +89,20 @@
         <div class="panel-body collapse in" id="settingsPanel">
           <form class="form-horizontal">
             <div class="form-group">
-              <label class="control-label col-sm-5" for="minimumMatchSize">Minimum Match Size:
+              <label class="control-label col-sm-6" for="minimumMatchSize">Minimum Match Size:
                 <a href="#" data-toggle="popover" data-trigger="hover" title="Minimum Match Size"
                 data-content="The minimum match size determines the smallest a match can be to be added to the results. NB: Smaller settings create more results which can make the browser very slow."><i class="glyphicon glyphicon-info-sign"></i></a>
               </label>
-              <div class="col-sm-7">
+              <div class="col-sm-6">
                   <input type="number" class="form-control" id="minimumMatchSize" value="7" onBlur="comparativus.ui.checkMinMatchSize(this)">
               </div>
             </div>
             <div class="form-group">
-              <label class="control-label col-sm-5" for="stripWhiteSpace">Ignore Whitespace:
+              <label class="control-label col-sm-6" for="stripWhiteSpace">Ignore Whitespace:
                 <a href="#" data-toggle="popover" data-trigger="hover" title="Ignore Whitespace"
                 data-content="This option ignores tabs, newlines and spaces. If they are ignored generally the results are cleaner and more accurate."><i class="glyphicon glyphicon-info-sign"></i></a>
               </label>
-              <div class="col-sm-7">
+              <div class="col-sm-6">
                 <select class="form-control" id="stripWhiteSpace">
                   <option value="true" selected>Yes, please ignore all whitespace, newlines and tabs. (recommended)</option>
                   <option value="false">No, keep all whitespace, newlines and tabs.</option>
@@ -99,11 +110,11 @@
               </div>
             </div>
             <div class="form-group">
-              <label class="control-label col-sm-5" for="stripPunctuation">Ignore Punctuation:
+              <label class="control-label col-sm-6" for="stripPunctuation">Ignore Punctuation:
                 <a href="#" data-toggle="popover" data-trigger="hover" title="Ignore Punctuation"
                 data-content="This option igenores all punctuation. Generally this improves the results."><i class="glyphicon glyphicon-info-sign"></i></a>
               </label>
-              <div class="col-sm-7">
+              <div class="col-sm-6">
                 <select class="form-control" id="stripPunctuation">
                   <option value="true" selected>Yes, please ignore all punctuation. (recommended)</option>
                   <option value="false">No, keep all punctuation.</option>
