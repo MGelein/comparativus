@@ -36,25 +36,37 @@
   <!-- Main Content -->
   <div class="row">
     <div id="mainPanel" class="col-xs-8">
-      <!-- File inputs -->
-        <div class="col-xs-6">  
-            <div class="panel panel-warning" id="panelA">
-              <div class="panel-heading"><i class="glyphicon glyphicon-list"></i>&nbsp;
-                <label class="btn btn-default btn-xs hidden"><span class="fileName">Choose File</span><input style="display:none" type="file" id="fInputA" /></label>
-                <span id="infoA" class="small"></span>
-                <input type="button" data-toggle="collapse" data-target="#fileAPanel" class="hidden btn btn-default btn-xs pull-right" value="Show/Hide"></div>
-              <div class="panel-body collapse in" id="fileAPanel"><pre id="textA"></pre></div>
-            </div>
-          </div>
-          <div class="col-xs-6">
-            <div class="panel panel-warning" id="panelB">
-              <div class="panel-heading"><i class="glyphicon glyphicon-list"></i>&nbsp;
-                <label class="btn btn-default btn-xs hidden"><span class="fileName">Choose File</span><input style="display:none" type="file" id="fInputB" /></label>
-                <span id="infoB" class="small"></span>
-                <input type="button" data-toggle="collapse" data-target="#fileBPanel" class="hidden btn btn-default btn-xs pull-right" value="Show/Hide"></div>
-              <div class="panel-body collapse in" id="fileBPanel"><pre id="textB"></pre></div>
-            </div>
-          </div>
+
+      <!-- Title panel A -->
+      <div class="col-xs-6">
+        <i class="glyphicon glyphicon-list"></i>&nbsp;
+        <label>
+          <span class="fileName">Choose File</span>
+          <input style="display:none" type="file" id="fInputA"/>
+        </label>
+        <span id="infoA" class="small"></span>
+      </div>
+
+      <!-- Title Panel B -->
+      <div class="col-xs-6">
+        <i class="glyphicon glyphicon-list"></i>&nbsp;
+        <label>
+          <span class="fileName">Choose File</span>
+          <input style="display:none" type="file" id="fInputB"/>
+        </label>
+        <span id="infoB" class="small"></span>
+      </div>
+
+      <!-- Actual text of focused text -->
+      <div>  
+        <pre id="textA"></pre>
+      </div>
+
+      <!-- Hidden second file input -->
+      <div class="col-xs-6 hidden">
+        <pre id="textB"></pre>
+      </div>
+
     </div>
       
     <!-- Side Content -->
@@ -103,6 +115,7 @@
         </div>
       </div>
 
+      <br>
       <!-- Results table -->
 
       <div id="tablePanel">
