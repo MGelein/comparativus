@@ -98,27 +98,29 @@ function insertAt(text, index, newSubStr) {
 /**
 Decorates the text and once it is done returns the result
 **/
-function decorateText(name, text, matches, edits){
+function decorateText(name, text, nodes, edits){
   console.log("Starting text decoration of " + name);
-  var max = matches.length;
-  var m;
+  var max = nodes.length;
+  var n;
   var index;
   var indexOffset = 0;
   //list of inserted ID's
   var inserted = [];
   for(var i = 0; i < max; i++){
-      m = matches[i];
-      index = (name == 'a') ? m.indexA : m.indexB;
-      text = insertAt(text, index + indexOffset, matchChar);
+      n = nodes[i];
+      console.log(name + '-index: ' + n.index);
+      text = insertAt(text, n.index + indexOffset, matchChar);
       inserted.push({
         'index': index + indexOffset,
-        'id': 'S' + m.indexA + m.indexB + name
+        'id': name + index,
+        'node': n
       });
       indexOffset ++;
-      text = insertAt(text, index + indexOffset + m.l, matchChar);
+      text = insertAt(text, n.index + indexOffset + n.match.l, matchChar);
       inserted.push({
-        'index': index + indexOffset + m.l,
-        'id': 'E' + m.indexA + m.indexB + name
+        'index': index + indexOffset + n.match.l,
+        'id': name + index + n.match.l,
+        'node': n
       });
       indexOffset ++;
   }
@@ -148,8 +150,8 @@ function generateMatchMark(insertedObj){
     var start = (insertedObj.id.startsWith('S'));
     var content = (start) ? "◀" : "▶";
     var span =  "<span class='matchMark " + ((start) ? 'start' : 'end') 
-    +"' id='" + insertedObj.id + "' onmouseover='comparativus.ui.highLightMatch(this, true)'"
-    + " onmouseout='comparativus.ui.highLightMatch(this, false)'" +">"
+    +"' id='" + insertedObj.id + "' data='" + JSON.stringify(insertedObj.node) + "'"
+    + "onmouseover=''>"
     + content + "</span>";
     return span;
 }

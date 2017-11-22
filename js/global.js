@@ -3,7 +3,7 @@ Starts after document load.
 **/
 $(document).ready(function (){
     //create a new thread
-    comparativus.thread = new Worker('js/thread.js?v=15');
+    comparativus.thread = new Worker('js/thread.js?v=17');
     comparativus.thread.onmessage = function(event){
       //it is assumed that any communication from a worker assigns these values
       var action = event.data.action;

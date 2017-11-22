@@ -20,6 +20,14 @@ var comparativus = {
      */
     _c.matches = [];
     /**
+     * Contains the araray of nodes (unique matches) that have been found. Prevents doubling of data when
+     * one sequence has multiple matches in the other document
+     */
+    _c.nodes = {
+        a: [],
+        b: []
+    }
+    /**
      * Reference to the single thread we're currently running
      */
     _c.thread;
@@ -74,8 +82,8 @@ var comparativus = {
         comparativus.ui.showResultTable(comparativus.matches);
         comparativus.texts.toDecorate = 2;
         comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.texts.toDecorate + ' left)');
-        comparativus.worker.decorateText('a', comparativus.matches, comparativus.edits['a']);
-        comparativus.worker.decorateText('b', comparativus.matches, comparativus.edits['b']);
+        comparativus.worker.decorateText('a', comparativus.nodes.a, comparativus.edits['a']);
+        comparativus.worker.decorateText('b', comparativus.nodes.b, comparativus.edits['b']);
     };
 
     /**
@@ -157,9 +165,44 @@ var comparativus = {
         if(matchLength >= comparativus.minMatchLength){
             var m = {l:matchLength, indexA:iA, indexB:iB, textA:sA, textB:sB, r:comparativus.util.levDistRatio(sA, sB)};
             comparativus.matches.push(m);
+            comparativus.addNodeFromMatch(m);
             //console.log("Match found: " + m.l);
         }
     }
+
+    /**
+     * Adds new nodes to the list of them. 
+     * @param {Match} match 
+     */
+    _c.addNodeFromMatch= function(match){
+        var nA = {index: match.indexA, 'match': match};
+        var nB = {index: match.indexB, 'match': match};
+        var i = 0;
+        //First check if node A is unique
+        var max = comparativus.nodes.a.length;
+        var unique = true;
+        for(i = 0; i < max; i++){
+            if(comparativus.nodes.a[i].index == nA.index){
+                unique = false;
+                break;
+            }
+        }
+        if(unique) comparativus.nodes.a.push(nA);
+        else console.log("node A was not unique");
+
+        //Then check if node B is unique
+        max = comparativus.nodes.b.length;
+        unique = true;
+        for(i = 0; i < max; i++){
+            if(comparativus.nodes.b[i].index == nB.index){
+                unique = false;
+                break;
+            }
+        }
+        if(unique) comparativus.nodes.b.push(nB);
+        else console.log("node B was not unique");
+    }
+
 
     /**
      * Expands all occurrences for a matching seed found in the dictionary
