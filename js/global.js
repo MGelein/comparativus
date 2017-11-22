@@ -46,6 +46,8 @@ $(document).ready(function (){
     comparativus.ui.addListeners();
     //Initialize the visualization
     comparativus.visualization.init();
+    //Initialize the popover
+    comparativus.popover.init();
 
     //then load the texts
     $.ajax('data/Mencius.txt', {success:function(data){

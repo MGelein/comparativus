@@ -91,6 +91,7 @@ CUSTOM CLASSES
     transform: rotate(360deg);
   }
 }
+
 .rotating {
   -webkit-animation: rotating 2s linear infinite;
   -moz-animation: rotating 2s linear infinite;
@@ -144,8 +145,14 @@ CUSTOM CLASSES
 /**
 ID's
 **/
-#progressBar{
-  transition-duration:50ms;
+#popover{
+  position: absolute;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 1px 1px 4px #777;
+  z-index: 45;
+  display: block;
+  padding: 8px;
 }
 
 #resultTable{
