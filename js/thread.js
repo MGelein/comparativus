@@ -108,10 +108,10 @@ function decorateText(name, text, nodes, edits){
   var inserted = [];
   for(var i = 0; i < max; i++){
       n = nodes[i];
-      console.log(name + '-index: ' + n.index);
       text = insertAt(text, n.index + indexOffset, matchChar);
       inserted.push({
         'index': index + indexOffset,
+        'start': true,
         'id': name + index,
         'node': n
       });
@@ -119,6 +119,7 @@ function decorateText(name, text, nodes, edits){
       text = insertAt(text, n.index + indexOffset + n.match.l, matchChar);
       inserted.push({
         'index': index + indexOffset + n.match.l,
+        'start': false,
         'id': name + index + n.match.l,
         'node': n
       });
@@ -147,11 +148,10 @@ function decorateText(name, text, nodes, edits){
 Generates the left id mark and sets the id to the provided id
 **/
 function generateMatchMark(insertedObj){
-    var start = (insertedObj.id.startsWith('S'));
-    var content = (start) ? "◀" : "▶";
-    var span =  "<span class='matchMark " + ((start) ? 'start' : 'end') 
+    var content = (insertedObj.start) ? "◀" : "▶";
+    var span =  "<span class='matchMark " + ((insertedObj.start) ? 'start' : 'end') 
     +"' id='" + insertedObj.id + "' data='" + JSON.stringify(insertedObj.node) + "'"
-    + "onmouseover=''>"
+    + "onmouseover='comparativus.popover.showData(this);'>"
     + content + "</span>";
     return span;
 }
