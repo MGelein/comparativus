@@ -941,7 +941,7 @@ var comparativus = {
             comparativus.popover.pop.fadeIn();
             $(document).click(function(){
                 comparativus.popover.pop.hide();
-                $(document).unbind('click');
+                //$(document).unbind('click');
             });
             
         },
