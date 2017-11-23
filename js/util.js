@@ -45,14 +45,15 @@
             //for the parts of a GET assignement
             var parts;
             //Loop through each of GET key-value pairs
-            window.location.search.substring(1).split('&').forEach(function(pair){
-                parts = pair.split('=');
+            var pairs = window.location.search.substring(1).split('&');
+            for(var i = 0; i < pairs.length; i++){
+                parts = pairs[i].split('=');
                 //If this is the key-value pair we want
-                if(parts[0] === name){
+                if(parts[0] == name){
                     //return the value or true if this only was a key
-                    return parts[1] === undefined ? true : parts[1];
+                    return ((parts[1] === undefined) ? true : decodeURI(parts[1]));
                 }
-            });
+            };
         }
     };
 })(comparativus);
