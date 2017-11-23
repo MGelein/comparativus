@@ -39,14 +39,16 @@
         },
 
         /**
-         * Returns the file with the provided ID from the server. Returned file
-         * is HTML string.
+         * Returns the file with the provided ID from the server. The file
+         * is returned in the callback as a string. This is due to the asynchronous
+         * nature of the file request
          * 
          * @param {String} id   the id used for the file in the filesystem
+         * @param {Function} callback   takes the file data as a parameter
          */
-        loadFromID: function(id){
+        loadFromID: function(id, callback){
             $.get("http://dh.chinese-empires.eu/auth/get/" + id, function(data){
-                console.log(data);
+                callback($(data).text());
             });
         },
 
