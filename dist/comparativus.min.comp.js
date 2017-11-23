@@ -552,7 +552,7 @@ var comparativus = {
         /**
          * Contains the JSON object returned upon loading the page auth/list_files
          */
-        list,
+        list: undefined,
 
         /**
          * Returns the full filename of the provided text
