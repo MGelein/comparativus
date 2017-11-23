@@ -548,6 +548,12 @@ var comparativus = {
      * All the file and data manipulation methods
      */
     _c.file = {
+
+        /**
+         * Contains the JSON object returned upon loading the page auth/list_files
+         */
+        list,
+
         /**
          * Returns the full filename of the provided text
          */
@@ -585,6 +591,9 @@ var comparativus = {
          * is returned in the callback as a string. This is due to the asynchronous
          * nature of the file request
          * 
+         * Look here for the list of file id for this user
+         * http://dh.chinese-empires.eu/auth/list_files >
+         * 
          * @param {String} id   the id used for the file in the filesystem
          * @param {Function} callback   takes the file data as a parameter
          */
@@ -592,6 +601,28 @@ var comparativus = {
             $.get("http://dh.chinese-empires.eu/auth/get/" + id, function(data){
                 callback($(data).text());
             });
+        },
+
+        /**
+         * Returns the fileName that matches this ID
+         */
+        getTitleFromID: function(id){
+            //If we haven't loaded the list before, please do so now
+            if(list === undefined){
+                $.get("http://dh.chinese-empires.eu/get/list_files/", function(data){
+                    comparativus.file.list = JSON.parse(data);
+                    return comparativus.file.getTitleFromID(id);
+                });
+            }
+
+            //We now know for sure that the list of files is loaded
+            var file, max = list.files.length;
+            for(var i = 0; i < max; i++){
+                file = list.files[i];
+                if(file._id == id) return file.fileName;
+            }
+            //If we don't find a match, return that
+            return "No Title Found";
         },
 
         /**
@@ -1055,11 +1086,21 @@ $(document).ready(function (){
     comparativus.popover.init();
 
     //then load the texts
-    $.ajax('data/Mencius.txt', {success:function(data){
+    var idA = comparativus.util.getURLVar('idA');
+    comparativus.file.loadFromID(idA, function(data){
+      comparativus.file.populateFileHolder(data, 'a', comparativus.file.getTitleFromID(idA));
+    });
+    var idB = comparativus.util.getURLVar('idB');
+    comparativus.file.loadFromID(idB, function(data){
+      comparativus.file.populateFileHolder(data, 'b', comparativus.file.getTitleFromID(idB));
+    });
+
+    //OLD TEXT LOADING STRAIGHT FROM DISK
+    /*$.ajax('data/Mencius.txt', {success:function(data){
       comparativus.file.populateFileHolder(data, 'a', 'Mencius.txt');
     }});
     $.ajax('data/ZGZY.txt', {success:function(data){
       comparativus.file.populateFileHolder(data, 'b', 'ZGZY.txt');
-    }});
+    }});*/
     
   });

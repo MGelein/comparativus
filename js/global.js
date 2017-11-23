@@ -50,11 +50,21 @@ $(document).ready(function (){
     comparativus.popover.init();
 
     //then load the texts
-    $.ajax('data/Mencius.txt', {success:function(data){
+    var idA = comparativus.util.getURLVar('idA');
+    comparativus.file.loadFromID(idA, function(data){
+      comparativus.file.populateFileHolder(data, 'a', comparativus.file.getTitleFromID(idA));
+    });
+    var idB = comparativus.util.getURLVar('idB');
+    comparativus.file.loadFromID(idB, function(data){
+      comparativus.file.populateFileHolder(data, 'b', comparativus.file.getTitleFromID(idB));
+    });
+
+    //OLD TEXT LOADING STRAIGHT FROM DISK
+    /*$.ajax('data/Mencius.txt', {success:function(data){
       comparativus.file.populateFileHolder(data, 'a', 'Mencius.txt');
     }});
     $.ajax('data/ZGZY.txt', {success:function(data){
       comparativus.file.populateFileHolder(data, 'b', 'ZGZY.txt');
-    }});
+    }});*/
     
   });
