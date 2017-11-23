@@ -34,6 +34,25 @@
 
             //0 for no likeness. 1 for complete likeness
             return 1 - (matrix[bMax][aMax] / aMax);
+        },
+
+        /**
+         * Returns the value of the GET variable with the provided name.
+         * If no variable was set, undefined is returned. If it is set,
+         * its string is URI decoded and returned.
+         */
+        getURLVar: function(name){
+            //for the parts of a GET assignement
+            var parts;
+            //Loop through each of GET key-value pairs
+            window.location.search.substring(1).split('&').forEach(function(pair){
+                parts = pair.split('=');
+                //If this is the key-value pair we want
+                if(parts[0] === name){
+                    //return the value or true if this only was a key
+                    return parts[1] === undefined ? true : parts[1];
+                }
+            });
         }
     };
 })(comparativus);
