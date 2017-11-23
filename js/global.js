@@ -2,8 +2,20 @@
 Starts after document load.
 **/
 $(document).ready(function (){
+    /**Load the list of files */
+    $.get("http://dh.chinese-empires.eu/auth/list_files/", function(data){
+        comparativus.file.list = data;
+        init();
+    });
+});
+
+/**
+ * Continued initialization after first ajax calls
+ */
+function init(){    
     //create a new thread
     comparativus.thread = new Worker('js/thread.js?v=17');
+
     comparativus.thread.onmessage = function(event){
       //it is assumed that any communication from a worker assigns these values
       var action = event.data.action;
@@ -67,4 +79,4 @@ $(document).ready(function (){
       comparativus.file.populateFileHolder(data, 'b', 'ZGZY.txt');
     }});*/
     
-  });
+  }

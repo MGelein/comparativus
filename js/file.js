@@ -65,18 +65,10 @@
          * Returns the fileName that matches this ID
          */
         getTitleFromID: function(id){
-            //If we haven't loaded the list before, please do so now
-            if(list === undefined){
-                $.get("http://dh.chinese-empires.eu/get/list_files/", function(data){
-                    comparativus.file.list = JSON.parse(data);
-                    return comparativus.file.getTitleFromID(id);
-                });
-            }
-
             //We now know for sure that the list of files is loaded
-            var file, max = list.files.length;
+            var file, max = comparativus.file.list.files.length;
             for(var i = 0; i < max; i++){
-                file = list.files[i];
+                file = comparativus.file.list.files[i];
                 if(file._id == id) return file.fileName;
             }
             //If we don't find a match, return that

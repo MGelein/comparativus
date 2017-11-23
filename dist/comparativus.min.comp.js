@@ -607,18 +607,10 @@ var comparativus = {
          * Returns the fileName that matches this ID
          */
         getTitleFromID: function(id){
-            //If we haven't loaded the list before, please do so now
-            if(list === undefined){
-                $.get("http://dh.chinese-empires.eu/get/list_files/", function(data){
-                    comparativus.file.list = JSON.parse(data);
-                    return comparativus.file.getTitleFromID(id);
-                });
-            }
-
             //We now know for sure that the list of files is loaded
-            var file, max = list.files.length;
+            var file, max = comparativus.file.list.files.length;
             for(var i = 0; i < max; i++){
-                file = list.files[i];
+                file = comparativus.file.list.files[i];
                 if(file._id == id) return file.fileName;
             }
             //If we don't find a match, return that
@@ -1038,8 +1030,20 @@ var comparativus = {
 Starts after document load.
 **/
 $(document).ready(function (){
+    /**Load the list of files */
+    $.get("http://dh.chinese-empires.eu/auth/list_files/", function(data){
+        comparativus.file.list = data;
+        init();
+    });
+});
+
+/**
+ * Continued initialization after first ajax calls
+ */
+function init(){    
     //create a new thread
     comparativus.thread = new Worker('js/thread.js?v=17');
+
     comparativus.thread.onmessage = function(event){
       //it is assumed that any communication from a worker assigns these values
       var action = event.data.action;
@@ -1103,4 +1107,4 @@ $(document).ready(function (){
       comparativus.file.populateFileHolder(data, 'b', 'ZGZY.txt');
     }});*/
     
-  });
+  }
