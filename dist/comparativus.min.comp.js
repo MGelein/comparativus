@@ -623,6 +623,9 @@ var comparativus = {
          * @param {String} name the name of the text field [a-b]
          */
         populateFileHolder: function(text, name, filename){
+            console.log("text: " + text);
+            console.log("name: " + name);
+            console.log("filename: " + filename);
             $('#' + 'text' + name.toUpperCase()).html(text);
             $('#' + 'info' + name.toUpperCase()).html('Length: ' + text.length + ' characters');
             $($('#fInput' + name.toUpperCase()).get(0).parentNode).find('.fileName').html(filename);
