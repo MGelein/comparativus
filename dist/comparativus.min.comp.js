@@ -561,6 +561,18 @@ var comparativus = {
         },
 
         /**
+         * Returns the file with the provided ID from the server. Returned file
+         * is HTML string.
+         * 
+         * @param {String} id   the id used for the file in the filesystem
+         */
+        loadFromID: function(id){
+            $.get("http://dh.chinese-empires.eu/auth/get/" + id, function(data){
+                console.log(data);
+            });
+        },
+
+        /**
          * 
          * @param {String} text the text to put into the textfield 
          * @param {String} name the name of the text field [a-b]
