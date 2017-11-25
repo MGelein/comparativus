@@ -21,6 +21,10 @@
      */
     var textLength = {};
     /**
+     * List of text names ordered by group number
+     */
+    textNames = [];
+    /**
      * The margins of the text-bar
      */
     var textMargins = {top: 20, left: 0, bottom: 50, right: 0};
@@ -76,7 +80,7 @@
     var getNodeX = function(dataset, id){
         var d = getNodeByID(dataset, id);
         //get the x coordinate relative to the length of the text
-        return (d.index / textLength[(d.group == 0) ? 'Mencius' : 'ZGZY']) * w;
+        return (d.index / getTextLength(d.group)) * w;
     }
 
     /**
@@ -96,9 +100,17 @@
      * @param {Integer} group 
      */
     var getNodeWidth = function(length, group){
-        var l = (length / textLength[(group == 0) ? 'Mencius' : 'ZGZY']) * w;
+        var l = (length / getTextLength(group)) * w;
         //At least return 2, no lower than that
         return Math.max(2, l);
+    }
+
+    /**
+     * Returns the textlenght for the specified text group
+     * @param {Number} group 
+     */
+    var getTextLength = function(group){
+        return textLength[textNames[group]];
     }
 
     /**
@@ -182,7 +194,8 @@
                         .attr('y', function(d, i){return (i > 0 ) ? h - 5 : 15;})
                         .text(function(d){
                             textLength[d.name] = d.textLength;
-                            return d.name + " : " + d.textLength + " characters"
+                            textNames[d.group] = d.name;
+                            return d.name + " : " + d.textLength + " characters";
                         });
             
             //Holder for the text-match nodes
@@ -194,7 +207,7 @@
                         .enter()
                         .append('rect')
                         .attr('y', function(d){return (d.group == 0) ? h - 50 : 20;})
-                        .attr('x', function(d){return Math.round((d.index / textLength[(d.group == 0) ? 'Mencius' : 'ZGZY']) * w);})
+                        .attr('x', function(d){return Math.round((d.index / getTextLength(d.group)) * w);})
                         .attr('width', function(d){return getNodeWidth(d.l, d.group)})
                         .attr('height', 30)
                         .attr('opacity', 0.5)
