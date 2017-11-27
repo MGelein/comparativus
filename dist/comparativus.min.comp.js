@@ -6,13 +6,14 @@
  * namespace to prevent polluting it.
  */
 var comparativus = {
-    build: '1.11.1',
+    build: '2.1.1',
     author: "Mees Gelein"
 };
 
 (function(_c){
     /**
-     * The minimum lenght a match should be to be added to the results
+     * The minimum lenght a match should be to be added to the results.
+     * This read either from the URL Get variables, or parsed from the UI
      */
     _c.minMatchLength = 10;
     /**
@@ -28,7 +29,7 @@ var comparativus = {
         b: []
     }
     /**
-     * Reference to the single thread we're currently running
+     * Reference to the single thread we're currently running. Do we want to multithread at all?
      */
     _c.thread;
     /**
@@ -78,7 +79,7 @@ var comparativus = {
         totalSeedAmt += dictB[seeds[i]].length;
         }
         //console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
-        comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt)
+        comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt);
         comparativus.ui.showResultTable(comparativus.matches);
         comparativus.texts.toDecorate = 2;
         comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.texts.toDecorate + ' left)');
@@ -107,6 +108,7 @@ var comparativus = {
         }
         //console.log("Expand the match: "+ iA + "; " + iB);
 
+        //Start at a predetermined size of 10, then expand or diminish to fit
         var matchLength = 10;
         var sA = comparativus.texts.a.substr(iA, matchLength);
         var sB = comparativus.texts.b.substr(iB, matchLength);
@@ -129,6 +131,7 @@ var comparativus = {
             matchLength++;
             sA = comparativus.texts.a.substr(iA, matchLength);
             sB = comparativus.texts.b.substr(iB, matchLength);
+            //Build a fail safe in case one of the indeces overflows the text length
             if(iA + matchLength > comparativus.texts.a.length || iB + matchLength > comparativus.texts.b.length) break;
         }
         //take off the three chars we added to much.
@@ -144,6 +147,7 @@ var comparativus = {
             }else{
                 strikes = 0;
             }
+            //By increasing lenght and decreasing index we're basically expanding left
             matchLength++;
             iA --;
             iB --;
@@ -166,7 +170,6 @@ var comparativus = {
             var m = {l:matchLength, indexA:iA, indexB:iB, textA:sA, textB:sB, r:comparativus.util.levDistRatio(sA, sB)};
             comparativus.matches.push(m);
             comparativus.addNodeFromMatch(m);
-            //console.log("Match found: " + m.l);
         }
     }
 
@@ -188,7 +191,6 @@ var comparativus = {
             }
         }
         if(unique) comparativus.nodes.a.push(nA);
-        else console.log("node A was not unique");
 
         //Then check if node B is unique
         max = comparativus.nodes.b.length;
@@ -200,7 +202,6 @@ var comparativus = {
             }
         }
         if(unique) comparativus.nodes.b.push(nB);
-        else console.log("node B was not unique");
     }
 
 
