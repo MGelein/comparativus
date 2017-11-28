@@ -41,7 +41,7 @@ var comparativus = {
     _c.edits = {};
 
     /**
-     * Called to start the comparison between the two texts
+     * Called to start the comparison between the two texts. This
      */
     _c.startComparison = function(){
         comparativus.ui.setComparisonButtonText('Running Comparison');
@@ -72,8 +72,8 @@ var comparativus = {
         //console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
         comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt);
         comparativus.ui.showResultTable(comparativus.matches);
-        comparativus.texts.toDecorate = 2;
-        comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.texts.toDecorate + ' left)');
+        comparativus.text.toDecorate = 2;
+        comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.text.toDecorate + ' left)');
         comparativus.worker.decorateText('a', comparativus.nodes.a, comparativus.edits['a']);
         comparativus.worker.decorateText('b', comparativus.nodes.b, comparativus.edits['b']);
     };
@@ -347,13 +347,12 @@ String.prototype.insertAt = function(index, string){
          * This function loads data files from disk. Just used for 
          * testing purposes. Don't clean the file again if it is already loaded
          */
-        loadDataFile: function(name, data){
-            //console.log('Loading Data file: ' + name);
+        prepareText: function(id){
             var config = {
               'stripWhiteSpace': $('#stripWhiteSpace').val(),
               'stripPunctuation': $('#stripPunctuation').val()
             };
-            message('prepareText', {'textName': name, 'text': data, 'config': config});          
+            message('prepareText', {'id': id, 'text': comparativus.text.getByID(id), 'config': config});          
         },
 
         /**
@@ -361,8 +360,8 @@ String.prototype.insertAt = function(index, string){
          * Builds the dictionary for the text that is registered under
          * the provided name
          */
-        buildDictionary: function(name){
-            message('buildDictionary', {textName:name, text: comparativus.texts[name]});
+        buildDictionary: function(id){
+            message('buildDictionary', {'id':id , text: comparativus.text.getByID(id)});
         },
 
         /**
@@ -388,17 +387,16 @@ String.prototype.insertAt = function(index, string){
             switch(action){
                 case 'DictDone':
                     comparativus.dicts.toBuild --;
-                    comparativus.dicts[params.textName] = params.dictionary;
+                    comparativus.dicts[params.id] = params.dictionary;
                     if(comparativus.dicts.toBuild == 0){
-                        console.log('Starting Comparison');
                         comparativus.startComparison();
                     }
                     break;
                 case 'DecorateDone':
-                    comparativus.texts.toDecorate --;
+                    comparativus.text.toDecorate --;
                     comparativus.ui.setFilePanelContent(params.textName, params.result);
-                    comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.texts.toDecorate + ' left)');
-                    if(comparativus.texts.toDecorate == 0){
+                    comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.text.toDecorate + ' left)');
+                    if(comparativus.text.toDecorate == 0){
                         comparativus.ui.setComparisonButtonText('(Re)Compare Texts');
                         comparativus.ui.showLoadingAnimation(false);
                         //Re-add listeners now that we're done with the comparison
@@ -407,12 +405,12 @@ String.prototype.insertAt = function(index, string){
                     }
                     break;
                 case 'PrepareDone':
-                    comparativus.texts[params.textName] = params.text;
-                    comparativus.edits[params.textName] = params.edits;
-                    $('#info' + name.toUpperCase()).html('Length: ' + comparativus.texts[params.textName].length + ' characters');
-                    $('#text' + name.toUpperCase()).html(params.text);
+                    comparativus.text.setByID(params.id, params.text);
+                    comparativus.edits[params.id] = params.edits;
+                    $('#info' + params.id).html('Length: ' + params.text.length + ' characters');
+                    $('#text' + params.id).html(params.text);
                     comparativus.ui.setComparisonButtonText('Building dictionaries...');
-                    comparativus.worker.buildDictionary(params.textName);
+                    comparativus.worker.buildDictionary(params.id);
                     break;
             }
           }
@@ -431,19 +429,13 @@ String.prototype.insertAt = function(index, string){
         init: function(){
             //Handler for the comparisonButton
             $('#comparisonButton').unbind('click').click(function(){
-                console.log("Asked to start");
-                var aEmpty = ($('#textA').html() == "" );
-                var bEmpty = ($('#textB').html() == "" );
-                if(aEmpty || bEmpty) return;
-
                 //unbinds the click handler, to prevent more clicking during comparison
                 $(this).unbind('click');
             
-                comparativus.dicts.toBuild = 2;
+                comparativus.dicts.toBuild = comparativus.text.amt();
                 comparativus.ui.setComparisonButtonText('Preparing texts for comparison...');
                 comparativus.ui.showLoadingAnimation(true);
-                comparativus.worker.loadDataFile('a', $('#textA').text());
-                comparativus.worker.loadDataFile('b', $('#textB').text());
+                comparativus.text.prepareAll();
             });
 
             //set popover to have with relative to the main body
@@ -1208,6 +1200,10 @@ String.prototype.insertAt = function(index, string){
      * The publicly accesible text module.
      */
     _c.text = {
+        /**
+         * Numerical value that keeps track of the number of texts that still need to be decorated
+         */
+        toDecorate,
 
         /**
          * Adds a new text to the text storage
@@ -1219,6 +1215,14 @@ String.prototype.insertAt = function(index, string){
             //Then change the ui now that we've saved it
             comparativus.ui.addFileTab(text_id, text_name, text_content);
         },
+
+        /**
+         * Sets the content of the text specified by the id to the provided
+         * content. Hopefully not necessary after some work
+         */
+        setByID: function(id, text){
+            idToContent[id] = text;
+        },  
 
         /**
          * Returns the text with the provided ID
@@ -1260,6 +1264,24 @@ String.prototype.insertAt = function(index, string){
             });
 
             return json;
+        },
+
+        /**
+         * Returns the amount of texts this comparison is made up of
+         * It figures this out by coutning the amount of keys in idToNames
+         */
+        amt: function(){
+            return Object.keys(idToNames).length;
+        },
+
+        /**
+         * Prepares all text for comparison (stripWhitespace etc)
+         */
+        prepareAll: function(){
+            //Prepare each of the texts
+            Object.keys(idToNames).forEach(function(id){
+                comparativus.worker.prepareText(id);
+            });
         }
     }
 })(comparativus);;/**

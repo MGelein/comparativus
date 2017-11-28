@@ -13,13 +13,13 @@ self.onmessage = function(event){
   //Switch based on the action
   switch(action){
     case 'buildDictionary':
-        buildDictionary(params.textName, params.text);
+        buildDictionary(params.id, params.text);
         break;
     case 'decorateText':
         decorateText(params.textName, params.text, params.match, params.edits);
         break;
     case 'prepareText':
-        prepareText(params.textName, params.text, params.config);
+        prepareText(params.id, params.text, params.config);
         break;
   }
 }
@@ -30,7 +30,7 @@ or punctuation according to the config object. It does this non destructively
 by keeping track of where characters are removed so they can be re-added on a
 later date.
 **/
-function prepareText(name, text, config){
+function prepareText(id, text, config){
   //console.log('preparing text for use: ' + name);
   //an array that will keep track of edit objects
   var edits = [];
@@ -51,9 +51,8 @@ function prepareText(name, text, config){
     text = result.text;
     //text = text.replace(/。|』|」|，|《|》|：|『|？|「|；/g, '');
   }
-  //console.log('Performed ' + edits.length + ' edits on text ' + name);
   //now send the result back to the main thread
-  message('PrepareDone', {'textName':name, 'text':text, 'edits': edits});
+  message('PrepareDone', {'id':id, 'text':text, 'edits': edits});
 }
 
 /**
@@ -181,7 +180,7 @@ function undoEdit(parts, edits){
 /**
 Starts to build the dictionary for the provided text
 **/
-function buildDictionary(name, text){
+function buildDictionary(id, text){
   var i = 0;
   var dict = {};
   var max = text.length - K;
@@ -194,7 +193,7 @@ function buildDictionary(name, text){
       dict[part] = [i];
     }
   }
-  message('DictDone', {'textName':name, 'dictionary': dict});
+  message('DictDone', {'id':name, 'dictionary': dict});
 }
 
 /**

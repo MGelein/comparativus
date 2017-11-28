@@ -11,19 +11,13 @@
         init: function(){
             //Handler for the comparisonButton
             $('#comparisonButton').unbind('click').click(function(){
-                console.log("Asked to start");
-                var aEmpty = ($('#textA').html() == "" );
-                var bEmpty = ($('#textB').html() == "" );
-                if(aEmpty || bEmpty) return;
-
                 //unbinds the click handler, to prevent more clicking during comparison
                 $(this).unbind('click');
             
-                comparativus.dicts.toBuild = 2;
+                comparativus.dicts.toBuild = comparativus.text.amt();
                 comparativus.ui.setComparisonButtonText('Preparing texts for comparison...');
                 comparativus.ui.showLoadingAnimation(true);
-                comparativus.worker.loadDataFile('a', $('#textA').text());
-                comparativus.worker.loadDataFile('b', $('#textB').text());
+                comparativus.text.prepareAll();
             });
 
             //set popover to have with relative to the main body

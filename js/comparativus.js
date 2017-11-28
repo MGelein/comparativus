@@ -41,7 +41,7 @@ var comparativus = {
     _c.edits = {};
 
     /**
-     * Called to start the comparison between the two texts
+     * Called to start the comparison between the two texts. This
      */
     _c.startComparison = function(){
         comparativus.ui.setComparisonButtonText('Running Comparison');
@@ -72,8 +72,8 @@ var comparativus = {
         //console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
         comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt);
         comparativus.ui.showResultTable(comparativus.matches);
-        comparativus.texts.toDecorate = 2;
-        comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.texts.toDecorate + ' left)');
+        comparativus.text.toDecorate = 2;
+        comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.text.toDecorate + ' left)');
         comparativus.worker.decorateText('a', comparativus.nodes.a, comparativus.edits['a']);
         comparativus.worker.decorateText('b', comparativus.nodes.b, comparativus.edits['b']);
     };

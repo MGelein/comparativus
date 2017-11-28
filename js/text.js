@@ -21,6 +21,10 @@
      * The publicly accesible text module.
      */
     _c.text = {
+        /**
+         * Numerical value that keeps track of the number of texts that still need to be decorated
+         */
+        toDecorate,
 
         /**
          * Adds a new text to the text storage
@@ -32,6 +36,14 @@
             //Then change the ui now that we've saved it
             comparativus.ui.addFileTab(text_id, text_name, text_content);
         },
+
+        /**
+         * Sets the content of the text specified by the id to the provided
+         * content. Hopefully not necessary after some work
+         */
+        setByID: function(id, text){
+            idToContent[id] = text;
+        },  
 
         /**
          * Returns the text with the provided ID
@@ -73,6 +85,24 @@
             });
 
             return json;
+        },
+
+        /**
+         * Returns the amount of texts this comparison is made up of
+         * It figures this out by coutning the amount of keys in idToNames
+         */
+        amt: function(){
+            return Object.keys(idToNames).length;
+        },
+
+        /**
+         * Prepares all text for comparison (stripWhitespace etc)
+         */
+        prepareAll: function(){
+            //Prepare each of the texts
+            Object.keys(idToNames).forEach(function(id){
+                comparativus.worker.prepareText(id);
+            });
         }
     }
 })(comparativus);

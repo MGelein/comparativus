@@ -41,13 +41,12 @@
          * This function loads data files from disk. Just used for 
          * testing purposes. Don't clean the file again if it is already loaded
          */
-        loadDataFile: function(name, data){
-            //console.log('Loading Data file: ' + name);
+        prepareText: function(id){
             var config = {
               'stripWhiteSpace': $('#stripWhiteSpace').val(),
               'stripPunctuation': $('#stripPunctuation').val()
             };
-            message('prepareText', {'textName': name, 'text': data, 'config': config});          
+            message('prepareText', {'id': id, 'text': comparativus.text.getByID(id), 'config': config});          
         },
 
         /**
@@ -55,8 +54,8 @@
          * Builds the dictionary for the text that is registered under
          * the provided name
          */
-        buildDictionary: function(name){
-            message('buildDictionary', {textName:name, text: comparativus.texts[name]});
+        buildDictionary: function(id){
+            message('buildDictionary', {'id':id , text: comparativus.text.getByID(id)});
         },
 
         /**
@@ -82,17 +81,16 @@
             switch(action){
                 case 'DictDone':
                     comparativus.dicts.toBuild --;
-                    comparativus.dicts[params.textName] = params.dictionary;
+                    comparativus.dicts[params.id] = params.dictionary;
                     if(comparativus.dicts.toBuild == 0){
-                        console.log('Starting Comparison');
                         comparativus.startComparison();
                     }
                     break;
                 case 'DecorateDone':
-                    comparativus.texts.toDecorate --;
+                    comparativus.text.toDecorate --;
                     comparativus.ui.setFilePanelContent(params.textName, params.result);
-                    comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.texts.toDecorate + ' left)');
-                    if(comparativus.texts.toDecorate == 0){
+                    comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.text.toDecorate + ' left)');
+                    if(comparativus.text.toDecorate == 0){
                         comparativus.ui.setComparisonButtonText('(Re)Compare Texts');
                         comparativus.ui.showLoadingAnimation(false);
                         //Re-add listeners now that we're done with the comparison
@@ -101,12 +99,12 @@
                     }
                     break;
                 case 'PrepareDone':
-                    comparativus.texts[params.textName] = params.text;
-                    comparativus.edits[params.textName] = params.edits;
-                    $('#info' + name.toUpperCase()).html('Length: ' + comparativus.texts[params.textName].length + ' characters');
-                    $('#text' + name.toUpperCase()).html(params.text);
+                    comparativus.text.setByID(params.id, params.text);
+                    comparativus.edits[params.id] = params.edits;
+                    $('#info' + params.id).html('Length: ' + params.text.length + ' characters');
+                    $('#text' + params.id).html(params.text);
                     comparativus.ui.setComparisonButtonText('Building dictionaries...');
-                    comparativus.worker.buildDictionary(params.textName);
+                    comparativus.worker.buildDictionary(params.id);
                     break;
             }
           }
