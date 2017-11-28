@@ -123,21 +123,7 @@
             if(doDownload === undefined) doDownload = true;
             //convert the matches object to nodes and links
             var jsonFile = {};
-            jsonFile.texts = [];
-            jsonFile.texts.push(
-                {
-                name: comparativus.file.getName('a'),
-                textLength: comparativus.texts.a.length,
-                group: 0
-                }
-            );
-            jsonFile.texts.push(
-                {
-                name: comparativus.file.getName('b'),
-                textLength: comparativus.texts.b.length,
-                group: 1
-                }
-            );
+            jsonFile.texts = comparativus.text.getJSON();
             jsonFile.nodes = [];
             jsonFile.links = [];
             var max = matches.length;

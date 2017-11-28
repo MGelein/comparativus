@@ -703,21 +703,7 @@ String.prototype.insertAt = function(index, string){
             if(doDownload === undefined) doDownload = true;
             //convert the matches object to nodes and links
             var jsonFile = {};
-            jsonFile.texts = [];
-            jsonFile.texts.push(
-                {
-                name: comparativus.file.getName('a'),
-                textLength: comparativus.texts.a.length,
-                group: 0
-                }
-            );
-            jsonFile.texts.push(
-                {
-                name: comparativus.file.getName('b'),
-                textLength: comparativus.texts.b.length,
-                group: 1
-                }
-            );
+            jsonFile.texts = comparativus.text.getJSON();
             jsonFile.nodes = [];
             jsonFile.links = [];
             var max = matches.length;
@@ -1248,6 +1234,32 @@ String.prototype.insertAt = function(index, string){
          */
         getByName: function(name){
             return idToContent[nameToID[name]];
+        },
+
+        /**
+         * Returns a JSON string encoding the length, name and group of every text we have
+         */
+        getJSON: function(){
+            //The array that will hold the text info objects
+            var json = [];
+            //Enumerate all registered texts
+            var ids = Object.keys(idToNames);
+            //Keep a counter of the number of texts for their group number
+            var counter = 0;
+            //For each, append a piece of JSON
+            ids.forEach(function(id){
+                json.push(
+                    {
+                        name: idToNames[id],
+                        'id': id,
+                        textLength: idToContent[id].length,
+                        group: counter
+                    }
+                )
+                counter++;
+            });
+
+            return json;
         }
     }
 })(comparativus);;/**

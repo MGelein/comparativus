@@ -47,6 +47,32 @@
          */
         getByName: function(name){
             return idToContent[nameToID[name]];
+        },
+
+        /**
+         * Returns a JSON string encoding the length, name and group of every text we have
+         */
+        getJSON: function(){
+            //The array that will hold the text info objects
+            var json = [];
+            //Enumerate all registered texts
+            var ids = Object.keys(idToNames);
+            //Keep a counter of the number of texts for their group number
+            var counter = 0;
+            //For each, append a piece of JSON
+            ids.forEach(function(id){
+                json.push(
+                    {
+                        name: idToNames[id],
+                        'id': id,
+                        textLength: idToContent[id].length,
+                        group: counter
+                    }
+                )
+                counter++;
+            });
+
+            return json;
         }
     }
 })(comparativus);
