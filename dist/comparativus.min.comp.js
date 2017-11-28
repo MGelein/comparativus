@@ -364,12 +364,7 @@ var comparativus = {
                 container: 'body'
             });
             //activate popovers
-            $('[data-toggle="popover"]').unbind('popover').popover();
-
-            //FIle input change listeners
-            $('#fInputA').unbind('change').change(function(event){comparativus.file.readSingle(event, 'a')});
-            $('#fInputB').unbind('change').change(function(event){comparativus.file.readSingle(event, 'b')});
-            
+            $('[data-toggle="popover"]').unbind('popover').popover();            
         },
 
         /**
@@ -434,22 +429,33 @@ var comparativus = {
          * the result table
          */
         showResultTable: function(matches){            
-            //now show all matches in the browser
+            //Stringbuilder that will hold the HTML for the data table
             var parts = [];
+
+            //Add the table header
             parts.push("<thead><tr><th>IndexA</th><th>IndexB</th><th>Length</th><th>TextA</th><th>TextB</th></tr></thead><tbody>");
+            
+            //Stringbuilder for the parts of a TSV file
             var tsvParts = [];
-            var cMatch; var max = matches.length;
+            
+            //Set the amt of results in the table
             $('#matchesAmt').html(max);
-            for(var i = 0; i < max; i++){
-                cMatch = matches[i];
+            
+            //Loop through every match
+            matches.forEach(function(cMatch){
+                //Get the link id
                 var linkID = 'A' + cMatch.indexA + 'B' + cMatch.indexB;
+                //Add a new line for that match
                 parts.push("<tr id='row" + linkID +"'><td><a class='matchLink' onmouseup='comparativus.ui.highlightMatchFromLinkID(\"" + linkID + "\", true);'" + i + 'a' + "'>" + cMatch.indexA +
                 "</a></td><td><a class='matchLink' onmouseup='comparativus.ui.highlightMatchFromLinkID(\"" + linkID + "\", true);'" + i + 'a' + "'>" + cMatch.indexB +
                 "</td><td>" + cMatch.l + "</td><td>" + cMatch.textA + "</td><td>"
                 + cMatch.textB + "</td></tr>");
-                tsvParts.push(cMatch.indexA + '\t' + cMatch.indexB + '\t' + cMatch.l + '\t' + cMatch.r + '\t' + cMatch.textA + '\t' + cMatch.textB);
-            }
 
+                //And a new line for its TSV counter part
+                tsvParts.push(cMatch.indexA + '\t' + cMatch.indexB + '\t' + cMatch.l + '\t' + cMatch.r + '\t' + cMatch.textA + '\t' + cMatch.textB);
+            });
+
+            //Add the result to the page
             $("#resultTable").html(parts.join() + "</tbody>");
 
             //create the downloadButtons
