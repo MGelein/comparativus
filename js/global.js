@@ -5,23 +5,18 @@ $(document).ready(function (){
     //Start loading all modules
     initModules();
 
-    //Then check if we're running a local version or not
-    if(comparativus.util.isDebug()){
-        initFiles(true);
-    }else{
-
-        //Apparently we're running the online version, so start loading the list of files
-        //from the auth/ server. This also means that you should be presented with a 
-        //file input dialog choosing one of the files from here if the URL GET variablres
-        //didnt specify two files to load.
-        $.get("http://dh.chinese-empires.eu/auth/list_files/", function(data){
-            comparativus.file.list = data;
-
-            //Only start initializing after we've received the file list from the server
-            initFiles(false);
-        });
-            
-    }
+    //Based on the debug variable, decide where we load the list of files from
+    var listFilesURL = "http://dh.chinese-empires.eu/auth/list_files/";
+    if(comparativus.util.isDebug()) listFilesURL = "./data/list_files.json";
+    
+    //Then load the list files from the right location
+    $.get(listFilesURL, function(data){  
+        //Assign the file list
+        comparativus.file.list = data;
+        //Only start initializing after we've received the file list from the server
+        initFiles();
+    });
+        
 });
 
 /**
@@ -42,26 +37,24 @@ function initModules(){
  * load either some dev data files or to actually parse the user input in the GET
  * variables. Called after ajax calls like list_files have succeeded. 
  */
-function initFiles(debug){ 
-    if(!debug){
-
+function initFiles(){ 
+    if(!comparativus.util.isDebug()){
         //Load the files from the GET URL variables
         var idA = comparativus.util.getURLVar('idA');
         comparativus.file.loadFromID(idA, function(data){
-          comparativus.file.populateFileHolder(data, 'a', comparativus.file.getTitleFromID(idA));
+            comparativus.file.populateFileHolder(data, 'a', comparativus.file.getTitleFromID(idA));
         });
         var idB = comparativus.util.getURLVar('idB');
         comparativus.file.loadFromID(idB, function(data){
-          comparativus.file.populateFileHolder(data, 'b', comparativus.file.getTitleFromID(idB));
+            comparativus.file.populateFileHolder(data, 'b', comparativus.file.getTitleFromID(idB));
         });    
     }else{
-
         //Load the data files from disc
         $.ajax('data/Mencius.txt', {success:function(data){
-        comparativus.file.populateFileHolder(data, 'a', 'Mencius.txt');
+            comparativus.file.populateFileHolder(data, 'a', comparativus.file.getTitleFromID('5a15793ed272f335aab275af'));
         }});
         $.ajax('data/ZGZY.txt', {success:function(data){
-        comparativus.file.populateFileHolder(data, 'b', 'ZGZY.txt');
+            comparativus.file.populateFileHolder(data, 'b', comparativus.file.getTitleFromID('5a1579a3d272f335aab275b0'));
         }});
     }   
 }
