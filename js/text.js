@@ -62,6 +62,13 @@
         },
 
         /**
+         * Returns all the ids in an array.
+         */
+        getAllIDs: function(){
+            return Object.keys(idToNames);
+        },
+
+        /**
          * Returns a JSON string encoding the length, name and group of every text we have
          */
         getJSON: function(){

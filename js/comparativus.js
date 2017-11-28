@@ -48,8 +48,19 @@ var comparativus = {
         comparativus.minMatchLength = comparativus.ui.getMinMatchSize();
 
         comparativus.matches = [];
-        var dictA = comparativus.dicts['a'];
-        var dictB = comparativus.dicts['b'];
+
+        var ids = comparativus.text.getAllIDs();
+        //Run comparison on the first two, this should change based on the amount of texts
+        comparativus.runSingleComparison(ids[0], ids[1]);
+    }
+
+    /**
+     * Runs the comparison between a single set of texts signified by their
+     * two ids that have been provided below.
+     */
+    _c.runSingleComparison = function(idA, idB){
+        var dictA = comparativus.dicts[idA];
+        var dictB = comparativus.dicts[idB];
         var seeds = Object.keys(dictA);
         var seedAmt = seeds.length;
         var overlap = [];
