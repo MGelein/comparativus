@@ -338,7 +338,7 @@ String.prototype.insertAt = function(index, string){
         init: function(){
             //create a new thread (force refresh in debug)
             var workerFileURL = 'js/thread.js';
-            if(comparativus.util.isDebug()) workerFileURL += "?v=" + Date.getTime();
+            if(comparativus.util.isDebug()) workerFileURL += "?v=" + (new Date()).getTime();
             
             //Finally create a worker from the created url
             comparativus.worker.thread = new Worker(workerFileURL);
