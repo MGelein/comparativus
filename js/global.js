@@ -40,14 +40,12 @@ function initModules(){
 function initFiles(){ 
     if(!comparativus.util.isDebug()){
         //Load the files from the GET URL variables
-        var idA = comparativus.util.getURLVar('idA');
-        comparativus.file.loadFromID(idA, function(data){
-            comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data);
+        var files = comparativus.util.getURLVar('files');
+        files.split(',').forEach(function(id){
+            comparativus.file.loadFromID(id, function(data){
+                comparativus.text.add(id, comparativus.file.getTitleFromID(id), data);
+            });
         });
-        var idB = comparativus.util.getURLVar('idB');
-        comparativus.file.loadFromID(idB, function(data){
-            comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data);
-        });    
     }else{
         //Load the data files from disc
         $.ajax('data/Mencius.txt', {success:function(data){
