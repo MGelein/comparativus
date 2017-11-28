@@ -7,7 +7,9 @@
         /**
          * Returns the levenSthein ratio [0-1] similarity between
          * the two provided string. 1 means they're identical. 0
-         * means they are completely different
+         * means they are completely different.
+         * 
+         * This is basically the normalized levensthein distance.
          */
         levDistRatio : function(sA, sB){
             //instantiate vars and cache length
