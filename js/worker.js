@@ -64,8 +64,8 @@
          * adds the edits back in the text (the special characters
          * that were previously taken out)
          */
-        decorateText: function(name, matches, edits){
-            message('decorateText', {textName:name, text: comparativus.texts[name], match:matches, 'edits': edits});
+        decorateText: function(id, matches, edits){
+            message('decorateText', {'id':id, text: comparativus.text.getByID(id), match:matches, 'edits': edits});
         },
 
         /**

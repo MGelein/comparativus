@@ -71,7 +71,7 @@ var comparativus = {
             if(seeds[i] in dictB){
                 overlapSeedAmt += dictA[seeds[i]].length + dictB[seeds[i]].length;
                 overlap.push(seeds[i]);
-                comparativus.expandAllMatches(dictA[seeds[i]], dictB[seeds[i]]);
+                comparativus.expandAllMatches(dictA[seeds[i]], dictB[seeds[i]], idA, idB);
             }
         }
         //also add all seeds of text B to the total amount of seeds
@@ -85,8 +85,8 @@ var comparativus = {
         comparativus.ui.showResultTable(comparativus.matches);
         comparativus.text.toDecorate = 2;
         comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.text.toDecorate + ' left)');
-        comparativus.worker.decorateText('a', comparativus.nodes.a, comparativus.edits['a']);
-        comparativus.worker.decorateText('b', comparativus.nodes.b, comparativus.edits['b']);
+        comparativus.worker.decorateText(idA, comparativus.nodes.a, comparativus.edits[idA]);
+        comparativus.worker.decorateText(idB, comparativus.nodes.b, comparativus.edits[idB]);
     };
 
     /**
@@ -94,7 +94,7 @@ var comparativus = {
      * @param {Integer} iA 
      * @param {Integer} iB 
      */
-    var expandMatch = function(iA, iB){
+    var expandMatch = function(iA, iB, idA, idB){
         //first check if this match is inside another match
         var max = comparativus.matches.length;
         var cMatch;
@@ -112,15 +112,17 @@ var comparativus = {
 
         //Start at a predetermined size of 10, then expand or diminish to fit
         var matchLength = 10;
-        var sA = comparativus.texts.a.substr(iA, matchLength);
-        var sB = comparativus.texts.b.substr(iB, matchLength);
+        var tA = comparativus.text.getByID(idA);
+        var tB = comparativus.text.getByID(idB);
+        var sA = tA.substr(iA, matchLength);
+        var sB = tB.substr(iB, matchLength);
         var strikes = 0;
 
         //diminish to the left (if the 10 char expansion made the levDist to low)
         while(comparativus.util.levDistRatio(sA, sB) < 0.8 && matchLength > 0){
             matchLength --;
-            sA = comparativus.texts.a.substr(iA, matchLength);
-            sB = comparativus.texts.b.substr(iB, matchLength);
+            sA = tA.substr(iA, matchLength);
+            sB = tB.substr(iB, matchLength);
         }
 
         //expand right
@@ -131,16 +133,16 @@ var comparativus = {
                 strikes = 0;
             }
             matchLength++;
-            sA = comparativus.texts.a.substr(iA, matchLength);
-            sB = comparativus.texts.b.substr(iB, matchLength);
+            sA = tA.substr(iA, matchLength);
+            sB = tB.substr(iB, matchLength);
             //Build a fail safe in case one of the indeces overflows the text length
-            if(iA + matchLength > comparativus.texts.a.length || iB + matchLength > comparativus.texts.b.length) break;
+            if(iA + matchLength > tA.length || iB + matchLength > tB.length) break;
         }
         //take off the three chars we added to much.
         matchLength -= 3;
         strikes = 0;
-        sA = comparativus.texts.a.substr(iA, matchLength);
-        sB = comparativus.texts.b.substr(iB, matchLength);
+        sA = tA.substr(iA, matchLength);
+        sB = tB.substr(iB, matchLength);
 
         //expand left
         while(strikes < 3){
@@ -157,14 +159,14 @@ var comparativus = {
                 iA = iB = 0;
                 break;
             }
-            sA = comparativus.texts.a.substr(iA, matchLength);
-            sB = comparativus.texts.b.substr(iB, matchLength);
+            sA = tA.substr(iA, matchLength);
+            sB = tB.substr(iB, matchLength);
         }
         //return the three chars we add too much
         iA += strikes; iB += strikes;
         matchLength -= strikes;
-        sA = comparativus.texts.a.substr(iA, matchLength);
-        sB = comparativus.texts.b.substr(iB, matchLength);
+        sA = tA.substr(iA, matchLength);
+        sB = tB.substr(iB, matchLength);
 
         //now it has been fully expanded. Add it to the matches object if the length
         //is greater than minLength
@@ -210,7 +212,7 @@ var comparativus = {
     /**
      * Expands all occurrences for a matching seed found in the dictionary
      */
-    _c.expandAllMatches = function(occA, occB){
+    _c.expandAllMatches = function(occA, occB, idA, idB){
         var maxA = occA.length;
         var maxB = occB.length;
         var matchAIndex;
@@ -219,7 +221,7 @@ var comparativus = {
             matchAIndex = occA[i];
             for(var j = 0; j < maxB; j++){
                 matchBIndex = occB[j];
-                expandMatch(matchAIndex, matchBIndex);
+                expandMatch(matchAIndex, matchBIndex, idA, idB);
             }
         }   
     };
@@ -381,8 +383,8 @@ String.prototype.insertAt = function(index, string){
          * adds the edits back in the text (the special characters
          * that were previously taken out)
          */
-        decorateText: function(name, matches, edits){
-            message('decorateText', {textName:name, text: comparativus.texts[name], match:matches, 'edits': edits});
+        decorateText: function(id, matches, edits){
+            message('decorateText', {'id':id, text: comparativus.text.getByID(id), match:matches, 'edits': edits});
         },
 
         /**
