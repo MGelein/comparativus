@@ -6,9 +6,9 @@
     _c.ui = {
         /**
          * This function adds the event listeners to the ui objects
-         * and inputs.
+         * and inputs. Basically, all the initialization of the UI
          */
-        addListeners: function(){
+        init: function(){
             //Handler for the comparisonButton
             $('#comparisonButton').unbind('click').click(function(){
                 console.log("Asked to start");

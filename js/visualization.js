@@ -23,7 +23,7 @@
     /**
      * List of text names ordered by group number
      */
-    textNames = [];
+    var textNames = [];
     /**
      * The margins of the text-bar
      */

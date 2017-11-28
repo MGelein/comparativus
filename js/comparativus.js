@@ -29,10 +29,6 @@ var comparativus = {
         b: []
     }
     /**
-     * Reference to the single thread we're currently running. Do we want to multithread at all?
-     */
-    _c.thread;
-    /**
      * Data object that holds all the texts
      */
     _c.texts = {};

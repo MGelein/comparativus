@@ -56,6 +56,14 @@
                     return ((parts[1] === undefined) ? true : decodeURI(parts[1]));
                 }
             };
+        },
+
+        /**
+         * Checks if we're running under a localhost environment
+         * @returns {boolean}
+         */
+        isDebug: function(){
+            return (window.location.href.indexOf('localhost') != -1);
         }
     };
 })(comparativus);
