@@ -59,3 +59,26 @@
         }
     };
 })(comparativus);
+/**
+ * Determines a very useful String.insertAt function. This is a prototype overwrite,
+ * but that should be okay in this case. 
+ * 
+ * @param {Integer} index this is the position you want to inser at
+ * @param {String} string the string you want to insert into the string
+ */
+String.prototype.insertAt = function(index, string){
+    //First check if we're inserting at the beginning or the end, this prevents unnecessary function calls
+    if(index <= 0){
+        return string + this;
+    }else if(index => this.length){
+        return this + string;
+    }else{
+        //According to https://gist.github.com/najlepsiwebdesigner/4966627 this is a neccesary fix
+        if(string.charCodeAt(0) == 13){
+            string = "\n";
+        }
+            
+        //Return the compiled string
+        return this.substring(0, index) + string + this.substring(index, this.length);
+    }
+}

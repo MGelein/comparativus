@@ -13,14 +13,14 @@ self.onmessage = function(event){
   //Switch based on the action
   switch(action){
     case 'buildDictionary':
-      buildDictionary(params.textName, params.text);
-    break;
+        buildDictionary(params.textName, params.text);
+        break;
     case 'decorateText':
-      decorateText(params.textName, params.text, params.match, params.edits);
-    break;
+        decorateText(params.textName, params.text, params.match, params.edits);
+        break;
     case 'prepareText':
-      prepareText(params.textName, params.text, params.config);
-      break;
+        prepareText(params.textName, params.text, params.config);
+        break;
   }
 }
 
@@ -89,13 +89,6 @@ function removeAndKeepTrackOfChar(text, edits, c){
 }
 
 /**
-Inserts a character at a given index of a given  string
-**/
-function insertAt(text, index, newSubStr) {
-    return text.slice(0, index) + newSubStr + text.slice(index);
-}
-
-/**
 Decorates the text and once it is done returns the result
 **/
 function decorateText(name, text, nodes, edits){
@@ -108,7 +101,7 @@ function decorateText(name, text, nodes, edits){
   var inserted = [];
   for(var i = 0; i < max; i++){
       n = nodes[i];
-      text = insertAt(text, n.index + indexOffset, matchChar);
+      text = text.insertAt(n.index + indexOffset, matchChar);
       inserted.push({
         'index': index + indexOffset,
         'start': true,
@@ -116,7 +109,7 @@ function decorateText(name, text, nodes, edits){
         'node': n
       });
       indexOffset ++;
-      text = insertAt(text, n.index + indexOffset + n.match.l, matchChar);
+      text = text.insertAt(n.index + indexOffset + n.match.l, matchChar);
       inserted.push({
         'index': index + indexOffset + n.match.l,
         'start': false,
@@ -179,7 +172,7 @@ function undoEdit(parts, edits){
     i--;
 
     //now add the character at that index
-    parts[i] = insertAt(editPart, cEdit.index, cEdit.character);
+    parts[i] = editPart.insertAt(cEdit.index, cEdit.character);
   }
 
   return parts;
