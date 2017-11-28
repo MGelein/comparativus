@@ -407,7 +407,7 @@ String.prototype.insertAt = function(index, string){
                     break;
                 case 'DecorateDone':
                     comparativus.text.toDecorate --;
-                    comparativus.ui.setFilePanelContent(params.textName, params.result);
+                    comparativus.ui.setFilePanelContent(params.id, params.result);
                     comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.text.toDecorate + ' left)');
                     if(comparativus.text.toDecorate == 0){
                         comparativus.ui.setComparisonButtonText('(Re)Compare Texts');
@@ -487,8 +487,8 @@ String.prototype.insertAt = function(index, string){
         /**
          * Sets the file panel with the provided name to the provided content
          */
-        setFilePanelContent: function(name, content){
-            $('#text' + name.toUpperCase()).html(content);
+        setFilePanelContent: function(id, content){
+            $('#text' + id).html(content);
         },
 
         /**

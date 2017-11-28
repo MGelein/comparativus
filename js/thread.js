@@ -90,8 +90,8 @@ function removeAndKeepTrackOfChar(text, edits, c){
 /**
 Decorates the text and once it is done returns the result
 **/
-function decorateText(name, text, nodes, edits){
-  console.log("Starting text decoration of " + name);
+function decorateText(id, text, nodes, edits){
+  console.log("Starting text decoration of " + id);
   var max = nodes.length;
   var n;
   var index;
@@ -104,7 +104,7 @@ function decorateText(name, text, nodes, edits){
       inserted.push({
         'index': index + indexOffset,
         'start': true,
-        'id': name + index,
+        'id': id + index,
         'node': n
       });
       indexOffset ++;
@@ -112,7 +112,7 @@ function decorateText(name, text, nodes, edits){
       inserted.push({
         'index': index + indexOffset + n.match.l,
         'start': false,
-        'id': name + index + n.match.l,
+        'id': id + index + n.match.l,
         'node': n
       });
       indexOffset ++;
@@ -133,7 +133,7 @@ function decorateText(name, text, nodes, edits){
       text = text.replace(matchChar, generateMatchMark(inserted[matchID]));
       matchID++;
   }
-  message('DecorateDone', {'textName':name, 'result': text});
+  message('DecorateDone', {'id':id, 'result': text});
 }
 
 /**

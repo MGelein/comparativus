@@ -56,8 +56,8 @@
         /**
          * Sets the file panel with the provided name to the provided content
          */
-        setFilePanelContent: function(name, content){
-            $('#text' + name.toUpperCase()).html(content);
+        setFilePanelContent: function(id, content){
+            $('#text' + id).html(content);
         },
 
         /**
