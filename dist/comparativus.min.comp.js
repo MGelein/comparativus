@@ -336,8 +336,12 @@ String.prototype.insertAt = function(index, string){
          * Webworker and assigns a message handler.
          */
         init: function(){
-            //create a new thread
-            comparativus.worker.thread = new Worker('js/thread.js?v=17');
+            //create a new thread (force refresh in debug)
+            var workerFileURL = 'js/thread.js';
+            if(comparativus.util.isDebug()) workerFileURL += "?v=" + Date.getTime();
+            
+            //Finally create a worker from the created url
+            comparativus.worker.thread = new Worker(workerFileURL);
     
             //And assign the correct handler function for workers
             comparativus.worker.thread.onmessage = comparativus.worker.onmessage;
