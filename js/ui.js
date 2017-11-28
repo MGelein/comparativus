@@ -67,6 +67,34 @@
         },
 
         /**
+         * Loads a new file into a newly created tab of the textContent div.
+         */
+        addFileTab: function(id, name, content){
+            //Add the tab
+            $.get('./parts/filetab.html', function(data){
+                //Activate the template
+                data = data.replace(/%ID%/g, id);
+                data = data.replace(/%NAME%/g, name);
+                $('#navTabs').append(data);
+                //If this is the first one, make it active
+                if($('#navTabs li').length == 1){
+                    $('#navTabs li').addClass('active');
+                }
+            });
+            //Add the div that holds the pre that holds the text
+            $.get('./parts/textholder.html', function(data){
+                //First activate the template by replacing KEYwords
+                data = data.replace(/%ID%/g, id);
+                data = data.replace(/%CONTENT%/g, content);
+                $('#textContent').append(data);
+                //If this is the first one, make it active
+                if($('#textContent div').length == 1){
+                    $('#textContent div').addClass('in active');
+                }
+            });
+        },
+
+        /**
          * Returns the minimum match size. This is the value
          * of the minimum match size input element on the GUI.
          */

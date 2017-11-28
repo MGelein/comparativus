@@ -42,19 +42,21 @@ function initFiles(){
         //Load the files from the GET URL variables
         var idA = comparativus.util.getURLVar('idA');
         comparativus.file.loadFromID(idA, function(data){
-            comparativus.file.populateFileHolder(data, 'a', comparativus.file.getTitleFromID(idA));
+            comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data);
         });
         var idB = comparativus.util.getURLVar('idB');
         comparativus.file.loadFromID(idB, function(data){
-            comparativus.file.populateFileHolder(data, 'b', comparativus.file.getTitleFromID(idB));
+            comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data);
         });    
     }else{
         //Load the data files from disc
         $.ajax('data/Mencius.txt', {success:function(data){
-            comparativus.file.populateFileHolder(data, 'a', comparativus.file.getTitleFromID('5a15793ed272f335aab275af'));
+            var idA = '5a15793ed272f335aab275af'
+            comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data);
         }});
         $.ajax('data/ZGZY.txt', {success:function(data){
-            comparativus.file.populateFileHolder(data, 'b', comparativus.file.getTitleFromID('5a1579a3d272f335aab275b0'));
+            var idB = '5a1579a3d272f335aab275b0';
+            comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data);
         }});
     }   
 }

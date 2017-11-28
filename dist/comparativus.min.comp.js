@@ -29,11 +29,6 @@ var comparativus = {
         b: []
     }
     /**
-     * Data object that holds all the texts
-     */
-    _c.texts = {};
-
-    /**
      * Data object that holds the dictionaries that have been generated
      */
     _c.dicts = {};
@@ -489,6 +484,34 @@ String.prototype.insertAt = function(index, string){
          */
         setFilePanelContent: function(name, content){
             $('#text' + name.toUpperCase()).html(content);
+        },
+
+        /**
+         * Loads a new file into a newly created tab of the textContent div.
+         */
+        addFileTab: function(id, name, content){
+            //Add the tab
+            $.get('./parts/filetab.html', function(data){
+                //Activate the template
+                data = data.replace(/%ID%/g, id);
+                data = data.replace(/%NAME%/g, name);
+                $('#navTabs').append(data);
+                //If this is the first one, make it active
+                if($('#navTabs li').length == 1){
+                    $('#navTabs li').addClass('active');
+                }
+            });
+            //Add the div that holds the pre that holds the text
+            $.get('./parts/textholder.html', function(data){
+                //First activate the template by replacing KEYwords
+                data = data.replace(/%ID%/g, id);
+                data = data.replace(/%CONTENT%/g, content);
+                $('#textContent').append(data);
+                //If this is the first one, make it active
+                if($('#textContent div').length == 1){
+                    $('#textContent div').addClass('in active');
+                }
+            });
         },
 
         /**
@@ -1177,6 +1200,57 @@ String.prototype.insertAt = function(index, string){
         }
     };
 })(comparativus);;/**
+ * Anonymous function to keep global namespace clean
+ */
+(function(_c){
+    /**
+     * Holds the text objects as values under the keys of their id's
+     */
+    var idToContent = {};
+
+    /**
+     * Hash table of every name with the id it belongs to
+     */
+    var idToNames = {};
+
+    /**
+     * Hash table of every id with the name it belongs to
+     */
+    var nameToID = {};
+
+    /**
+     * The publicly accesible text module.
+     */
+    _c.text = {
+
+        /**
+         * Adds a new text to the text storage
+         */
+        add: function(text_id, text_name, text_content){
+            idToContent[text_id] = text_content;
+            idToNames[text_id] = text_name;
+            nameToID[text_name] = text_id;
+            //Then change the ui now that we've saved it
+            comparativus.ui.addFileTab(text_id, text_name, text_content);
+        },
+
+        /**
+         * Returns the text with the provided ID
+         * @param {String} id   the id of the text you want to retrieve 
+         */
+        getByID : function(id){
+            return idToContent[id];
+        },
+
+        /**
+         * Returns the text associated with the provided name
+         * @param {String} name the name of the text you want to retrieve
+         */
+        getByName: function(name){
+            return idToContent[nameToID[name]];
+        }
+    }
+})(comparativus);;/**
 Starts after document load.
 **/
 $(document).ready(function (){
@@ -1220,19 +1294,21 @@ function initFiles(){
         //Load the files from the GET URL variables
         var idA = comparativus.util.getURLVar('idA');
         comparativus.file.loadFromID(idA, function(data){
-            comparativus.file.populateFileHolder(data, 'a', comparativus.file.getTitleFromID(idA));
+            comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data);
         });
         var idB = comparativus.util.getURLVar('idB');
         comparativus.file.loadFromID(idB, function(data){
-            comparativus.file.populateFileHolder(data, 'b', comparativus.file.getTitleFromID(idB));
+            comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data);
         });    
     }else{
         //Load the data files from disc
         $.ajax('data/Mencius.txt', {success:function(data){
-            comparativus.file.populateFileHolder(data, 'a', comparativus.file.getTitleFromID('5a15793ed272f335aab275af'));
+            var idA = '5a15793ed272f335aab275af'
+            comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data);
         }});
         $.ajax('data/ZGZY.txt', {success:function(data){
-            comparativus.file.populateFileHolder(data, 'b', comparativus.file.getTitleFromID('5a1579a3d272f335aab275b0'));
+            var idB = '5a1579a3d272f335aab275b0';
+            comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data);
         }});
     }   
 }

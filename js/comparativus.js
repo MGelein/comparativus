@@ -29,11 +29,6 @@ var comparativus = {
         b: []
     }
     /**
-     * Data object that holds all the texts
-     */
-    _c.texts = {};
-
-    /**
      * Data object that holds the dictionaries that have been generated
      */
     _c.dicts = {};
