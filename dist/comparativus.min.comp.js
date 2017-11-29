@@ -413,7 +413,7 @@ String.prototype.insertAt = function(index, string){
                         comparativus.ui.setComparisonButtonText('(Re)Compare Texts');
                         comparativus.ui.showLoadingAnimation(false);
                         //Re-add listeners now that we're done with the comparison
-                        comparativus.ui.addListeners();
+                        comparativus.ui.init();
                         comparativus.visualization.draw(comparativus.file.createJSON(comparativus.matches, false));
                     }
                     break;
