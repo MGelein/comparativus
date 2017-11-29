@@ -421,7 +421,6 @@ String.prototype.insertAt = function(index, string){
                     comparativus.text.setByID(params.id, params.text);
                     comparativus.edits[params.id] = params.edits;
                     $('#info' + params.id).html('Length: ' + params.text.length + ' characters');
-                    $('#text' + params.id).html(params.text);
                     comparativus.ui.setComparisonButtonText('Building dictionaries...');
                     comparativus.worker.buildDictionary(params.id);
                     break;
