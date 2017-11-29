@@ -76,19 +76,6 @@
                         comparativus.startComparison();
                     }
                     break;
-                case 'DecorateDone':
-                    comparativus.text.toDecorate --;
-                    comparativus.ui.setFilePanelContent(params.id, params.result);
-                    comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.text.toDecorate + ' left)');
-                    if(comparativus.text.toDecorate == 0){
-                        comparativus.ui.setComparisonButtonText('(Re)Compare Texts');
-                        comparativus.ui.showLoadingAnimation(false);
-                        //Re-add listeners now that we're done with the comparison
-                        comparativus.ui.init();
-                        //For now don't draw the vis
-                        //comparativus.visualization.draw(comparativus.file.createJSON(comparativus.matches, false));
-                    }
-                    break;
                 case 'PrepareDone':
                     comparativus.text.setByID(params.id, params.text);
                     $('#info' + params.id).html('Length: ' + params.text.length + ' characters');

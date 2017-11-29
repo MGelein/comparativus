@@ -87,6 +87,14 @@ var comparativus = {
         comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.text.toDecorate + ' left)');
         comparativus.text.decorate(idA, comparativus.nodes.a);
         comparativus.text.decorate(idB, comparativus.nodes.b);
+
+        //Show that we're done
+        comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.text.toDecorate + ' left)');
+        comparativus.ui.setComparisonButtonText('(Re)Compare Texts');
+        comparativus.ui.showLoadingAnimation(false);
+        //Re-add listeners now that we're done with the comparison
+        comparativus.ui.init();
+        
     };
 
     /**
