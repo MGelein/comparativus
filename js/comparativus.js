@@ -48,6 +48,10 @@ var comparativus = {
         comparativus.minMatchLength = comparativus.ui.getMinMatchSize();
 
         comparativus.matches = [];
+        comparativus.nodes = {
+            a: [],
+            b: []
+        }
 
         var ids = comparativus.text.getAllIDs();
         //Run comparison on the first two, this should change based on the amount of texts
