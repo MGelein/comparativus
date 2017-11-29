@@ -24,7 +24,7 @@
         /**
          * Numerical value that keeps track of the number of texts that still need to be decorated
          */
-        toDecorate,
+        toDecorate: 0,
 
         /**
          * Adds a new text to the text storage

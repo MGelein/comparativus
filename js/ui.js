@@ -128,15 +128,15 @@
             var tsvParts = [];
             
             //Set the amt of results in the table
-            $('#matchesAmt').html(max);
+            $('#matchesAmt').html(matches.length);
             
             //Loop through every match
             matches.forEach(function(cMatch){
                 //Get the link id
                 var linkID = 'A' + cMatch.indexA + 'B' + cMatch.indexB;
                 //Add a new line for that match
-                parts.push("<tr id='row" + linkID +"'><td><a class='matchLink' onmouseup='comparativus.ui.highlightMatchFromLinkID(\"" + linkID + "\", true);'" + i + 'a' + "'>" + cMatch.indexA +
-                "</a></td><td><a class='matchLink' onmouseup='comparativus.ui.highlightMatchFromLinkID(\"" + linkID + "\", true);'" + i + 'a' + "'>" + cMatch.indexB +
+                parts.push("<tr id='row" + linkID +"'><td><a class='matchLink'>" + cMatch.indexA +
+                "</a></td><td><a class='matchLink'>" + cMatch.indexB +
                 "</td><td>" + cMatch.l + "</td><td>" + cMatch.textA + "</td><td>"
                 + cMatch.textB + "</td></tr>");
 
