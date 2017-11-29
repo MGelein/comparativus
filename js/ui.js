@@ -5,6 +5,11 @@
 
     _c.ui = {
         /**
+         * Holds the HTML for a single matchmark
+         */
+        matchmark: "",
+
+        /**
          * This function adds the event listeners to the ui objects
          * and inputs. Basically, all the initialization of the UI
          */
@@ -25,7 +30,25 @@
                 container: 'body'
             });
             //activate popovers
-            $('[data-toggle="popover"]').unbind('popover').popover();            
+            $('[data-toggle="popover"]').unbind('popover').popover(); 
+
+            //Load the matchmark template
+            $.get('./parts/matchmark.html', function(data){
+                comparativus.ui.matchmark = data;
+            });
+        },
+
+        /**
+         * Returns the opening or closing matchmark of a match (dependent on the 
+         * state of the passed parameter boolean)
+         * @param {Boolean} opening if true, this is a astart of a match, if false it is the end
+         * @param {String} urnID    the id+urn of this match and text.
+         */
+        getMatchMark: function(opening, urnID){
+            var openingClass = "glyphicon glyphicon-chevron-left";
+            var closingClass = "glyphicon glyphicon-chevron-right"
+            var mark = comparativus.ui.matchmark.replace(/%MARK%/g, ((opening) ? openingClass : closingClass));
+            return mark.replace(/%URN%/g, urnID);
         },
 
         /**

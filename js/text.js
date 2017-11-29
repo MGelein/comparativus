@@ -107,6 +107,29 @@
             Object.keys(texts).forEach(function(id){
                 comparativus.worker.prepareText(id);
             });
+        },
+
+        /**
+         * Decorates the specified text using the provided nodes
+         * @param {String} id the id of the text we want to decorate
+         * @param {Array} nodes the array of nodes of matches we have in our text
+         */
+        decorate: function(id, nodes){
+            //Get the original unstripped text
+            var text = comparativus.text.getByID(id).data;
+            //Prepare the holder for the new indeces
+            var indeces, urnid;
+            //Now add each node to the text
+            nodes.forEach(function(node){
+                indeces = comparativus.urn.toIndeces(text, node.urn);
+                urnid = id + node.urn;
+                //Now insert the marks
+                text = text.substring(0, indeces[0]) + comparativus.ui.getMatchMark(true, urnid) 
+                    + text.substring(indeces[0], indeces[1]) + comparativus.ui.getMatchMark(false, urnid) 
+                    + text.substring(indeces[1]);
+            });
+            //Now set the filepanel to the correct content
+            comparativus.ui.setFilePanelContent(id, text);
         }
     }
 })(comparativus);

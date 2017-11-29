@@ -50,7 +50,7 @@
             var cIndex = -1, found = -1, ltIndex, gtIndex;
             do{
                 //First find an occurence
-                cIndex = text.indexOf(char, cIndex + 1);
+                cIndex = text.indexOf(c, cIndex + 1);
                 //Then check preceding '<' and '>'
                 ltIndex = text.lastIndexOf('<', cIndex);
                 gtIndex = text.lastIndexOf('>', cIndex);
@@ -84,8 +84,8 @@
          */
         toIndeces: function(text, urn){
             return [
-                comparativus.urn.toIndex(urn.substring(0, urn.indexOf('-', 2))), //Do this substring thing instead of split because of hyphen as a URN character
-                comparativus.urn.toIndex(urn.substring(urn.indexOf('-', 2) + 1)) //This allows us to also refer to a hyphen as a URN not just a range character
+                comparativus.urn.toIndex(text, urn.substring(0, urn.indexOf('-', 2))), //Do this substring thing instead of split because of hyphen as a URN character
+                comparativus.urn.toIndex(text, urn.substring(urn.indexOf('-', 2) + 1)) //This allows us to also refer to a hyphen as a URN not just a range character
             ];
         },
 

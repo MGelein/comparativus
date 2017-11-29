@@ -85,8 +85,8 @@ var comparativus = {
         comparativus.ui.showResultTable(comparativus.matches);
         comparativus.text.toDecorate = 2;
         comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.text.toDecorate + ' left)');
-        comparativus.worker.decorateText(idA, comparativus.nodes.a, comparativus.edits[idA]);
-        comparativus.worker.decorateText(idB, comparativus.nodes.b, comparativus.edits[idB]);
+        comparativus.text.decorate(idA, comparativus.nodes.a);
+        comparativus.text.decorate(idB, comparativus.nodes.b);
     };
 
     /**
@@ -184,8 +184,8 @@ var comparativus = {
      * @param {Match} match 
      */
     _c.addNodeFromMatch= function(match){
-        var nA = {index: match.indexA, 'match': match};
-        var nB = {index: match.indexB, 'match': match};
+        var nA = {index: match.indexA, urn: match.urnA, 'match': match};
+        var nB = {index: match.indexB, urn: match.urnB, 'match': match};
         var i = 0;
         //First check if node A is unique
         var max = comparativus.nodes.a.length;
@@ -380,16 +380,6 @@ String.prototype.insertAt = function(index, string){
         },
 
         /**
-         * Decorates the text that is registered under the provided
-         * name with the matches found in the comparison. Also 
-         * adds the edits back in the text (the special characters
-         * that were previously taken out)
-         */
-        decorateText: function(id, matches, edits){
-            message('decorateText', {'id':id, text: comparativus.text.getByID(id).data, match:matches, 'edits': edits});
-        },
-
-        /**
          * What happens when the main thread recieves a message from the worker. This is all defined 
          * in this function
          */
@@ -422,7 +412,6 @@ String.prototype.insertAt = function(index, string){
                     break;
                 case 'PrepareDone':
                     comparativus.text.setByID(params.id, params.text);
-                    comparativus.edits[params.id] = params.edits;
                     $('#info' + params.id).html('Length: ' + params.text.length + ' characters');
                     comparativus.ui.setComparisonButtonText('Building dictionaries...');
                     comparativus.worker.buildDictionary(params.id);
@@ -437,6 +426,11 @@ String.prototype.insertAt = function(index, string){
 (function(_c){
 
     _c.ui = {
+        /**
+         * Holds the HTML for a single matchmark
+         */
+        matchmark: "",
+
         /**
          * This function adds the event listeners to the ui objects
          * and inputs. Basically, all the initialization of the UI
@@ -458,7 +452,25 @@ String.prototype.insertAt = function(index, string){
                 container: 'body'
             });
             //activate popovers
-            $('[data-toggle="popover"]').unbind('popover').popover();            
+            $('[data-toggle="popover"]').unbind('popover').popover(); 
+
+            //Load the matchmark template
+            $.get('./parts/matchmark.html', function(data){
+                comparativus.ui.matchmark = data;
+            });
+        },
+
+        /**
+         * Returns the opening or closing matchmark of a match (dependent on the 
+         * state of the passed parameter boolean)
+         * @param {Boolean} opening if true, this is a astart of a match, if false it is the end
+         * @param {String} urnID    the id+urn of this match and text.
+         */
+        getMatchMark: function(opening, urnID){
+            var openingClass = "glyphicon glyphicon-chevron-left";
+            var closingClass = "glyphicon glyphicon-chevron-right"
+            var mark = comparativus.ui.matchmark.replace(/%MARK%/g, ((opening) ? openingClass : closingClass));
+            return mark.replace(/%URN%/g, urnID);
         },
 
         /**
@@ -1122,7 +1134,7 @@ String.prototype.insertAt = function(index, string){
             var cIndex = -1, found = -1, ltIndex, gtIndex;
             do{
                 //First find an occurence
-                cIndex = text.indexOf(char, cIndex + 1);
+                cIndex = text.indexOf(c, cIndex + 1);
                 //Then check preceding '<' and '>'
                 ltIndex = text.lastIndexOf('<', cIndex);
                 gtIndex = text.lastIndexOf('>', cIndex);
@@ -1156,8 +1168,8 @@ String.prototype.insertAt = function(index, string){
          */
         toIndeces: function(text, urn){
             return [
-                comparativus.urn.toIndex(urn.substring(0, urn.indexOf('-', 2))), //Do this substring thing instead of split because of hyphen as a URN character
-                comparativus.urn.toIndex(urn.substring(urn.indexOf('-', 2) + 1)) //This allows us to also refer to a hyphen as a URN not just a range character
+                comparativus.urn.toIndex(text, urn.substring(0, urn.indexOf('-', 2))), //Do this substring thing instead of split because of hyphen as a URN character
+                comparativus.urn.toIndex(text, urn.substring(urn.indexOf('-', 2) + 1)) //This allows us to also refer to a hyphen as a URN not just a range character
             ];
         },
 
@@ -1301,6 +1313,29 @@ String.prototype.insertAt = function(index, string){
             Object.keys(texts).forEach(function(id){
                 comparativus.worker.prepareText(id);
             });
+        },
+
+        /**
+         * Decorates the specified text using the provided nodes
+         * @param {String} id the id of the text we want to decorate
+         * @param {Array} nodes the array of nodes of matches we have in our text
+         */
+        decorate: function(id, nodes){
+            //Get the original unstripped text
+            var text = comparativus.text.getByID(id).data;
+            //Prepare the holder for the new indeces
+            var indeces, urnid;
+            //Now add each node to the text
+            nodes.forEach(function(node){
+                indeces = comparativus.urn.toIndeces(text, node.urn);
+                urnid = id + node.urn;
+                //Now insert the marks
+                text = text.substring(0, indeces[0]) + comparativus.ui.getMatchMark(true, urnid) 
+                    + text.substring(indeces[0], indeces[1]) + comparativus.ui.getMatchMark(false, urnid) 
+                    + text.substring(indeces[1]);
+            });
+            //Now set the filepanel to the correct content
+            comparativus.ui.setFilePanelContent(id, text);
         }
     }
 })(comparativus);;/**

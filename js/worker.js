@@ -59,16 +59,6 @@
         },
 
         /**
-         * Decorates the text that is registered under the provided
-         * name with the matches found in the comparison. Also 
-         * adds the edits back in the text (the special characters
-         * that were previously taken out)
-         */
-        decorateText: function(id, matches, edits){
-            message('decorateText', {'id':id, text: comparativus.text.getByID(id).data, match:matches, 'edits': edits});
-        },
-
-        /**
          * What happens when the main thread recieves a message from the worker. This is all defined 
          * in this function
          */
@@ -101,7 +91,6 @@
                     break;
                 case 'PrepareDone':
                     comparativus.text.setByID(params.id, params.text);
-                    comparativus.edits[params.id] = params.edits;
                     $('#info' + params.id).html('Length: ' + params.text.length + ' characters');
                     comparativus.ui.setComparisonButtonText('Building dictionaries...');
                     comparativus.worker.buildDictionary(params.id);

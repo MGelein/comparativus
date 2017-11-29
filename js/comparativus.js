@@ -85,8 +85,8 @@ var comparativus = {
         comparativus.ui.showResultTable(comparativus.matches);
         comparativus.text.toDecorate = 2;
         comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.text.toDecorate + ' left)');
-        comparativus.worker.decorateText(idA, comparativus.nodes.a, comparativus.edits[idA]);
-        comparativus.worker.decorateText(idB, comparativus.nodes.b, comparativus.edits[idB]);
+        comparativus.text.decorate(idA, comparativus.nodes.a);
+        comparativus.text.decorate(idB, comparativus.nodes.b);
     };
 
     /**
@@ -184,8 +184,8 @@ var comparativus = {
      * @param {Match} match 
      */
     _c.addNodeFromMatch= function(match){
-        var nA = {index: match.indexA, 'match': match};
-        var nB = {index: match.indexB, 'match': match};
+        var nA = {index: match.indexA, urn: match.urnA, 'match': match};
+        var nB = {index: match.indexB, urn: match.urnB, 'match': match};
         var i = 0;
         //First check if node A is unique
         var max = comparativus.nodes.a.length;
