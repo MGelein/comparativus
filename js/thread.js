@@ -16,7 +16,7 @@ self.onmessage = function(event){
         buildDictionary(params.id, params.text);
         break;
     case 'decorateText':
-        decorateText(params.textName, params.text, params.match, params.edits);
+        decorateText(params.id, params.text, params.match, params.edits);
         break;
     case 'prepareText':
         prepareText(params.id, params.text, params.config);
