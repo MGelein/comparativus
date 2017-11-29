@@ -46,7 +46,7 @@
               'stripWhiteSpace': $('#stripWhiteSpace').val(),
               'stripPunctuation': $('#stripPunctuation').val()
             };
-            message('prepareText', {'id': id, 'text': comparativus.text.getByID(id), 'config': config});          
+            message('prepareText', {'id': id, 'text': comparativus.text.getByID(id).data, 'config': config});          
         },
 
         /**
@@ -55,7 +55,7 @@
          * the provided name
          */
         buildDictionary: function(id){
-            message('buildDictionary', {'id':id , text: comparativus.text.getByID(id)});
+            message('buildDictionary', {'id':id , text: comparativus.text.getByID(id).plain});
         },
 
         /**
@@ -65,7 +65,7 @@
          * that were previously taken out)
          */
         decorateText: function(id, matches, edits){
-            message('decorateText', {'id':id, text: comparativus.text.getByID(id), match:matches, 'edits': edits});
+            message('decorateText', {'id':id, text: comparativus.text.getByID(id).data, match:matches, 'edits': edits});
         },
 
         /**
@@ -95,7 +95,8 @@
                         comparativus.ui.showLoadingAnimation(false);
                         //Re-add listeners now that we're done with the comparison
                         comparativus.ui.init();
-                        comparativus.visualization.draw(comparativus.file.createJSON(comparativus.matches, false));
+                        //For now don't draw the vis
+                        //comparativus.visualization.draw(comparativus.file.createJSON(comparativus.matches, false));
                     }
                     break;
                 case 'PrepareDone':

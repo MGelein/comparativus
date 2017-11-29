@@ -112,8 +112,8 @@ var comparativus = {
 
         //Start at a predetermined size of 10, then expand or diminish to fit
         var matchLength = 10;
-        var tA = comparativus.text.getByID(idA);
-        var tB = comparativus.text.getByID(idB);
+        var tA = comparativus.text.getByID(idA).plain;
+        var tB = comparativus.text.getByID(idB).plain;
         var sA = tA.substr(iA, matchLength);
         var sB = tB.substr(iB, matchLength);
         var strikes = 0;
@@ -172,6 +172,8 @@ var comparativus = {
         //is greater than minLength
         if(matchLength >= comparativus.minMatchLength){
             var m = {l:matchLength, indexA:iA, indexB:iB, textA:sA, textB:sB, r:comparativus.util.levDistRatio(sA, sB)};
+            m.urnA = comparativus.urn.fromMatch(tA, m.indexA, m.l);
+            m.urnB = comparativus.urn.fromMatch(tB, m.indexB, m.l);
             comparativus.matches.push(m);
             comparativus.addNodeFromMatch(m);
         }
@@ -365,7 +367,7 @@ String.prototype.insertAt = function(index, string){
               'stripWhiteSpace': $('#stripWhiteSpace').val(),
               'stripPunctuation': $('#stripPunctuation').val()
             };
-            message('prepareText', {'id': id, 'text': comparativus.text.getByID(id), 'config': config});          
+            message('prepareText', {'id': id, 'text': comparativus.text.getByID(id).data, 'config': config});          
         },
 
         /**
@@ -374,7 +376,7 @@ String.prototype.insertAt = function(index, string){
          * the provided name
          */
         buildDictionary: function(id){
-            message('buildDictionary', {'id':id , text: comparativus.text.getByID(id)});
+            message('buildDictionary', {'id':id , text: comparativus.text.getByID(id).plain});
         },
 
         /**
@@ -384,7 +386,7 @@ String.prototype.insertAt = function(index, string){
          * that were previously taken out)
          */
         decorateText: function(id, matches, edits){
-            message('decorateText', {'id':id, text: comparativus.text.getByID(id), match:matches, 'edits': edits});
+            message('decorateText', {'id':id, text: comparativus.text.getByID(id).data, match:matches, 'edits': edits});
         },
 
         /**
@@ -414,7 +416,8 @@ String.prototype.insertAt = function(index, string){
                         comparativus.ui.showLoadingAnimation(false);
                         //Re-add listeners now that we're done with the comparison
                         comparativus.ui.init();
-                        comparativus.visualization.draw(comparativus.file.createJSON(comparativus.matches, false));
+                        //For now don't draw the vis
+                        //comparativus.visualization.draw(comparativus.file.createJSON(comparativus.matches, false));
                     }
                     break;
                 case 'PrepareDone':
@@ -565,8 +568,8 @@ String.prototype.insertAt = function(index, string){
                 //Get the link id
                 var linkID = 'A' + cMatch.indexA + 'B' + cMatch.indexB;
                 //Add a new line for that match
-                parts.push("<tr id='row" + linkID +"'><td><a class='matchLink'>" + cMatch.indexA +
-                "</a></td><td><a class='matchLink'>" + cMatch.indexB +
+                parts.push("<tr id='row" + linkID +"'><td><a class='matchLink'>" + cMatch.urnA +
+                "</a></td><td><a class='matchLink'>" + cMatch.urnB +
                 "</td><td>" + cMatch.l + "</td><td>" + cMatch.textA + "</td><td>"
                 + cMatch.textB + "</td></tr>");
 
@@ -1140,7 +1143,7 @@ String.prototype.insertAt = function(index, string){
          * @param {Integer} eIndex the end of the passage we are indexing (exclusive)
          */
         fromIndeces: function(text, sIndex, eIndex){
-            return fromIndex(text, sIndex) + "-" + fromIndex(text, eIndex);
+            return comparativus.urn.fromIndex(text, sIndex) + "-" + comparativus.urn.fromIndex(text, eIndex);
         },
 
         /**
@@ -1153,8 +1156,8 @@ String.prototype.insertAt = function(index, string){
          */
         toIndeces: function(text, urn){
             return [
-                toIndex(urn.substring(0, urn.indexOf('-', 2))), //Do this substring thing instead of split because of hyphen as a URN character
-                toIndex(urn.substring(urn.indexOf('-', 2) + 1)) //This allows us to also refer to a hyphen as a URN not just a range character
+                comparativus.urn.toIndex(urn.substring(0, urn.indexOf('-', 2))), //Do this substring thing instead of split because of hyphen as a URN character
+                comparativus.urn.toIndex(urn.substring(urn.indexOf('-', 2) + 1)) //This allows us to also refer to a hyphen as a URN not just a range character
             ];
         },
 
@@ -1167,7 +1170,7 @@ String.prototype.insertAt = function(index, string){
          * @param {Integer} length the length of this match
          */
         fromMatch: function(text, index, length){
-            return fromIndeces(text, index, index + length);
+            return comparativus.urn.fromIndeces(text, index, index + length);
         },
 
         /**
@@ -1180,7 +1183,7 @@ String.prototype.insertAt = function(index, string){
          * @param {String} urn  the URN we're trying to decode
          */
         toMatch: function(text, urn){
-            var indeces = toIndeces(text, urn);
+            var indeces = comparativus.urn.toIndeces(text, urn);
             //Then construct a match object from it.
             return {
                 index: indeces[0],
@@ -1193,21 +1196,12 @@ String.prototype.insertAt = function(index, string){
  * Anonymous function to keep global namespace clean
  */
 (function(_c){
+    
     /**
-     * Holds the text objects as values under the keys of their id's
+     * Holds all the text objects as objects under their keys
      */
-    var idToContent = {};
-
-    /**
-     * Hash table of every name with the id it belongs to
-     */
-    var idToNames = {};
-
-    /**
-     * Hash table of every id with the name it belongs to
-     */
-    var nameToID = {};
-
+    var texts = {};
+    
     /**
      * The publicly accesible text module.
      */
@@ -1221,27 +1215,28 @@ String.prototype.insertAt = function(index, string){
          * Adds a new text to the text storage
          */
         add: function(text_id, text_name, text_content){
-            idToContent[text_id] = text_content;
-            idToNames[text_id] = text_name;
-            nameToID[text_name] = text_id;
+            texts[text_id] = {
+                name: text_name,    //the name of the text
+                data: text_content, //the html content of the text precleaned
+                plain: ""           //the cleaned stripped text
+            }
             //Then change the ui now that we've saved it
             comparativus.ui.addFileTab(text_id, text_name, text_content);
         },
 
         /**
-         * Sets the content of the text specified by the id to the provided
-         * content. Hopefully not necessary after some work
+         * Sets the plain text of a specified text
          */
-        setByID: function(id, text){
-            idToContent[id] = text;
-        },  
+        setByID: function(id, plain){
+            texts[id].plain = plain;
+        },
 
         /**
          * Returns the text with the provided ID
          * @param {String} id   the id of the text you want to retrieve 
          */
         getByID : function(id){
-            return idToContent[id];
+            return texts[id];
         },
 
         /**
@@ -1249,14 +1244,18 @@ String.prototype.insertAt = function(index, string){
          * @param {String} name the name of the text you want to retrieve
          */
         getByName: function(name){
-            return idToContent[nameToID[name]];
+            var ids = Object.keys(texts), id;
+            for(var i = 0; i < ids.length; i++){
+                id = ids[i];
+                if(texts[id].name == name) return texts[id];
+            }
         },
 
         /**
          * Returns all the ids in an array.
          */
         getAllIDs: function(){
-            return Object.keys(idToNames);
+            return Object.keys(texts);
         },
 
         /**
@@ -1266,16 +1265,17 @@ String.prototype.insertAt = function(index, string){
             //The array that will hold the text info objects
             var json = [];
             //Enumerate all registered texts
-            var ids = Object.keys(idToNames);
+            var ids = Object.keys(texts);
             //Keep a counter of the number of texts for their group number
-            var counter = 0;
+            var counter = 0, text;
             //For each, append a piece of JSON
             ids.forEach(function(id){
+                text = texts[id];
                 json.push(
                     {
-                        name: idToNames[id],
+                        name: text.name,
                         'id': id,
-                        textLength: idToContent[id].length,
+                        textLength: text.data.length,
                         group: counter
                     }
                 )
@@ -1290,7 +1290,7 @@ String.prototype.insertAt = function(index, string){
          * It figures this out by coutning the amount of keys in idToNames
          */
         amt: function(){
-            return Object.keys(idToNames).length;
+            return Object.keys(texts).length;
         },
 
         /**
@@ -1298,7 +1298,7 @@ String.prototype.insertAt = function(index, string){
          */
         prepareAll: function(){
             //Prepare each of the texts
-            Object.keys(idToNames).forEach(function(id){
+            Object.keys(texts).forEach(function(id){
                 comparativus.worker.prepareText(id);
             });
         }

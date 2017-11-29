@@ -112,8 +112,8 @@ var comparativus = {
 
         //Start at a predetermined size of 10, then expand or diminish to fit
         var matchLength = 10;
-        var tA = comparativus.text.getByID(idA);
-        var tB = comparativus.text.getByID(idB);
+        var tA = comparativus.text.getByID(idA).plain;
+        var tB = comparativus.text.getByID(idB).plain;
         var sA = tA.substr(iA, matchLength);
         var sB = tB.substr(iB, matchLength);
         var strikes = 0;
@@ -172,6 +172,8 @@ var comparativus = {
         //is greater than minLength
         if(matchLength >= comparativus.minMatchLength){
             var m = {l:matchLength, indexA:iA, indexB:iB, textA:sA, textB:sB, r:comparativus.util.levDistRatio(sA, sB)};
+            m.urnA = comparativus.urn.fromMatch(tA, m.indexA, m.l);
+            m.urnB = comparativus.urn.fromMatch(tB, m.indexB, m.l);
             comparativus.matches.push(m);
             comparativus.addNodeFromMatch(m);
         }

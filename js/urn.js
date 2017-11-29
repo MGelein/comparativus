@@ -71,7 +71,7 @@
          * @param {Integer} eIndex the end of the passage we are indexing (exclusive)
          */
         fromIndeces: function(text, sIndex, eIndex){
-            return fromIndex(text, sIndex) + "-" + fromIndex(text, eIndex);
+            return comparativus.urn.fromIndex(text, sIndex) + "-" + comparativus.urn.fromIndex(text, eIndex);
         },
 
         /**
@@ -84,8 +84,8 @@
          */
         toIndeces: function(text, urn){
             return [
-                toIndex(urn.substring(0, urn.indexOf('-', 2))), //Do this substring thing instead of split because of hyphen as a URN character
-                toIndex(urn.substring(urn.indexOf('-', 2) + 1)) //This allows us to also refer to a hyphen as a URN not just a range character
+                comparativus.urn.toIndex(urn.substring(0, urn.indexOf('-', 2))), //Do this substring thing instead of split because of hyphen as a URN character
+                comparativus.urn.toIndex(urn.substring(urn.indexOf('-', 2) + 1)) //This allows us to also refer to a hyphen as a URN not just a range character
             ];
         },
 
@@ -98,7 +98,7 @@
          * @param {Integer} length the length of this match
          */
         fromMatch: function(text, index, length){
-            return fromIndeces(text, index, index + length);
+            return comparativus.urn.fromIndeces(text, index, index + length);
         },
 
         /**
@@ -111,7 +111,7 @@
          * @param {String} urn  the URN we're trying to decode
          */
         toMatch: function(text, urn){
-            var indeces = toIndeces(text, urn);
+            var indeces = comparativus.urn.toIndeces(text, urn);
             //Then construct a match object from it.
             return {
                 index: indeces[0],

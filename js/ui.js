@@ -135,8 +135,8 @@
                 //Get the link id
                 var linkID = 'A' + cMatch.indexA + 'B' + cMatch.indexB;
                 //Add a new line for that match
-                parts.push("<tr id='row" + linkID +"'><td><a class='matchLink'>" + cMatch.indexA +
-                "</a></td><td><a class='matchLink'>" + cMatch.indexB +
+                parts.push("<tr id='row" + linkID +"'><td><a class='matchLink'>" + cMatch.urnA +
+                "</a></td><td><a class='matchLink'>" + cMatch.urnB +
                 "</td><td>" + cMatch.l + "</td><td>" + cMatch.textA + "</td><td>"
                 + cMatch.textB + "</td></tr>");
 

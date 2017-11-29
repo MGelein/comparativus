@@ -2,21 +2,12 @@
  * Anonymous function to keep global namespace clean
  */
 (function(_c){
+    
     /**
-     * Holds the text objects as values under the keys of their id's
+     * Holds all the text objects as objects under their keys
      */
-    var idToContent = {};
-
-    /**
-     * Hash table of every name with the id it belongs to
-     */
-    var idToNames = {};
-
-    /**
-     * Hash table of every id with the name it belongs to
-     */
-    var nameToID = {};
-
+    var texts = {};
+    
     /**
      * The publicly accesible text module.
      */
@@ -30,27 +21,28 @@
          * Adds a new text to the text storage
          */
         add: function(text_id, text_name, text_content){
-            idToContent[text_id] = text_content;
-            idToNames[text_id] = text_name;
-            nameToID[text_name] = text_id;
+            texts[text_id] = {
+                name: text_name,    //the name of the text
+                data: text_content, //the html content of the text precleaned
+                plain: ""           //the cleaned stripped text
+            }
             //Then change the ui now that we've saved it
             comparativus.ui.addFileTab(text_id, text_name, text_content);
         },
 
         /**
-         * Sets the content of the text specified by the id to the provided
-         * content. Hopefully not necessary after some work
+         * Sets the plain text of a specified text
          */
-        setByID: function(id, text){
-            idToContent[id] = text;
-        },  
+        setByID: function(id, plain){
+            texts[id].plain = plain;
+        },
 
         /**
          * Returns the text with the provided ID
          * @param {String} id   the id of the text you want to retrieve 
          */
         getByID : function(id){
-            return idToContent[id];
+            return texts[id];
         },
 
         /**
@@ -58,14 +50,18 @@
          * @param {String} name the name of the text you want to retrieve
          */
         getByName: function(name){
-            return idToContent[nameToID[name]];
+            var ids = Object.keys(texts), id;
+            for(var i = 0; i < ids.length; i++){
+                id = ids[i];
+                if(texts[id].name == name) return texts[id];
+            }
         },
 
         /**
          * Returns all the ids in an array.
          */
         getAllIDs: function(){
-            return Object.keys(idToNames);
+            return Object.keys(texts);
         },
 
         /**
@@ -75,16 +71,17 @@
             //The array that will hold the text info objects
             var json = [];
             //Enumerate all registered texts
-            var ids = Object.keys(idToNames);
+            var ids = Object.keys(texts);
             //Keep a counter of the number of texts for their group number
-            var counter = 0;
+            var counter = 0, text;
             //For each, append a piece of JSON
             ids.forEach(function(id){
+                text = texts[id];
                 json.push(
                     {
-                        name: idToNames[id],
+                        name: text.name,
                         'id': id,
-                        textLength: idToContent[id].length,
+                        textLength: text.data.length,
                         group: counter
                     }
                 )
@@ -99,7 +96,7 @@
          * It figures this out by coutning the amount of keys in idToNames
          */
         amt: function(){
-            return Object.keys(idToNames).length;
+            return Object.keys(texts).length;
         },
 
         /**
@@ -107,7 +104,7 @@
          */
         prepareAll: function(){
             //Prepare each of the texts
-            Object.keys(idToNames).forEach(function(id){
+            Object.keys(texts).forEach(function(id){
                 comparativus.worker.prepareText(id);
             });
         }
