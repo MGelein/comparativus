@@ -88,6 +88,17 @@
             $('.btn-page').removeClass('active');
             //Set it as active and de-focus asap
             $(event.target).addClass('active').blur();
+
+            //Find the id of the page we're trying to load and the old page
+            var newPage = $('#' + $(event.target).text().toLowerCase() + "Page");
+            var oldPage = $('.page.active');
+
+            //check if we're not staying on the same page, if so cancel
+            if(newPage.attr('id') == oldPage.attr('id')) return;
+
+            //Fade out the old page
+            oldPage.removeClass('active').fadeOut();
+            newPage.addClass('active').fadeIn();
         },  
 
         /**

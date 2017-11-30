@@ -6,6 +6,8 @@ body{
   width: 100%;
   padding: 0;
   margin: 0;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 canvas{
@@ -27,20 +29,13 @@ pre {
     border-top-right-radius: 0px;
     border-top: 0px;
 
-    max-height: 200vh;
+    max-height: 82vh;
     overflow-y: auto;
 }
 
 /**
 BOOTSTRAP OVERRIDES
 **/
-/**
-.col-xs-12, .col-xs-11, .col-xs-10, .col-xs-9,
-.col-xs-8, .col-xs-7, .col-xs-6, .col-xs-5,
-.col-xs-4, .col-xs-3, .col-xs-2, .col-xs-1{
-  padding-left: 8px;
-  padding-right: 8px;
-}**/
 
 .popover{
     max-width: 20%; /* Max Width of the popover (depending on the container!) */
