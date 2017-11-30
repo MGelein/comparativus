@@ -49,6 +49,7 @@ BOOTSTRAP OVERRIDES
 .navbar{
   width: 100%;
   border-radius: 0px;
+  margin-bottom: 0px;
 }
 
 .panel{
@@ -90,6 +91,11 @@ CUSTOM CLASSES
     -o-transform: rotate(360deg);
     transform: rotate(360deg);
   }
+}
+
+.pageButtons{
+  text-align: center;
+  margin-top: 2px;
 }
 
 .rotating {

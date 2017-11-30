@@ -10,19 +10,30 @@
   <link rel="stylesheet" href="css/animate.css">
 </head>
 <body>
-  <nav class="navbar navbar-inverse navbar-static">
+<nav class="navbar navbar-inverse navbar-static">
     <div class="container">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="#">MARKUS</a>
-      </div>
-      <ul class="nav navbar-nav">
-        <li class="active"><a href="#">COMPARATIVUS</a></li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-       <li><a href="#"><span class="glyphicon glyphicon-log-in"></span>&nbsp;Login</a></li>
-     </ul>
+        <div class="col-xs-4">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="http://dh.chinese-empires.eu/markus/beta/">MARKUS</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="#">COMPARATIVUS</a></li>
+        </ul>
+        </div>
+        <div class="col-xs-4">
+            <div class="btn-group btn-group-lg pageButtons">
+                    <button type="button" class="btn btn-default">Visualisation</button>
+                    <button type="button" class="active btn btn-default">Text</button>
+                    <button type="button" class="btn btn-default">Data</button>
+            </div>
+        </div>
+        <div class="col-xs-4">
+            <ul class="nav navbar-nav navbar-right">
+            <li><a href="#"><span class="glyphicon glyphicon-cog"></span>&nbsp;Settings</a></li>
+        </ul>
+        </div>
     </div>
-  </nav>
+</nav>
 <div class="container">
 
   <!-- Visualization -->
@@ -37,42 +48,10 @@
     <div id="mainContent" class="col-xs-8">
 
       <ul id="navTabs" class="nav nav-tabs">
-        <!-- Title panel A 
-        <li class="active">
-          <a data-toggle="tab" href="#textAHolder">
-            <i class="glyphicon glyphicon-list"></i>&nbsp;
-            <label>
-              <span class="fileName">Choose File</span>
-            </label>
-            <span id="infoA" class="small"></span>
-          </a>
-        </li>-->
-
-        <!-- Title Panel B 
-        <li>
-          <a data-toggle="tab" href="#textBHolder">
-            <i class="glyphicon glyphicon-list"></i>&nbsp;
-            <label>
-              <span class="fileName">Choose File</span>
-            </label>
-            <span id="infoB" class="small"></span>
-          </a>
-        </li>-->
       </ul>
 
       <!-- Actual text of the focused text -->
-      <div id="textContent" class="tab-content">
-
-        <!-- Text input A 
-        <div id="textAHolder" class="tab-pane fade in active">
-          <pre id="textA"></pre>
-        </div>
-      -->
-        <!-- Text input B
-        <div id="textBHolder" class="tab-pane fade">
-          <pre id="textB"></pre>
-        </div> 
-      -->     
+      <div id="textContent" class="tab-content">   
       </div>
 
       
