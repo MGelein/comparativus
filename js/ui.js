@@ -36,7 +36,59 @@
             $.get('./parts/matchmark.html', function(data){
                 comparativus.ui.matchmark = data;
             });
+
+            //Assign the page button event handler
+            $('.btn-page').click(comparativus.ui.switchPage);
+
+            //Forward the call to show the settings menu
+            $('#settingsButton').click(comparativus.ui.showSettingsMenu);
         },
+
+        /**
+         * Shows the settings menu and binds listeners where necessary
+         */
+        showSettingsMenu: function(event){
+            var sh = $('#settingsHolder');
+            var et = $(event.target);
+            //in case we click the cog
+            if(et.attr('id') != "settingsButton") et = et.parent();
+            //Start fading it in to make calculations possible using the dimensions of this object
+            sh.fadeIn();
+            var pos = {
+                top: et.offset().top + et.outerHeight() + 2,
+                left: et.offset().left - sh.width() + et.outerWidth()
+            }
+            sh.offset(pos);
+            //Now unbind the show action and bind the hide action
+            et.unbind('click').click(comparativus.ui.hideSettingsMenu);
+            et.parent().addClass('active');
+        },
+
+        /**
+         * Called to hide the menu again
+         */
+        hideSettingsMenu: function(event){
+            var sh = $('#settingsHolder');
+            var et = $(event.target);
+            //in case we click the cog
+            if(et.attr('id') != "settingsButton") et = et.parent();
+            //Fade out the settings holder
+            sh.fadeOut(400, function(){sh.offset({top: 0, left: 0})});
+            //Don't make the button active anymore
+            et.parent().removeClass('active');
+            //Rebind the show action
+            et.unbind('click').click(comparativus.ui.showSettingsMenu);
+        },
+
+        /**
+         * Called when a user clicks on one of the page buttons to switch to a different page
+         */
+        switchPage: function(event){
+            //Set the clicked page as the active page
+            $('.btn-page').removeClass('active');
+            //Set it as active and de-focus asap
+            $(event.target).addClass('active').blur();
+        },  
 
         /**
          * Returns the opening or closing matchmark of a match (dependent on the 

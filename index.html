@@ -22,14 +22,14 @@
         </div>
         <div class="col-xs-4">
             <div class="btn-group btn-group-lg pageButtons">
-                    <button type="button" class="btn btn-default">Visualisation</button>
-                    <button type="button" class="active btn btn-default">Text</button>
-                    <button type="button" class="btn btn-default">Data</button>
+                    <button type="button" class="btn btn-page">Visualisation</button>
+                    <button type="button" class="active btn btn-page">Text</button>
+                    <button type="button" class="btn btn-page">Table</button>
             </div>
         </div>
         <div class="col-xs-4">
             <ul class="nav navbar-nav navbar-right">
-            <li><a href="#"><span class="glyphicon glyphicon-cog"></span>&nbsp;Settings</a></li>
+            <li><a href="#" id="settingsButton"><span class="glyphicon glyphicon-cog"></span>&nbsp;Comparison&nbsp;Settings</a></li>
         </ul>
         </div>
     </div>
@@ -45,7 +45,7 @@
 
   <!-- Main Content -->
   <div class="row">
-    <div id="mainContent" class="col-xs-8">
+    <div id="mainContent" class="col-xs-12">
 
       <ul id="navTabs" class="nav nav-tabs">
       </ul>
@@ -57,51 +57,11 @@
       
     </div>
       
-    <!-- Side Content -->
+    <!-- Side Content 
     <div id="sidePanel" class="col-xs-4">
 
-      <!-- Comparison settings -->
-      <div id="settingsHolder">
-        <h4><i class="glyphicon glyphicon-cog"></i>&nbsp;Comparison&nbsp;Settings</h4>
-        <div class="panel-body collapse in" id="settingsPanel">
-          <form class="form-horizontal">
-            <div class="form-group">
-              <label class="control-label tight col-sm-6" for="minimumMatchSize">Minimum Match Size:&nbsp;<a href="#" data-toggle="popover" data-trigger="hover" title="Minimum Match Size"
-                data-content="The minimum match size determines the smallest a match can be to be added to the results. NB: Smaller settings create more results which can make the browser very slow."><i class="glyphicon glyphicon-info-sign"></i></a>
-              </label>
-              <div class="col-sm-6">
-                  <input type="number" class="form-control" id="minimumMatchSize" value="7" onBlur="comparativus.ui.checkMinMatchSize(this)">
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label tight col-sm-6" for="stripWhiteSpace">Ignore Whitespace:&nbsp;<a href="#" data-toggle="popover" data-trigger="hover" title="Ignore Whitespace"
-                data-content="This option ignores tabs, newlines and spaces. If they are ignored generally the results are cleaner and more accurate."><i class="glyphicon glyphicon-info-sign"></i></a>
-              </label>
-              <div class="col-sm-6">
-                <select class="form-control" id="stripWhiteSpace">
-                  <option value="true" selected>Yes, please ignore all whitespace, newlines and tabs. (recommended)</option>
-                  <option value="false">No, keep all whitespace, newlines and tabs.</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="control-label tight col-sm-6" for="stripPunctuation">Ignore Punctuation:&nbsp;<a href="#" data-toggle="popover" data-trigger="hover" title="Ignore Punctuation"
-                data-content="This option igenores all punctuation. Generally this improves the results."><i class="glyphicon glyphicon-info-sign"></i></a>
-              </label>
-              <div class="col-sm-6">
-                <select class="form-control" id="stripPunctuation">
-                  <option value="true" selected>Yes, please ignore all punctuation. (recommended)</option>
-                  <option value="false">No, keep all punctuation.</option>
-                </select>
-              </div>
-            </div>
-            <a id="comparisonButton" type="button" class="btn btn-primary btn-block" href="#"><i id="comparisonButtonIcon" class="glyphicon glyphicon-refresh"></i>&nbsp;<span id="comparisonButtonText">Compare Texts</span></a>
-          </form>
-        </div>
-      </div>
-
       <br>
-      <!-- Results table -->
+      <!-- Results table 
 
       <div id="tablePanel">
         <h4><i class="glyphicon glyphicon-list-alt"></i>&nbsp;Result Table</h4>
@@ -121,12 +81,53 @@
       </div>
     </div>
     
-  </div>
-
-    
 </div>
+
+</div>
+-->
+
+<!-- Comparison settings -->
+<div id="settingsHolder" class="col-xs-4" style="display:none;">
+    <h4><i class="glyphicon glyphicon-cog"></i>&nbsp;Comparison&nbsp;Settings</h4>
+    <div class="panel-body collapse in" id="settingsPanel">
+        <form class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label tight col-sm-6" for="minimumMatchSize">Minimum Match Size:&nbsp;<a href="#" data-toggle="popover" data-trigger="hover" title="Minimum Match Size"
+            data-content="The minimum match size determines the smallest a match can be to be added to the results. NB: Smaller settings create more results which can make the browser very slow."><i class="glyphicon glyphicon-info-sign"></i></a>
+            </label>
+            <div class="col-sm-6">
+                <input type="number" class="form-control" id="minimumMatchSize" value="7" onBlur="comparativus.ui.checkMinMatchSize(this)">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label tight col-sm-6" for="stripWhiteSpace">Ignore Whitespace:&nbsp;<a href="#" data-toggle="popover" data-trigger="hover" title="Ignore Whitespace"
+            data-content="This option ignores tabs, newlines and spaces. If they are ignored generally the results are cleaner and more accurate."><i class="glyphicon glyphicon-info-sign"></i></a>
+            </label>
+            <div class="col-sm-6">
+            <select class="form-control" id="stripWhiteSpace">
+                <option value="true" selected>Yes, please ignore all whitespace, newlines and tabs. (recommended)</option>
+                <option value="false">No, keep all whitespace, newlines and tabs.</option>
+            </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label tight col-sm-6" for="stripPunctuation">Ignore Punctuation:&nbsp;<a href="#" data-toggle="popover" data-trigger="hover" title="Ignore Punctuation"
+            data-content="This option igenores all punctuation. Generally this improves the results."><i class="glyphicon glyphicon-info-sign"></i></a>
+            </label>
+            <div class="col-sm-6">
+            <select class="form-control" id="stripPunctuation">
+                <option value="true" selected>Yes, please ignore all punctuation. (recommended)</option>
+                <option value="false">No, keep all punctuation.</option>
+            </select>
+            </div>
+        </div>
+        <a id="comparisonButton" type="button" class="btn btn-primary btn-block" href="#"><i id="comparisonButtonIcon" class="glyphicon glyphicon-refresh"></i>&nbsp;<span id="comparisonButtonText">Compare Texts</span></a>
+        </form>
+    </div>
+</div>
+      
 <!-- Popover div --> 
-<div id="popover"/ style="display:none;">
+<div id="popover" style="display:none;">
 
   <!-- script includes -->
 <script src="js/lib/jquery.min.js"></script>
