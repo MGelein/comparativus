@@ -94,7 +94,7 @@ var comparativus = {
         }
         //console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
         comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt);
-        comparativus.ui.showResultTable(comparativus.matches);
+        comparativus.ui.showResultTable(comparativus.matches, idA, idB);
         comparativus.text.toDecorate = 2;
         comparativus.text.decorate(idA, comparativus.nodes.a);
         comparativus.text.decorate(idB, comparativus.nodes.b);
@@ -104,6 +104,7 @@ var comparativus = {
         comparativus.ui.showLoadingAnimation(false);
         //Re-add listeners now that we're done with the comparison
         comparativus.ui.init();
+        comparativus.ui.addMatchListeners();
         
     };
 

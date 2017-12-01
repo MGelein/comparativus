@@ -50,12 +50,12 @@ function initFiles(){
         //Load the data files from disc
         var idA = '5a15793ed272f335aab275af'
         comparativus.file.setLoadedStatus(idA, false);
-        $.ajax('data/Mencius.txt', {success:function(data){
+        $.ajax('data/Plat.Menex.242-249.txt', {cache:false, success:function(data){
             comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data);
         }});
         var idB = '5a1579a3d272f335aab275b0';
         comparativus.file.setLoadedStatus(idB, false);
-        $.ajax('data/ZGZY.txt', {success:function(data){
+        $.ajax('data/Thuc.2.34-47.txt', {cache: false, success:function(data){
             comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data);
         }});
     }   

@@ -134,19 +134,38 @@ CUSTOM CLASSES
 
 .matchMark{
   opacity: 0.5;
-  color: #C00;
+  background-color: #C00;
+  color: #fff;
+  
   font-weight: bold;
   cursor: pointer;
+
+  border-radius: 4px;
+  
+  margin-left: 2px;
+  margin-right: 2px;
   padding-left: 0.5em;
   padding-right: 0.5em;
 }
 
-.selectedSpan{
-  background-color: rgba(200, 0, 0, 0.3);
+.matchMark.active{
+  opacity: 1;
 }
 
 .matchMark.selected{
-  opacity: 1.0;
+  background-color: #F00;
+  border: 1px solid #700;
+  opacity: 1;
+}
+
+#resultTable td.active{
+  background-color: rgb(191, 208, 255);
+  
+}
+
+#resultTable td.selected{
+  background-color: rgb(149, 178, 255);
+  box-shadow: 1px 1px 1px rgb(0, 0, 0);
 }
 
 /**

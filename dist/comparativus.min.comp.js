@@ -94,7 +94,7 @@ var comparativus = {
         }
         //console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
         comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt);
-        comparativus.ui.showResultTable(comparativus.matches);
+        comparativus.ui.showResultTable(comparativus.matches, idA, idB);
         comparativus.text.toDecorate = 2;
         comparativus.text.decorate(idA, comparativus.nodes.a);
         comparativus.text.decorate(idB, comparativus.nodes.b);
@@ -104,6 +104,7 @@ var comparativus = {
         comparativus.ui.showLoadingAnimation(false);
         //Re-add listeners now that we're done with the comparison
         comparativus.ui.init();
+        comparativus.ui.addMatchListeners();
         
     };
 
@@ -436,6 +437,11 @@ String.prototype.insertAt = function(index, string){
         matchmark: "",
 
         /**
+         * Holds the HTML for a single matchrow in the resultstable
+         */
+        matchrow: "",
+
+        /**
          * This function adds the event listeners to the ui objects
          * and inputs. Basically, all the initialization of the UI
          */
@@ -458,8 +464,13 @@ String.prototype.insertAt = function(index, string){
             $('[data-toggle="popover"]').unbind('popover').popover(); 
 
             //Load the matchmark template
-            $.get('./parts/matchmark.html', function(data){
+            $.get({url: './parts/matchmark.html', cache:false}).then(function(data){
                 comparativus.ui.matchmark = data;
+            });
+
+            //Load the matchrow template
+            $.get({url: './parts/matchrow.html', cache:false}).then(function(data){
+                comparativus.ui.matchrow = data;
             });
 
             //Assign the page button event handler
@@ -574,6 +585,23 @@ String.prototype.insertAt = function(index, string){
         },
 
         /**
+         * Adds the listeners for the match selection and highlight events to 
+         * all the elements across the page
+         */
+        addMatchListeners: function(){
+            $('[comparativusURN').unbind('mouseenter mouseleave click').click(function(){
+                //On click toggle selected status for all with same attribute value
+                $('[comparativusURN="' + $(this).attr('comparativusURN') + '"]').toggleClass('selected');
+            }).mouseenter(function(){
+                //When the mouse enters add active class
+                $('[comparativusURN="' + $(this).attr('comparativusURN') + '"]').addClass('active');
+            }).mouseleave(function(){
+                //When the mouse leaves remove active class
+                $('[comparativusURN="' + $(this).attr('comparativusURN') + '"]').removeClass('active');
+            })
+        },
+
+        /**
          * Loads a new file into a newly created tab of the textContent div.
          */
         addFileTab: function(id, name, content){
@@ -616,26 +644,17 @@ String.prototype.insertAt = function(index, string){
             el.value = Math.round(Number(el.value));
             if(el.value == 0) el.value = 10;
         },
-        /**
-         * Highlights all matches in the text from the linkID
-         */
-        highlightMatchFromLinkID: function(linkID, enabled){
-            var id = "#S" + linkID.replace(/[AB]/g, '') + 'a'; 
-            console.log(id);
-            comparativus.ui.highLightMatch($(id), enabled);
-            if(enabled) setTimeout(function(){comparativus.ui.highlightMatchFromLinkID(linkID, false);}, 2000);
-        },
 
         /**
          * Loads the provided array of matches into 
          * the result table
          */
-        showResultTable: function(matches){            
+        showResultTable: function(matches, idA, idB){            
             //Stringbuilder that will hold the HTML for the data table
             var parts = [];
 
             //Add the table header
-            parts.push("<thead><tr><th>IndexA</th><th>IndexB</th><th>Length</th><th>TextA</th><th>TextB</th></tr></thead><tbody>");
+            parts.push("<thead><tr><th>IndexA</th><th>IndexB</th><th>Length</th><th>TextA</th><th>TextB</th><th>Ratio</th></tr></thead><tbody>");
             
             //Stringbuilder for the parts of a TSV file
             var tsvParts = [];
@@ -647,14 +666,23 @@ String.prototype.insertAt = function(index, string){
             matches.forEach(function(cMatch){
                 //Get the link id
                 var linkID = 'A' + cMatch.indexA + 'B' + cMatch.indexB;
-                //Add a new line for that match
-                parts.push("<tr id='row" + linkID +"'><td><a class='matchLink'>" + cMatch.urnA +
-                "</a></td><td><a class='matchLink'>" + cMatch.urnB +
-                "</td><td>" + cMatch.l + "</td><td>" + cMatch.textA + "</td><td>"
-                + cMatch.textB + "</td></tr>");
+                var compURNA = idA + cMatch.urnA;
+                var compURNB = idB + cMatch.urnB;
+                //Add a new line for that match, by replacing the variables in the template
+                var mRow = comparativus.ui.matchrow.replace(/%LENGTH%/g, cMatch.l);
+                mRow = mRow.replace(/%TEXTA%/g, cMatch.textA);
+                mRow = mRow.replace(/%TEXTB%/g, cMatch.textB);
+                mRow = mRow.replace(/%URNA%/g, cMatch.urnA);
+                mRow = mRow.replace(/%URNB%/g, cMatch.urnB);
+                mRow = mRow.replace(/%COMPURNA%/g, compURNA);
+                mRow = mRow.replace(/%COMPURNB%/g, compURNB);
+                mRow = mRow.replace(/%RATIO%/g, cMatch.r.toPrecision(4))
+
+                //Now add the template row to the table
+                parts.push(mRow);
 
                 //And a new line for its TSV counter part
-                tsvParts.push(cMatch.indexA + '\t' + cMatch.indexB + '\t' + cMatch.l + '\t' + cMatch.r + '\t' + cMatch.textA + '\t' + cMatch.textB);
+                tsvParts.push(cMatch.indexA + '\t' + cMatch.indexB + '\t' + cMatch.l + '\t' + cMatch.r + '\t' + cMatch.textA + '\t' + cMatch.textB + '\t' + cMatch.r);
             });
 
             //Add the result to the page
@@ -663,6 +691,25 @@ String.prototype.insertAt = function(index, string){
             //create the downloadButtons
             $('#downloadTSVButton').click(function(){createTSVFile(tsvParts);});
             $('#downloadJSONButton').click(function(){comparativus.file.createJSON(matches);});
+        },
+
+        /**
+         * Highlights the matchmark with a matching comparativus urn (textid + urn of match).
+         * Gives it the active status
+         * @param {String} urn 
+         */
+        highlightMatch: function(urn){
+            //When you hover over an element it is 'active' if clicked you toggle the 'selected' class
+            $('[comparativusURN="'+ urn + '"]').addClass('active').unbind('mouseleave').mouseleave(function(){
+                $('[comparativusURN="'+ urn + '"]').removeClass('active');
+            });
+        },
+
+        /**
+         * Selects a match mark
+         */
+        selectMatch: function(urn){
+            $('[comparativusURN="'+ urn + '"]').toggleClass('selected');
         }
     }
 })(comparativus);;/**
@@ -1499,12 +1546,12 @@ function initFiles(){
         //Load the data files from disc
         var idA = '5a15793ed272f335aab275af'
         comparativus.file.setLoadedStatus(idA, false);
-        $.ajax('data/Mencius.txt', {success:function(data){
+        $.ajax('data/Plat.Menex.242-249.txt', {cache:false, success:function(data){
             comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data);
         }});
         var idB = '5a1579a3d272f335aab275b0';
         comparativus.file.setLoadedStatus(idB, false);
-        $.ajax('data/ZGZY.txt', {success:function(data){
+        $.ajax('data/Thuc.2.34-47.txt', {cache: false, success:function(data){
             comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data);
         }});
     }   
