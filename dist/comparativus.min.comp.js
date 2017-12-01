@@ -58,6 +58,15 @@ var comparativus = {
     }
 
     /**
+     * This function is called to check if we need to autoexecute the comparison.
+     * It checks a URL var and then decides if the comparison needs to be run,
+     * it does this by triggering the comparisonButton
+     */
+    _c.autoexec = function(){
+        if(comparativus.util.getURLVar('autoexec')) $('#comparisonButton').click();
+    }
+
+    /**
      * Runs the comparison between a single set of texts signified by their
      * two ids that have been provided below.
      */
@@ -671,10 +680,49 @@ String.prototype.insertAt = function(index, string){
         list: undefined,
 
         /**
+         * Contains a list of boolean values with the loaded state of each text id
+         */
+        loadedStatus: {},
+
+        /**
          * Returns the full filename of the provided text
          */
         getName: function(name){
             return $('#fInput' + name.toUpperCase()).parent().find('.fileName').html().replace(/\.[^/.]+$/, "");
+        },
+
+        /**
+         * Sets the loaded status of a file.
+         */
+        setLoadedStatus: function(id, status){
+            comparativus.file.loadedStatus[id] = status;
+            //If this was a text done loading, check if all texts are done, if so, autoexec check
+            if(status){
+                if(comparativus.file.allDoneLoading()){
+                    //Try autoexecuting if the URL variable is set
+                    comparativus.autoexec();
+                }
+            }
+        },
+
+        /**
+         * Checks if all files are done loading
+         */
+        allDoneLoading: function(){
+            var ids = Object.keys(comparativus.file.loadedStatus);
+            for(var i = 0; i < ids.length; i++){
+                //If one file is not done loading, return that
+                if(! comparativus.file.doneLoading(ids[i])) return false;
+            }
+            //No loading file found
+            return true;
+        },
+        
+        /**
+         * Checks if the file with the provided id is done loading
+         */
+        doneLoading: function(id){
+            return comparativus.file.loadedStatus[id];
         },
 
         /**
@@ -1293,6 +1341,8 @@ String.prototype.insertAt = function(index, string){
             }
             //Then change the ui now that we've saved it
             comparativus.ui.addFileTab(text_id, text_name, text_content);
+            //Also register that the text is now loaded
+            comparativus.file.setLoadedStatus(text_id, true);
         },
 
         /**
@@ -1447,12 +1497,14 @@ function initFiles(){
         });
     }else{
         //Load the data files from disc
+        var idA = '5a15793ed272f335aab275af'
+        comparativus.file.setLoadedStatus(idA, false);
         $.ajax('data/Mencius.txt', {success:function(data){
-            var idA = '5a15793ed272f335aab275af'
             comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data);
         }});
+        var idB = '5a1579a3d272f335aab275b0';
+        comparativus.file.setLoadedStatus(idB, false);
         $.ajax('data/ZGZY.txt', {success:function(data){
-            var idB = '5a1579a3d272f335aab275b0';
             comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data);
         }});
     }   

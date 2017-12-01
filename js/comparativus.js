@@ -58,6 +58,15 @@ var comparativus = {
     }
 
     /**
+     * This function is called to check if we need to autoexecute the comparison.
+     * It checks a URL var and then decides if the comparison needs to be run,
+     * it does this by triggering the comparisonButton
+     */
+    _c.autoexec = function(){
+        if(comparativus.util.getURLVar('autoexec')) $('#comparisonButton').click();
+    }
+
+    /**
      * Runs the comparison between a single set of texts signified by their
      * two ids that have been provided below.
      */

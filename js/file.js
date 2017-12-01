@@ -13,10 +13,49 @@
         list: undefined,
 
         /**
+         * Contains a list of boolean values with the loaded state of each text id
+         */
+        loadedStatus: {},
+
+        /**
          * Returns the full filename of the provided text
          */
         getName: function(name){
             return $('#fInput' + name.toUpperCase()).parent().find('.fileName').html().replace(/\.[^/.]+$/, "");
+        },
+
+        /**
+         * Sets the loaded status of a file.
+         */
+        setLoadedStatus: function(id, status){
+            comparativus.file.loadedStatus[id] = status;
+            //If this was a text done loading, check if all texts are done, if so, autoexec check
+            if(status){
+                if(comparativus.file.allDoneLoading()){
+                    //Try autoexecuting if the URL variable is set
+                    comparativus.autoexec();
+                }
+            }
+        },
+
+        /**
+         * Checks if all files are done loading
+         */
+        allDoneLoading: function(){
+            var ids = Object.keys(comparativus.file.loadedStatus);
+            for(var i = 0; i < ids.length; i++){
+                //If one file is not done loading, return that
+                if(! comparativus.file.doneLoading(ids[i])) return false;
+            }
+            //No loading file found
+            return true;
+        },
+        
+        /**
+         * Checks if the file with the provided id is done loading
+         */
+        doneLoading: function(id){
+            return comparativus.file.loadedStatus[id];
         },
 
         /**

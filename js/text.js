@@ -28,6 +28,8 @@
             }
             //Then change the ui now that we've saved it
             comparativus.ui.addFileTab(text_id, text_name, text_content);
+            //Also register that the text is now loaded
+            comparativus.file.setLoadedStatus(text_id, true);
         },
 
         /**
