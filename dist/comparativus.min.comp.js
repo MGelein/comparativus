@@ -44,7 +44,6 @@ var comparativus = {
      * Called to start the comparison between the two texts. This
      */
     _c.startComparison = function(){
-        comparativus.ui.setComparisonButtonText('Running Comparison');
         comparativus.minMatchLength = comparativus.ui.getMinMatchSize();
 
         comparativus.matches = [];
@@ -88,12 +87,10 @@ var comparativus = {
         comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt);
         comparativus.ui.showResultTable(comparativus.matches);
         comparativus.text.toDecorate = 2;
-        comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.text.toDecorate + ' left)');
         comparativus.text.decorate(idA, comparativus.nodes.a);
         comparativus.text.decorate(idB, comparativus.nodes.b);
 
         //Show that we're done
-        comparativus.ui.setComparisonButtonText('Creating Text Decoration (' + comparativus.text.toDecorate + ' left)');
         comparativus.ui.setComparisonButtonText('(Re)Compare Texts');
         comparativus.ui.showLoadingAnimation(false);
         //Re-add listeners now that we're done with the comparison
@@ -412,7 +409,6 @@ String.prototype.insertAt = function(index, string){
                 case 'PrepareDone':
                     comparativus.text.setByID(params.id, params.text);
                     $('#info' + params.id).html('Length: ' + params.text.length + ' characters');
-                    comparativus.ui.setComparisonButtonText('Building dictionaries...');
                     comparativus.worker.buildDictionary(params.id);
                     break;
             }
@@ -441,7 +437,6 @@ String.prototype.insertAt = function(index, string){
                 $(this).unbind('click');
             
                 comparativus.dicts.toBuild = comparativus.text.amt();
-                comparativus.ui.setComparisonButtonText('Preparing texts for comparison...');
                 comparativus.ui.showLoadingAnimation(true);
                 comparativus.text.prepareAll();
             });
@@ -548,8 +543,10 @@ String.prototype.insertAt = function(index, string){
         showLoadingAnimation: function(enabled){
             if(enabled){
                 $('#comparisonButtonIcon').removeClass().addClass('glyphicon glyphicon-repeat rotating');
+                $('body').addClass('progress');
             }else{
                 $('#comparisonButtonIcon').removeClass().addClass('glyphicon glyphicon-refresh');
+                $('body').removeClass('progress');
             }
         },
 

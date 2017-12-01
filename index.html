@@ -12,7 +12,7 @@
 <body>
 <nav class="navbar navbar-inverse navbar-static">
     <div class="container">
-        <div class="col-xs-4">
+        <div class="col-xs-3">
         <div class="navbar-header">
             <a class="navbar-brand" href="http://dh.chinese-empires.eu/markus/beta/">MARKUS</a>
         </div>
@@ -27,7 +27,11 @@
                 <button type="button" class="btn btn-page">Table</button>
             </div>
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-5">
+            <button id="comparisonButton" type="button" class="btn btn-primary btn-lg">
+                <i id="comparisonButtonIcon" class="glyphicon glyphicon-refresh"></i>&nbsp;
+                <span id="comparisonButtonText">Compare Texts</span>
+            </button>
             <ul class="nav navbar-nav navbar-right">
             <li><a href="#" id="settingsButton"><span class="glyphicon glyphicon-cog"></span>&nbsp;Comparison&nbsp;Settings</a></li>
         </ul>
@@ -116,7 +120,6 @@
             </select>
             </div>
         </div>
-        <a id="comparisonButton" type="button" class="btn btn-primary btn-block" href="#"><i id="comparisonButtonIcon" class="glyphicon glyphicon-refresh"></i>&nbsp;<span id="comparisonButtonText">Compare Texts</span></a>
         </form>
     </div>
 </div>

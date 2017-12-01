@@ -79,7 +79,6 @@
                 case 'PrepareDone':
                     comparativus.text.setByID(params.id, params.text);
                     $('#info' + params.id).html('Length: ' + params.text.length + ' characters');
-                    comparativus.ui.setComparisonButtonText('Building dictionaries...');
                     comparativus.worker.buildDictionary(params.id);
                     break;
             }

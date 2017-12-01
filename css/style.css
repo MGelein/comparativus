@@ -123,6 +123,10 @@ CUSTOM CLASSES
   animation: rotating 2s linear infinite;
 }
 
+.progress{
+  cursor: progress;
+}
+
 .tight{
   padding: 0px;
   margin: 0px;
@@ -168,20 +172,10 @@ ID's
   padding: 8px;
 }
 
-#resultTable{
-  font-size: 80%;
+#comparisonButton{
+  margin-top: 2px;
 }
 
-#mousePointer{
-  width: 7px;
-  height: 7px;
-  border: 2px solid white;
-  position: absolute;
-  margin: 0;
-  padding: 0;
-  -moz-user-select: -moz-none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -o-user-select: none;
-    user-select: none;
+#resultTable{
+  font-size: 80%;
 }

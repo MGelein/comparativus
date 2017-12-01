@@ -20,7 +20,6 @@
                 $(this).unbind('click');
             
                 comparativus.dicts.toBuild = comparativus.text.amt();
-                comparativus.ui.setComparisonButtonText('Preparing texts for comparison...');
                 comparativus.ui.showLoadingAnimation(true);
                 comparativus.text.prepareAll();
             });
@@ -127,8 +126,10 @@
         showLoadingAnimation: function(enabled){
             if(enabled){
                 $('#comparisonButtonIcon').removeClass().addClass('glyphicon glyphicon-repeat rotating');
+                $('body').addClass('progress');
             }else{
                 $('#comparisonButtonIcon').removeClass().addClass('glyphicon glyphicon-refresh');
+                $('body').removeClass('progress');
             }
         },
 
