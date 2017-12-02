@@ -111,6 +111,7 @@
          * @param {Function} callback   takes the file data as a parameter
          */
         loadFromID: function(id, callback){
+            comparativus.file.setLoadedStatus(id, false);
             $.get("http://dh.chinese-empires.eu/auth/get/" + id, function(data){
                 callback($(data).text());
             });
