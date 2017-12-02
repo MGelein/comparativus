@@ -54,7 +54,7 @@
             //Load the fileselection row template
             $.get({url: './parts/filerow.html', cache:false}).then(function(data){
                 //Check if we should recall the fileselection show function
-                var doCall = comparativus.ui.filerow.length != 0;
+                var doCall = comparativus.ui.filerow == "NEEDED";
                 //Assign the template data
                 comparativus.ui.filerow = data;
                 //Then do the call if necessary
@@ -342,6 +342,34 @@
             });
             //Now add all the rows to the table body
             $('#fileSelectionBody').html(fileRows.join(''));
+
+            //Now add the event listeners
+            $('#fileSelectionBody input[type="checkbox"]').unbind('click').click(function(){
+                //Add the selected class and get its id value
+                var id = $(this).toggleClass('selected').val();
+                //Count how many are selected, if enough allow loading of files
+                if($('#fileSelectionBody input.selected').length > 1){
+                    //If there are enough files, allow loading them
+                    $('#loadSelectedButton').removeClass('disabled').unbind('click').click(function(){
+                        //In case of debug, ignore the scenario
+                        if(comparativus.util.isDebug()){
+                            comparativus.file.loadDebug();
+                            $('#fileSelectionMenu').fadeOut(400, function(){$(this).offset({top:0, left: 0}).hide();});
+                            return;
+                        }
+                        //Get all the ids we have to load
+                        $('#fileSelectionBody input.selected').each(function(index, input){
+                            var id = $(input).val();
+                            comparativus.file.loadFromID(id, function(data){
+                                comparativus.text.add(id, comparativus.file.getTitleFromID(id), data);
+                            });
+                        });
+                    });
+                }else{
+                    //If we have less than the minimum required files selected (<2)
+                    $('#loadSelectedButton').removeClass('disabled').addClass('disabled').unbind('click');
+                }
+            });
         }
     }
 })(comparativus);
