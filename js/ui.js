@@ -249,8 +249,8 @@
                 mRow = mRow.replace(/%URNB%/g, cMatch.urnB);
                 mRow = mRow.replace(/%COMPURNA%/g, compURNA);
                 mRow = mRow.replace(/%COMPURNB%/g, compURNB);
-                mRow = mRow.replace(/%RATIO%/g, cMatch.r.toPrecision(4))
-
+                mRow = mRow.replace(/%RATIO%/g, cMatch.r.toPrecision(4));
+                
                 //Now add the template row to the table
                 parts.push(mRow);
 
