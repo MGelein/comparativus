@@ -47,10 +47,7 @@ var comparativus = {
         comparativus.minMatchLength = comparativus.ui.getMinMatchSize();
 
         comparativus.matches = [];
-        comparativus.nodes = {
-            a: [],
-            b: []
-        }
+        comparativus.nodes = {};
 
         var ids = comparativus.text.getAllIDs();
         //Run comparison on the first two, this should change based on the amount of texts
@@ -73,6 +70,8 @@ var comparativus = {
     _c.runSingleComparison = function(idA, idB){
         var dictA = comparativus.dicts[idA];
         var dictB = comparativus.dicts[idB];
+        comparativus.nodes[idA] = [];
+        comparativus.nodes[idB] = [];
         var seeds = Object.keys(dictA);
         var seedAmt = seeds.length;
         var overlap = [];
@@ -96,8 +95,8 @@ var comparativus = {
         comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt);
         comparativus.ui.showResultTable(comparativus.matches, idA, idB);
         comparativus.text.toDecorate = 2;
-        comparativus.text.decorate(idA, comparativus.nodes.a);
-        comparativus.text.decorate(idB, comparativus.nodes.b);
+        comparativus.text.decorate(idA, comparativus.nodes[idA]);
+        comparativus.text.decorate(idB, comparativus.nodes[idB]);
 
         //Show that we're done
         comparativus.ui.setComparisonButtonText('(Re)Compare Texts');
@@ -194,7 +193,7 @@ var comparativus = {
             m.urnA = comparativus.urn.fromMatch(tA, m.indexA, m.l);
             m.urnB = comparativus.urn.fromMatch(tB, m.indexB, m.l);
             comparativus.matches.push(m);
-            comparativus.addNodeFromMatch(m);
+            comparativus.addNodeFromMatch(m, idA, idB);
         }
     }
 
@@ -202,31 +201,31 @@ var comparativus = {
      * Adds new nodes to the list of them. 
      * @param {Match} match 
      */
-    _c.addNodeFromMatch= function(match){
+    _c.addNodeFromMatch= function(match, idA, idB){
         var nA = {index: match.indexA, urn: match.urnA, 'match': match};
         var nB = {index: match.indexB, urn: match.urnB, 'match': match};
         var i = 0;
         //First check if node A is unique
-        var max = comparativus.nodes.a.length;
+        var max = comparativus.nodes[idA].length;
         var unique = true;
         for(i = 0; i < max; i++){
-            if(comparativus.nodes.a[i].index == nA.index){
+            if(comparativus.nodes[idA][i].index == nA.index){
                 unique = false;
                 break;
             }
         }
-        if(unique) comparativus.nodes.a.push(nA);
+        if(unique) comparativus.nodes[idA].push(nA);
 
         //Then check if node B is unique
-        max = comparativus.nodes.b.length;
+        max = comparativus.nodes[idB].length;
         unique = true;
         for(i = 0; i < max; i++){
-            if(comparativus.nodes.b[i].index == nB.index){
+            if(comparativus.nodes[idB][i].index == nB.index){
                 unique = false;
                 break;
             }
         }
-        if(unique) comparativus.nodes.b.push(nB);
+        if(unique) comparativus.nodes[idB].push(nB);
     }
 
 
@@ -1042,6 +1041,23 @@ String.prototype.insertAt = function(index, string){
         }
     }
 })(comparativus);;(function(_c){
+        //Define 2PI
+        var tau = Math.PI * 2;
+
+        //Pad angle is the space between texts in the arc
+        var padAngle = 0.05;
+        
+        //Define the area of the rect
+        var w = 1280;
+        var h = 720;
+        var w2 = w / 2;
+        var h2 = h / 2;
+        
+        //Defines the circle
+        var arc = d3.arc()
+            .innerRadius(h2 - 50)
+            .outerRadius(h2);
+
     
         /**
          * Holds the public methods for the visualization
@@ -1050,8 +1066,8 @@ String.prototype.insertAt = function(index, string){
             /**
              * Defined width and height for future use
              */
-            width: 900,
-            heigth: 900,
+            width: w,
+            height: h,
 
             /**
              * Color scheme
@@ -1061,14 +1077,14 @@ String.prototype.insertAt = function(index, string){
             /**
              * Reference to the SVg we will draw on
              */
-            svg,
+            svg: undefined,
 
             /**
              * Initializes the visualization. Called on document read
              */
             init: function(){
                 //hide the svg
-                $('.svg-canvas').hide();
+                //$('.svg-canvas').hide();
                 //save a reference to the svg
                 comparativus.vis.svg = d3.select('.svg-canvas');
             },
@@ -1077,7 +1093,58 @@ String.prototype.insertAt = function(index, string){
              * Draws the visualisation
              */
             draw: function(){
+                //First draw the text circle parts
+                comparativus.vis.drawTexts();
 
+                //Then draw the nodes on each text
+            },
+
+            /**
+             * Draws the texts and their info onto the screen
+             */
+            drawTexts: function(){
+                var textHolder = comparativus.vis.svg.append("g")
+                .attr("transform", "translate(" + comparativus.vis.width / 2  + "," + comparativus.vis.height / 2 + ")");
+            
+                //Get all text ids
+                var textIDS = comparativus.text.getAllIDs();
+                //Get all text objects
+                var text, sAngle = 0, tAngle, legendY = 0;
+                textIDS.forEach(function(id, index){
+                    text = comparativus.text.getByID(id);
+                    //Get the angle for this text in the circle
+                    tAngle = (tau - (padAngle * comparativus.text.amt())) * comparativus.text.getPercentLength(id);
+                    //Now add an arc to the text holder
+                    textHolder.append("path")
+                        .datum({startAngle: sAngle, endAngle: sAngle + tAngle})
+                        .style("fill", comparativus.vis.color(index))
+                        .attr("d", arc);
+                    sAngle += tAngle + padAngle;
+
+                    //Also draw a rect in the legend
+                    textHolder.append("rect")
+                        .style("fill", comparativus.vis.color(index))
+                        .style("stroke", d3.rgb(comparativus.vis.color(index)).darker())
+                        .attr("x", -w2 + 10)
+                        .attr("y", -h2 + legendY + 20)
+                        .attr("width", 20)
+                        .attr("height", 20);
+                    
+                    //Now draw the name with the legend rect
+                    textHolder.append("text")
+                        .attr("x", -w2 + 40)
+                        .attr("y", -h2 + legendY + 36)
+                        .text(text.name);
+
+                    //Now draw the character length with the name
+                    textHolder.append("text")
+                        .attr("x", -w2 + 40)
+                        .attr("y", -h2 + legendY + 48)
+                        .attr("class", "small")
+                        .text(text.plain.length + " characters");
+
+                    legendY += 50;
+                });
             }
     
         
@@ -1331,6 +1398,18 @@ String.prototype.insertAt = function(index, string){
          */
         getAllIDs: function(){
             return Object.keys(texts);
+        },
+
+        /**
+         * REturns a fraction [0-1] of the length this text takes of the totla
+         * lenght of all texts compared
+         */
+        getPercentLength: function(id){
+            var totalLength = 0;
+            Object.keys(texts).forEach(function(text_id){
+                totalLength += texts[text_id].plain.length;
+            });
+            return texts[id].plain.length / totalLength;
         },
 
         /**

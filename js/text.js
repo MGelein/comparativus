@@ -67,6 +67,18 @@
         },
 
         /**
+         * REturns a fraction [0-1] of the length this text takes of the totla
+         * lenght of all texts compared
+         */
+        getPercentLength: function(id){
+            var totalLength = 0;
+            Object.keys(texts).forEach(function(text_id){
+                totalLength += texts[text_id].plain.length;
+            });
+            return texts[id].plain.length / totalLength;
+        },
+
+        /**
          * Returns a JSON string encoding the length, name and group of every text we have
          */
         getJSON: function(){

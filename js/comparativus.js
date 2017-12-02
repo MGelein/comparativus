@@ -47,10 +47,7 @@ var comparativus = {
         comparativus.minMatchLength = comparativus.ui.getMinMatchSize();
 
         comparativus.matches = [];
-        comparativus.nodes = {
-            a: [],
-            b: []
-        }
+        comparativus.nodes = {};
 
         var ids = comparativus.text.getAllIDs();
         //Run comparison on the first two, this should change based on the amount of texts
@@ -73,6 +70,8 @@ var comparativus = {
     _c.runSingleComparison = function(idA, idB){
         var dictA = comparativus.dicts[idA];
         var dictB = comparativus.dicts[idB];
+        comparativus.nodes[idA] = [];
+        comparativus.nodes[idB] = [];
         var seeds = Object.keys(dictA);
         var seedAmt = seeds.length;
         var overlap = [];
@@ -96,8 +95,8 @@ var comparativus = {
         comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt);
         comparativus.ui.showResultTable(comparativus.matches, idA, idB);
         comparativus.text.toDecorate = 2;
-        comparativus.text.decorate(idA, comparativus.nodes.a);
-        comparativus.text.decorate(idB, comparativus.nodes.b);
+        comparativus.text.decorate(idA, comparativus.nodes[idA]);
+        comparativus.text.decorate(idB, comparativus.nodes[idB]);
 
         //Show that we're done
         comparativus.ui.setComparisonButtonText('(Re)Compare Texts');
@@ -194,7 +193,7 @@ var comparativus = {
             m.urnA = comparativus.urn.fromMatch(tA, m.indexA, m.l);
             m.urnB = comparativus.urn.fromMatch(tB, m.indexB, m.l);
             comparativus.matches.push(m);
-            comparativus.addNodeFromMatch(m);
+            comparativus.addNodeFromMatch(m, idA, idB);
         }
     }
 
@@ -202,31 +201,31 @@ var comparativus = {
      * Adds new nodes to the list of them. 
      * @param {Match} match 
      */
-    _c.addNodeFromMatch= function(match){
+    _c.addNodeFromMatch= function(match, idA, idB){
         var nA = {index: match.indexA, urn: match.urnA, 'match': match};
         var nB = {index: match.indexB, urn: match.urnB, 'match': match};
         var i = 0;
         //First check if node A is unique
-        var max = comparativus.nodes.a.length;
+        var max = comparativus.nodes[idA].length;
         var unique = true;
         for(i = 0; i < max; i++){
-            if(comparativus.nodes.a[i].index == nA.index){
+            if(comparativus.nodes[idA][i].index == nA.index){
                 unique = false;
                 break;
             }
         }
-        if(unique) comparativus.nodes.a.push(nA);
+        if(unique) comparativus.nodes[idA].push(nA);
 
         //Then check if node B is unique
-        max = comparativus.nodes.b.length;
+        max = comparativus.nodes[idB].length;
         unique = true;
         for(i = 0; i < max; i++){
-            if(comparativus.nodes.b[i].index == nB.index){
+            if(comparativus.nodes[idB][i].index == nB.index){
                 unique = false;
                 break;
             }
         }
-        if(unique) comparativus.nodes.b.push(nB);
+        if(unique) comparativus.nodes[idB].push(nB);
     }
 
 
