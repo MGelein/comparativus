@@ -22,7 +22,7 @@ module.exports = function(grunt) {
             },
             dist: {
               src: ['js/comparativus.js', 'js/util.js',  'js/worker.js' ,'js/ui.js', 'js/file.js',
-              'js/visualization.js', 'js/popover.js', 'js/urn.js', 'js/text.js', 'js/global.js'], //keep global.js as the last file
+              'js/vis.js', 'js/popover.js', 'js/urn.js', 'js/text.js', 'js/global.js'], //keep global.js as the last file
               dest: 'dist/comparativus.min.comp.js',
             },
           },

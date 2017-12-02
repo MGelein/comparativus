@@ -28,7 +28,7 @@ function initModules(){
     //Call the init function for modules that need it
     comparativus.worker.init();   
     comparativus.ui.init();
-    comparativus.visualization.init();
+    comparativus.vis.init();
     comparativus.popover.init();
 }
 
