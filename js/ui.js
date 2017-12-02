@@ -15,6 +15,11 @@
         matchrow: "",
 
         /**
+         * Holds the HTML for a singlefilerow in the fileSelectionMenu
+         */
+        filerow: "",
+
+        /**
          * This function adds the event listeners to the ui objects
          * and inputs. Basically, all the initialization of the UI
          */
@@ -44,6 +49,16 @@
             //Load the matchrow template
             $.get({url: './parts/matchrow.html', cache:false}).then(function(data){
                 comparativus.ui.matchrow = data;
+            });
+
+            //Load the fileselection row template
+            $.get({url: './parts/filerow.html', cache:false}).then(function(data){
+                //Check if we should recall the fileselection show function
+                var doCall = comparativus.ui.filerow.length != 0;
+                //Assign the template data
+                comparativus.ui.filerow = data;
+                //Then do the call if necessary
+                if(doCall) comparativus.ui.showFileSelection();
             });
 
             //Assign the page button event handler
@@ -283,6 +298,50 @@
          */
         selectMatch: function(urn){
             $('[comparativusURN="'+ urn + '"]').toggleClass('selected');
+        },
+
+        /**
+         * Shows the file selection menu
+         */
+        showFileSelection: function(){
+            //check if the template is loaded, otherwise set a sign so this function can be called back
+            if(comparativus.ui.filerow.length == 0){
+                comparativus.ui.filerow = "NEEDED";
+                return;
+            }
+            //If its already loaded, continue
+            
+            //Start fading in the menu
+            $('#fileSelectionMenu').fadeIn();
+            //And place it in the middle of the screen
+            var leftOffset = ($('body').outerWidth() - $('#fileSelectionMenu').outerWidth()) / 2;
+            $('#fileSelectionMenu').offset({left: leftOffset, top: 100});
+
+
+            //Set the contents of the fileSelectionBody
+            var files = comparativus.file.list.files;
+            var fileRows = [];
+            var fRow = "";
+            files.forEach(function(file){
+                //Try to find a match in the metadata
+                var metadata = file.metadata;
+                var dynasty;
+                var genre;
+                var title = file.fileName;
+                metadata.forEach(function(datum){
+                    if(datum.key == "title") title = datum.value;
+                    else if(datum.key == "genre") genre = datum.value;
+                    else if(datum.key == "dynasty") dynasty = datum.value;
+                });
+                fRow = comparativus.ui.filerow.replace(/%NAME%/g, title);
+                fRow = fRow.replace(/%DYNASTY%/g, file.meta);
+                fRow = fRow.replace(/%GENRE%/g, );
+                fRow = fRow.replace(/%ID%/g, file._id);
+                //Add it to all the rows
+                fileRows.push(fRow);
+            });
+            //Now add all the rows to the table body
+            $('#fileSelectionBody').html(fileRows.join(''));
         }
     }
 })(comparativus);

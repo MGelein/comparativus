@@ -46,6 +46,7 @@ function initFiles(){
         //
         //This is done when we haven't defined vars in the GET variable
         //
+        comparativus.ui.showFileSelection();
 
     }else{
         //

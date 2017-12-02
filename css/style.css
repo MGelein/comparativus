@@ -171,17 +171,7 @@ CUSTOM CLASSES
 /**
 ID's
 **/
-#settingsHolder{
-  position: absolute;
-  background-color: #fff;
-  border-radius: 5px;
-  box-shadow: 1px 1px 4px #777;
-  z-index: 46;
-  display: block;
-  padding: 8px;
-}
-
-#popover{
+#popover, #settingsHolder, #fileSelectionMenu{
   position: absolute;
   background-color: #fff;
   border-radius: 5px;
@@ -193,6 +183,11 @@ ID's
 
 #comparisonButton{
   margin-top: 2px;
+}
+
+#fileSelectionBody td{
+  vertical-align: middle;
+  text-align: center;
 }
 
 #resultTable{
