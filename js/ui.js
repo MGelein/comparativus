@@ -354,16 +354,17 @@
                         //In case of debug, ignore the scenario
                         if(comparativus.util.isDebug()){
                             comparativus.file.loadDebug();
-                            $('#fileSelectionMenu').fadeOut(400, function(){$(this).offset({top:0, left: 0}).hide();});
-                            return;
-                        }
+                        }else{
                         //Get all the ids we have to load
-                        $('#fileSelectionBody input.selected').each(function(index, input){
-                            var id = $(input).val();
-                            comparativus.file.loadFromID(id, function(data){
-                                comparativus.text.add(id, comparativus.file.getTitleFromID(id), data);
+                            $('#fileSelectionBody input.selected').each(function(index, input){
+                                var id = $(input).val();
+                                comparativus.file.loadFromID(id, function(data){
+                                    comparativus.text.add(id, comparativus.file.getTitleFromID(id), data);
+                                });
                             });
-                        });
+                        }
+                        //When the file are starting to load ,fade out the menu
+                        $('#fileSelectionMenu').fadeOut(400, function(){$(this).offset({top:0, left: 0}).hide();});
                     });
                 }else{
                     //If we have less than the minimum required files selected (<2)
