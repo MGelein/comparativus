@@ -676,8 +676,8 @@ String.prototype.insertAt = function(index, string){
                 mRow = mRow.replace(/%URNB%/g, cMatch.urnB);
                 mRow = mRow.replace(/%COMPURNA%/g, compURNA);
                 mRow = mRow.replace(/%COMPURNB%/g, compURNB);
-                mRow = mRow.replace(/%RATIO%/g, cMatch.r.toPrecision(4))
-
+                mRow = mRow.replace(/%RATIO%/g, cMatch.r.toPrecision(4));
+                
                 //Now add the template row to the table
                 parts.push(mRow);
 
@@ -1509,7 +1509,7 @@ $(document).ready(function (){
     $.get(listFilesURL, function(data){  
         //Assign the file list
         comparativus.file.list = data;
-        //Only start initializing after we've received the file list from the server
+        //Only start initializing after we've received the file list from the server.
         initFiles();
     });
         
@@ -1532,27 +1532,40 @@ function initModules(){
  * Calls the necessary functions to, depending on environment (production / dev), 
  * load either some dev data files or to actually parse the user input in the GET
  * variables. Called after ajax calls like list_files have succeeded. 
+ * 
+ * If no get variables was set, presents the user with a list files selection menu
  */
-function initFiles(){ 
-    if(!comparativus.util.isDebug()){
-        //Load the files from the GET URL variables
-        var files = comparativus.util.getURLVar('files');
-        files.split(',').forEach(function(id){
-            comparativus.file.loadFromID(id, function(data){
-                comparativus.text.add(id, comparativus.file.getTitleFromID(id), data);
-            });
-        });
+function initFiles(){
+    //Try to get the url GET var. This is undefined if it is not set
+    var filesVar = comparativus.util.getURLVar('files');
+    if(filesVar == undefined){
+        //
+        //This is done when we haven't defined vars in the GET variable
+        //
+
     }else{
-        //Load the data files from disc
-        var idA = '5a15793ed272f335aab275af'
-        comparativus.file.setLoadedStatus(idA, false);
-        $.ajax('data/Mencius.txt', {cache:false, success:function(data){
-            comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data);
-        }});
-        var idB = '5a1579a3d272f335aab275b0';
-        comparativus.file.setLoadedStatus(idB, false);
-        $.ajax('data/ZGZY.txt', {cache: false, success:function(data){
-            comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data);
-        }});
-    }   
+        //
+        //This is done in case we have defined files already in the GET VAR
+        //
+        if(!comparativus.util.isDebug()){
+            //Load the files from the GET URL variables
+            filesVar.split(',').forEach(function(id){
+                comparativus.file.loadFromID(id, function(data){
+                    comparativus.text.add(id, comparativus.file.getTitleFromID(id), data);
+                });
+            });
+        }else{
+            //Load the data files from disc
+            var idA = '5a15793ed272f335aab275af'
+            comparativus.file.setLoadedStatus(idA, false);
+            $.ajax('data/Mencius.txt', {cache:false, success:function(data){
+                comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data);
+            }});
+            var idB = '5a1579a3d272f335aab275b0';
+            comparativus.file.setLoadedStatus(idB, false);
+            $.ajax('data/ZGZY.txt', {cache: false, success:function(data){
+                comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data);
+            }});
+        }
+    }
 }
