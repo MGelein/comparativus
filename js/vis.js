@@ -105,7 +105,9 @@
                     textHolder.append("path")
                         .datum({startAngle: sAngle, endAngle: sAngle + tAngle})
                         .style("fill", tColor)
+                        .style("stroke", d3.rgb(tColor).darker())
                         .attr("d", arc)
+                        .attr('text-id', id)
                         .attr("class", "textArc");
                     sAngle += tAngle + padAngle;
 
@@ -116,7 +118,16 @@
                         .attr("x", -w2 + 10)
                         .attr("y", -h2 + legendY + 20)
                         .attr("width", 20)
-                        .attr("height", 20);
+                        .attr("height", 20)
+                        .attr('text-id', id)
+                        .attr("class", "textLegend");
+
+                    //Add the highlight action when they're hover over legend or arc
+                    $('.textLegend, .textArc').mouseenter(function(){
+                        $('[text-id="' + $(this).attr('text-id') + '"]').addClass('active');
+                    }).mouseleave(function(){
+                        $('[text-id="' + $(this).attr('text-id') + '"]').removeClass('active');
+                    });
                     
                     //Now draw the name with the legend rect
                     textHolder.append("text")

@@ -202,7 +202,10 @@ text{
   font-size: 20px;
 }
 
-.textArc:hover{
-  stroke: rgba(0, 0, 0, 0.2);
-  stroke-width: 2px;
+.textLegend, .textArc{
+  stroke-width: 0px;
+}
+
+.textLegend.active, .textArc.active{
+  stroke-width: 1px;
 }
