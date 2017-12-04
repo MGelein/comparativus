@@ -105,7 +105,8 @@
                     textHolder.append("path")
                         .datum({startAngle: sAngle, endAngle: sAngle + tAngle})
                         .style("fill", tColor)
-                        .attr("d", arc);
+                        .attr("d", arc)
+                        .attr("class", "textArc");
                     sAngle += tAngle + padAngle;
 
                     //Also draw a rect in the legend
