@@ -209,3 +209,12 @@ text{
 .textLegend.active, .textArc.active{
   stroke-width: 1px;
 }
+
+.node.active{
+  stroke-width: 1px;
+  fill-opacity: 0.7;
+}
+.node.selected{
+  stroke-width: 2px;
+  fill-opacity: 1;
+}

@@ -103,8 +103,8 @@ var comparativus = {
         comparativus.ui.showLoadingAnimation(false);
         //Re-add listeners now that we're done with the comparison
         comparativus.ui.init();
-        comparativus.ui.addMatchListeners();
         comparativus.vis.draw();
+        comparativus.ui.addMatchListeners();
     };
 
     /**

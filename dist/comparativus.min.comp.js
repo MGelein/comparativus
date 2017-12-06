@@ -103,8 +103,8 @@ var comparativus = {
         comparativus.ui.showLoadingAnimation(false);
         //Re-add listeners now that we're done with the comparison
         comparativus.ui.init();
-        comparativus.ui.addMatchListeners();
         comparativus.vis.draw();
+        comparativus.ui.addMatchListeners();
     };
 
     /**
@@ -1090,6 +1090,21 @@ String.prototype.insertAt = function(index, string){
             },
 
             /**
+             * Returns the angle (Radial) of where the node should be
+             * placed on the text with the provided id.
+             * @param {Object} node the node object to place
+             * @param {String} id the id of the text we're placing it on
+             */
+            getNodeAngle: function(node, id){
+                //Extract the necessary data. Index ratio is [0-1] for place in text
+                var indexRatio = node.index / comparativus.text.getByID(id).plain.length;
+                //Angles are the starting angle and angle of the arc of the text
+                var angles = $('[text-id="' + id + '"]').attr('angle').split("+");
+                //return the result
+                return (parseFloat(angles[1]) * indexRatio) + parseFloat(angles[0]);
+            },
+
+            /**
              * Draws the visualisation
              */
             draw: function(){
@@ -1123,9 +1138,29 @@ String.prototype.insertAt = function(index, string){
                     
                     //Now draw each node onto the circle
                     nodes.forEach(function(node){
-                        console.log(node);
+                        var angle = comparativus.vis.getNodeAngle(node, id);
+                        nodeHolder.append("circle")
+                            .style("stroke", d3.rgb(nColor).darker())
+                            .style("fill", nColor)
+                            .attr("stroke-width", 0)
+                            .attr("fill-opacity", 0.5)
+                            .attr("class", "node")
+                            .attr("cx", (Math.sin(angle) * (h2 - 50)))
+                            .attr("cy", - (Math.cos(angle) * (h2 - 50)))
+                            .attr("r", 6)
+                            .attr("comparativusURN", id + node.urn);
+                        
                     });
                 });             
+            },
+
+            /**
+             * Draws the lines between the nodes
+             */
+            drawLines: function(){
+                //Create a holder for the lines
+                var lineHolder = comparativus.vis.svg.append("g")
+                    .attr("transform", "translate(" + comparativus.vis.width / 2  + "," + comparativus.vis.height / 2 + ")");   
             },
 
             /**
@@ -1150,6 +1185,7 @@ String.prototype.insertAt = function(index, string){
                         .style("stroke", d3.rgb(tColor).darker())
                         .attr("d", arc)
                         .attr('text-id', id)
+                        .attr('angle', sAngle + "+" + tAngle)
                         .attr("class", "textArc");
                     sAngle += tAngle + padAngle;
 
