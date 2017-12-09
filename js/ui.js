@@ -186,8 +186,18 @@
                 //Then set back pointer events to auto
                 $(this).css('pointer-events', 'auto');
             }).mouseenter(function(e){
+                //Special case for td cells. highlight in matching text color
+                if($(this).prop('tagName') == "TD"){
+                    var tColor = comparativus.text.getVisColor($(this).attr('textid'));
+                    $('[comparativusURN*="' + $(this).attr('comparativusURN') + '"]').attr('style', 'background-color: ' + d3.hsl(tColor).brighter());
+                }
+                //Then set the active class
                 comparativus.ui.setActive($(this).attr('comparativusURN'), true);
             }).mouseleave(function(e){
+                 //Special case for td cells. empty style attribute inline
+                 if($(this).prop('tagName') == "TD"){
+                    $('[comparativusURN*="' + $(this).attr('comparativusURN') + '"]').attr('style', '');
+                }
                 comparativus.ui.setActive($(this).attr('comparativusURN'), false);
             });
         },
@@ -264,8 +274,6 @@
                          + "<th>IndexA</th>"
                          + "<th>IndexB</th>"
                          + "<th>Length</th>"
-                         + "<th>TextA</th>"
-                         + "<th>TextB</th>"
                          + "<th>Ratio</th>"
                          + "</tr></thead>"
                          + "<tbody>";
@@ -289,6 +297,8 @@
                 var mRow = comparativus.ui.matchrow.replace(/%LENGTH%/g, cMatch.l);
                 mRow = mRow.replace(/%TEXTA%/g, cMatch.textA);
                 mRow = mRow.replace(/%TEXTB%/g, cMatch.textB);
+                mRow = mRow.replace(/%TEXTIDA%/g, idA);
+                mRow = mRow.replace(/%TEXTIDB%/g, idB);
                 mRow = mRow.replace(/%URNA%/g, cMatch.urnA);
                 mRow = mRow.replace(/%URNB%/g, cMatch.urnB);
                 mRow = mRow.replace(/%COMPURNA%/g, compURNA);
@@ -308,25 +318,6 @@
             //create the downloadButtons
             $('#downloadTSVButton').click(function(){createTSVFile(tsvParts);});
             $('#downloadJSONButton').click(function(){comparativus.file.createJSON(matches);});
-        },
-
-        /**
-         * Highlights the matchmark with a matching comparativus urn (textid + urn of match).
-         * Gives it the active status
-         * @param {String} urn 
-         */
-        highlightMatch: function(urn){
-            //When you hover over an element it is 'active' if clicked you toggle the 'selected' class
-            $('[comparativusURN="'+ urn + '"]').addClass('active').unbind('mouseleave').mouseleave(function(){
-                $('[comparativusURN="'+ urn + '"]').removeClass('active');
-            });
-        },
-
-        /**
-         * Selects a match mark
-         */
-        selectMatch: function(urn){
-            $('[comparativusURN="'+ urn + '"]').toggleClass('selected');
         },
 
         /**

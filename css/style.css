@@ -157,15 +157,19 @@ CUSTOM CLASSES
   border: 1px solid #700;
   opacity: 1;
 }
-
+/*
 #resultTable td.active{
   background-color: rgb(191, 208, 255);
   
-}
+}*/
 
 #resultTable td.selected{
   background-color: rgb(149, 178, 255);
   box-shadow: 1px 1px 1px rgb(0, 0, 0);
+}
+
+#resultTable .small{
+  color: #777;
 }
 
 /**
