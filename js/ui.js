@@ -177,11 +177,17 @@
          * all the elements across the page
          */
         addMatchListeners: function(){
-            $('[comparativusURN]').unbind('mouseenter mouseleave click').click(function(){
+            $('[comparativusURN]').unbind('mouseenter mouseleave click').click(function(e){
                 comparativus.ui.toggleSelected($(this).attr('comparativusURN'));
-            }).mouseenter(function(){
+                //Briefly set pointer events to none
+                $(this).css('pointer-events', 'none');
+                //Then trigger a click on the next underlying element
+                $(document.elementFromPoint(e.pageX, e.pageY)).click();
+                //Then set back pointer events to auto
+                $(this).css('pointer-events', 'auto');
+            }).mouseenter(function(e){
                 comparativus.ui.setActive($(this).attr('comparativusURN'), true);
-            }).mouseleave(function(){
+            }).mouseleave(function(e){
                 comparativus.ui.setActive($(this).attr('comparativusURN'), false);
             });
         },
