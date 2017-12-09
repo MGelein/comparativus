@@ -1122,8 +1122,8 @@ String.prototype.insertAt = function(index, string){
              * Initializes the visualization. Called on document read
              */
             init: function(){
-                //hide the svg
-                $('.svg-canvas').hide();
+                //hide the svg and clear it to be sure
+                $('.svg-canvas').hide().html('');
                 //save a reference to the svg
                 comparativus.vis.svg = d3.select('.svg-canvas');
             },
@@ -1150,8 +1150,8 @@ String.prototype.insertAt = function(index, string){
                 //Get all text ids
                 var textIDS = comparativus.text.getAllIDs();
 
-                //Fade in the svg div
-                $('.svg-canvas').fadeIn(1000);
+                //Fade in the svg div but clear it first
+                $('.svg-canvas').html('').fadeIn(1000);
                 
                 //First draw the text circle parts
                 comparativus.vis.drawTexts(textIDS);
