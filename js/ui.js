@@ -178,33 +178,12 @@
          */
         addMatchListeners: function(){
             $('[comparativusURN]').unbind('mouseenter mouseleave click').click(function(){
-                //Obtain the comparativusURN attribute value
-                var urn = $(this).attr('comparativusURN');
-                //Create an array of all the urns in this attribute (split by equals sign)
-                urn = (urn.indexOf('=') != -1) ? urn.split("=") : [urn];
-                //On click toggle selected status for all with same attribute value
-                urn.forEach(function(u){
-                    comparativus.ui.toggleSelected(u);
-                });
+                comparativus.ui.toggleSelected($(this).attr('comparativusURN'));
             }).mouseenter(function(){
-                //Obtain the comparativusURN attribute value
-                var urn = $(this).attr('comparativusURN');
-                //Create an array of all the urns in this attribute (split by equals sign)
-                urn = (urn.indexOf('=') != -1) ? urn.split("=") : [urn];
-                //On click toggle selected status for all with same attribute value
-                urn.forEach(function(u){
-                    comparativus.ui.setActive(urn, true);
-                });
+                comparativus.ui.setActive($(this).attr('comparativusURN'), true);
             }).mouseleave(function(){
-                //Obtain the comparativusURN attribute value
-                var urn = $(this).attr('comparativusURN');
-                //Create an array of all the urns in this attribute (split by equals sign)
-                urn = (urn.indexOf('=') != -1) ? urn.split("=") : [urn];
-                //On click toggle selected status for all with same attribute value
-                urn.forEach(function(u){
-                    comparativus.ui.setActive(urn, false);
-                });
-            })
+                comparativus.ui.setActive($(this).attr('comparativusURN'), false);
+            });
         },
 
         /**

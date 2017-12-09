@@ -19,6 +19,22 @@
         //Defines the curve used for the lines between nodes
         var curve = d3.line().curve(d3.curveBasis);
 
+        /**
+         * Checks if the provided mouse coordinates fall within the radius
+         * and position of the provided node. Returns true / false
+         * @param {Node} node 
+         * @param {Number} mouseX 
+         * @param {Number} mouseY 
+         * @returns {Boolean}
+         */
+        var clickedNode = function(node, mouseX, mouseY){
+            var dx = mouseX - parseFloat(node.attr('cx'));
+            var dy = mouseY - parseFloat(node.attr('cy'));
+            var r = parseFloat(node.attr('r'));
+            //Square radius, prevents expensive SQRT calculations
+            return (r * r > dx * dx + dy * dy);
+        }
+
     
         /**
          * Holds the public methods for the visualization
@@ -83,6 +99,18 @@
                 
                 //Now draw lines between them
                 comparativus.vis.drawLines();
+
+                //Add click handler on the canvas itself
+                /*
+                $('.svg-canvas').unbind('click').click(function(e){
+                    var offset = $(this).offset();
+                    //Relative to element ,and tranlsated to have 0,0 in the middle
+                    var relX = e.pageX - offset.left - w2;
+                    var relY = e.pageY - offset.top - h2;
+                    $('.node').each(function(node){
+                        console.log(clickedNode($(node), relX, relY));
+                    });
+                });*/
             },
             
             /**
@@ -149,7 +177,7 @@
                             .attr("comparativusURN", id + node.urn);
                         
                     });
-                });             
+                });            
             },
 
             /**

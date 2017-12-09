@@ -606,33 +606,12 @@ String.prototype.insertAt = function(index, string){
          */
         addMatchListeners: function(){
             $('[comparativusURN]').unbind('mouseenter mouseleave click').click(function(){
-                //Obtain the comparativusURN attribute value
-                var urn = $(this).attr('comparativusURN');
-                //Create an array of all the urns in this attribute (split by equals sign)
-                urn = (urn.indexOf('=') != -1) ? urn.split("=") : [urn];
-                //On click toggle selected status for all with same attribute value
-                urn.forEach(function(u){
-                    comparativus.ui.toggleSelected(u);
-                });
+                comparativus.ui.toggleSelected($(this).attr('comparativusURN'));
             }).mouseenter(function(){
-                //Obtain the comparativusURN attribute value
-                var urn = $(this).attr('comparativusURN');
-                //Create an array of all the urns in this attribute (split by equals sign)
-                urn = (urn.indexOf('=') != -1) ? urn.split("=") : [urn];
-                //On click toggle selected status for all with same attribute value
-                urn.forEach(function(u){
-                    comparativus.ui.setActive(urn, true);
-                });
+                comparativus.ui.setActive($(this).attr('comparativusURN'), true);
             }).mouseleave(function(){
-                //Obtain the comparativusURN attribute value
-                var urn = $(this).attr('comparativusURN');
-                //Create an array of all the urns in this attribute (split by equals sign)
-                urn = (urn.indexOf('=') != -1) ? urn.split("=") : [urn];
-                //On click toggle selected status for all with same attribute value
-                urn.forEach(function(u){
-                    comparativus.ui.setActive(urn, false);
-                });
-            })
+                comparativus.ui.setActive($(this).attr('comparativusURN'), false);
+            });
         },
 
         /**
@@ -1096,6 +1075,22 @@ String.prototype.insertAt = function(index, string){
         //Defines the curve used for the lines between nodes
         var curve = d3.line().curve(d3.curveBasis);
 
+        /**
+         * Checks if the provided mouse coordinates fall within the radius
+         * and position of the provided node. Returns true / false
+         * @param {Node} node 
+         * @param {Number} mouseX 
+         * @param {Number} mouseY 
+         * @returns {Boolean}
+         */
+        var clickedNode = function(node, mouseX, mouseY){
+            var dx = mouseX - parseFloat(node.attr('cx'));
+            var dy = mouseY - parseFloat(node.attr('cy'));
+            var r = parseFloat(node.attr('r'));
+            //Square radius, prevents expensive SQRT calculations
+            return (r * r > dx * dx + dy * dy);
+        }
+
     
         /**
          * Holds the public methods for the visualization
@@ -1160,6 +1155,18 @@ String.prototype.insertAt = function(index, string){
                 
                 //Now draw lines between them
                 comparativus.vis.drawLines();
+
+                //Add click handler on the canvas itself
+                /*
+                $('.svg-canvas').unbind('click').click(function(e){
+                    var offset = $(this).offset();
+                    //Relative to element ,and tranlsated to have 0,0 in the middle
+                    var relX = e.pageX - offset.left - w2;
+                    var relY = e.pageY - offset.top - h2;
+                    $('.node').each(function(node){
+                        console.log(clickedNode($(node), relX, relY));
+                    });
+                });*/
             },
             
             /**
@@ -1226,7 +1233,7 @@ String.prototype.insertAt = function(index, string){
                             .attr("comparativusURN", id + node.urn);
                         
                     });
-                });             
+                });            
             },
 
             /**
