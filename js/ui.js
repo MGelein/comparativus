@@ -260,7 +260,18 @@
             var parts = [];
 
             //Add the table header
-            parts.push("<thead><tr><th>IndexA</th><th>IndexB</th><th>Length</th><th>TextA</th><th>TextB</th><th>Ratio</th></tr></thead><tbody>");
+            var tableHeader = "<thead><tr>"
+                         + "<th>IndexA</th>"
+                         + "<th>IndexB</th>"
+                         + "<th>Length</th>"
+                         + "<th>TextA</th>"
+                         + "<th>TextB</th>"
+                         + "<th>Ratio</th>"
+                         + "</tr></thead>"
+                         + "<tbody>";
+            tableHeader = tableHeader.replace("IndexA", comparativus.text.getByID(idA).name);
+            tableHeader = tableHeader.replace("IndexB", comparativus.text.getByID(idB).name);
+            parts.push(tableHeader);
             
             //Stringbuilder for the parts of a TSV file
             var tsvParts = [];

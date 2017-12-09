@@ -195,7 +195,7 @@
                     //Get the angle for this text in the circle
                     tAngle = (tau - (padAngle * comparativus.text.amt())) * comparativus.text.getPercentLength(id);
                     //Now add an arc to the text holder
-                    var tColor = comparativus.vis.color(index);
+                    var tColor = comparativus.text.getVisColor(id);
                     textHolder.append("path")
                         .datum({startAngle: sAngle, endAngle: sAngle + tAngle})
                         .style("fill", tColor)

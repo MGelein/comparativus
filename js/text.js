@@ -144,6 +144,14 @@
             });
             //Now set the filepanel to the correct content
             comparativus.ui.setFilePanelContent(id, text);
+        },
+
+        /**
+         * Returns the color on the D3 ordinal color scale used for the visualization
+         * for the index of this text.
+         */
+        getVisColor: function(id){
+            return comparativus.vis.color(Object.keys(texts).indexOf(id));
         }
     }
 })(comparativus);

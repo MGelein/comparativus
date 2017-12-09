@@ -688,7 +688,18 @@ String.prototype.insertAt = function(index, string){
             var parts = [];
 
             //Add the table header
-            parts.push("<thead><tr><th>IndexA</th><th>IndexB</th><th>Length</th><th>TextA</th><th>TextB</th><th>Ratio</th></tr></thead><tbody>");
+            var tableHeader = "<thead><tr>"
+                         + "<th>IndexA</th>"
+                         + "<th>IndexB</th>"
+                         + "<th>Length</th>"
+                         + "<th>TextA</th>"
+                         + "<th>TextB</th>"
+                         + "<th>Ratio</th>"
+                         + "</tr></thead>"
+                         + "<tbody>";
+            tableHeader = tableHeader.replace("IndexA", comparativus.text.getByID(idA).name);
+            tableHeader = tableHeader.replace("IndexB", comparativus.text.getByID(idB).name);
+            parts.push(tableHeader);
             
             //Stringbuilder for the parts of a TSV file
             var tsvParts = [];
@@ -1257,7 +1268,7 @@ String.prototype.insertAt = function(index, string){
                     //Get the angle for this text in the circle
                     tAngle = (tau - (padAngle * comparativus.text.amt())) * comparativus.text.getPercentLength(id);
                     //Now add an arc to the text holder
-                    var tColor = comparativus.vis.color(index);
+                    var tColor = comparativus.text.getVisColor(id);
                     textHolder.append("path")
                         .datum({startAngle: sAngle, endAngle: sAngle + tAngle})
                         .style("fill", tColor)
@@ -1634,6 +1645,14 @@ String.prototype.insertAt = function(index, string){
             });
             //Now set the filepanel to the correct content
             comparativus.ui.setFilePanelContent(id, text);
+        },
+
+        /**
+         * Returns the color on the D3 ordinal color scale used for the visualization
+         * for the index of this text.
+         */
+        getVisColor: function(id){
+            return comparativus.vis.color(Object.keys(texts).indexOf(id));
         }
     }
 })(comparativus);;/**
