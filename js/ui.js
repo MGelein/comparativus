@@ -177,16 +177,49 @@
          * all the elements across the page
          */
         addMatchListeners: function(){
-            $('[comparativusURN').unbind('mouseenter mouseleave click').click(function(){
+            $('[comparativusURN]').unbind('mouseenter mouseleave click').click(function(){
+                //Obtain the comparativusURN attribute value
+                var urn = $(this).attr('comparativusURN');
+                //Create an array of all the urns in this attribute (split by equals sign)
+                urn = (urn.indexOf('=') != -1) ? urn.split("=") : [urn];
                 //On click toggle selected status for all with same attribute value
-                $('[comparativusURN="' + $(this).attr('comparativusURN') + '"]').toggleClass('selected');
+                urn.forEach(function(u){
+                    comparativus.ui.toggleSelected(u);
+                });
             }).mouseenter(function(){
-                //When the mouse enters add active class
-                $('[comparativusURN="' + $(this).attr('comparativusURN') + '"]').addClass('active');
+                //Obtain the comparativusURN attribute value
+                var urn = $(this).attr('comparativusURN');
+                //Create an array of all the urns in this attribute (split by equals sign)
+                urn = (urn.indexOf('=') != -1) ? urn.split("=") : [urn];
+                //On click toggle selected status for all with same attribute value
+                urn.forEach(function(u){
+                    comparativus.ui.setActive(urn, true);
+                });
             }).mouseleave(function(){
-                //When the mouse leaves remove active class
-                $('[comparativusURN="' + $(this).attr('comparativusURN') + '"]').removeClass('active');
+                //Obtain the comparativusURN attribute value
+                var urn = $(this).attr('comparativusURN');
+                //Create an array of all the urns in this attribute (split by equals sign)
+                urn = (urn.indexOf('=') != -1) ? urn.split("=") : [urn];
+                //On click toggle selected status for all with same attribute value
+                urn.forEach(function(u){
+                    comparativus.ui.setActive(urn, false);
+                });
             })
+        },
+
+        /**
+         * Toggles the selected class for any element that contains the provided urn as comparativusURN attribute
+         */
+        toggleSelected: function(urn){
+            $('[comparativusURN*="' + urn + '"]').toggleClass('selected');
+        },
+
+        /**
+         * Adds/removes the active class based on the provided comparativusURN attribute
+         */
+        setActive: function(urn, enabled){
+            if(enabled) $('[comparativusURN*="' + urn + '"]').addClass('active');
+            else $('[comparativusURN*="' + urn + '"]').removeClass('active');
         },
 
         /**

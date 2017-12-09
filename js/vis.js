@@ -16,6 +16,9 @@
             .innerRadius(h2 - 50)
             .outerRadius(h2);
 
+        //Defines the curve used for the lines between nodes
+        var curve = d3.line().curve(d3.curveBasis);
+
     
         /**
          * Holds the public methods for the visualization
@@ -74,9 +77,46 @@
                 
                 //First draw the text circle parts
                 comparativus.vis.drawTexts(textIDS);
-
+                
                 //Then draw the nodes on each text
                 comparativus.vis.drawNodes(textIDS);
+                
+                //Now draw lines between them
+                comparativus.vis.drawLines();
+            },
+            
+            /**
+             * Draws the lines between the nodes
+             */
+            drawLines: function(){
+                //Create a holder for the lines
+                var lineHolder = comparativus.vis.svg.append("g")
+                    .attr("transform", "translate(" + comparativus.vis.width / 2 + "," + comparativus.vis.height / 2 + ")");
+                
+                //Now go through all match objects
+                comparativus.matches.forEach(function(match){
+                    //Create empty array of points;
+                    var points = [];
+
+                    //Grab beginngin and end point
+                    var startNode = $('circle[comparativusURN="' + match.idA + match.urnA + '"]');
+                    var endNode = $('circle[comparativusURN="' + match.idB + match.urnB + '"]');
+                    
+                    //Push beginning point to pathData
+                    points.push([startNode.attr('cx'), startNode.attr('cy')]);
+                    //Push middle point to pathData
+                    points.push([0, 0]);
+
+                    //Push end point to pathData
+                    points.push([endNode.attr('cx'), endNode.attr('cy')]);
+
+                    //Then draw a ling with the generated pathData
+                    lineHolder.append("path")
+                            .attr('d', curve(points))
+                            .attr('comparativusURN', match.idA + match.urnA + "=" + match.idB + match.urnB)
+                            .attr('class', 'matchLine');
+
+                });
             },
 
             /**
@@ -110,15 +150,6 @@
                         
                     });
                 });             
-            },
-
-            /**
-             * Draws the lines between the nodes
-             */
-            drawLines: function(){
-                //Create a holder for the lines
-                var lineHolder = comparativus.vis.svg.append("g")
-                    .attr("transform", "translate(" + comparativus.vis.width / 2  + "," + comparativus.vis.height / 2 + ")");   
             },
 
             /**

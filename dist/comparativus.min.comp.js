@@ -192,6 +192,8 @@ var comparativus = {
             var m = {l:matchLength, indexA:iA, indexB:iB, textA:sA, textB:sB, r:comparativus.util.levDistRatio(sA, sB)};
             m.urnA = comparativus.urn.fromMatch(tA, m.indexA, m.l);
             m.urnB = comparativus.urn.fromMatch(tB, m.indexB, m.l);
+            m.idA = idA;
+            m.idB = idB;
             comparativus.matches.push(m);
             comparativus.addNodeFromMatch(m, idA, idB);
         }
@@ -603,16 +605,49 @@ String.prototype.insertAt = function(index, string){
          * all the elements across the page
          */
         addMatchListeners: function(){
-            $('[comparativusURN').unbind('mouseenter mouseleave click').click(function(){
+            $('[comparativusURN]').unbind('mouseenter mouseleave click').click(function(){
+                //Obtain the comparativusURN attribute value
+                var urn = $(this).attr('comparativusURN');
+                //Create an array of all the urns in this attribute (split by equals sign)
+                urn = (urn.indexOf('=') != -1) ? urn.split("=") : [urn];
                 //On click toggle selected status for all with same attribute value
-                $('[comparativusURN="' + $(this).attr('comparativusURN') + '"]').toggleClass('selected');
+                urn.forEach(function(u){
+                    comparativus.ui.toggleSelected(u);
+                });
             }).mouseenter(function(){
-                //When the mouse enters add active class
-                $('[comparativusURN="' + $(this).attr('comparativusURN') + '"]').addClass('active');
+                //Obtain the comparativusURN attribute value
+                var urn = $(this).attr('comparativusURN');
+                //Create an array of all the urns in this attribute (split by equals sign)
+                urn = (urn.indexOf('=') != -1) ? urn.split("=") : [urn];
+                //On click toggle selected status for all with same attribute value
+                urn.forEach(function(u){
+                    comparativus.ui.setActive(urn, true);
+                });
             }).mouseleave(function(){
-                //When the mouse leaves remove active class
-                $('[comparativusURN="' + $(this).attr('comparativusURN') + '"]').removeClass('active');
+                //Obtain the comparativusURN attribute value
+                var urn = $(this).attr('comparativusURN');
+                //Create an array of all the urns in this attribute (split by equals sign)
+                urn = (urn.indexOf('=') != -1) ? urn.split("=") : [urn];
+                //On click toggle selected status for all with same attribute value
+                urn.forEach(function(u){
+                    comparativus.ui.setActive(urn, false);
+                });
             })
+        },
+
+        /**
+         * Toggles the selected class for any element that contains the provided urn as comparativusURN attribute
+         */
+        toggleSelected: function(urn){
+            $('[comparativusURN*="' + urn + '"]').toggleClass('selected');
+        },
+
+        /**
+         * Adds/removes the active class based on the provided comparativusURN attribute
+         */
+        setActive: function(urn, enabled){
+            if(enabled) $('[comparativusURN*="' + urn + '"]').addClass('active');
+            else $('[comparativusURN*="' + urn + '"]').removeClass('active');
         },
 
         /**
@@ -1058,6 +1093,9 @@ String.prototype.insertAt = function(index, string){
             .innerRadius(h2 - 50)
             .outerRadius(h2);
 
+        //Defines the curve used for the lines between nodes
+        var curve = d3.line().curve(d3.curveBasis);
+
     
         /**
          * Holds the public methods for the visualization
@@ -1116,9 +1154,46 @@ String.prototype.insertAt = function(index, string){
                 
                 //First draw the text circle parts
                 comparativus.vis.drawTexts(textIDS);
-
+                
                 //Then draw the nodes on each text
                 comparativus.vis.drawNodes(textIDS);
+                
+                //Now draw lines between them
+                comparativus.vis.drawLines();
+            },
+            
+            /**
+             * Draws the lines between the nodes
+             */
+            drawLines: function(){
+                //Create a holder for the lines
+                var lineHolder = comparativus.vis.svg.append("g")
+                    .attr("transform", "translate(" + comparativus.vis.width / 2 + "," + comparativus.vis.height / 2 + ")");
+                
+                //Now go through all match objects
+                comparativus.matches.forEach(function(match){
+                    //Create empty array of points;
+                    var points = [];
+
+                    //Grab beginngin and end point
+                    var startNode = $('circle[comparativusURN="' + match.idA + match.urnA + '"]');
+                    var endNode = $('circle[comparativusURN="' + match.idB + match.urnB + '"]');
+                    
+                    //Push beginning point to pathData
+                    points.push([startNode.attr('cx'), startNode.attr('cy')]);
+                    //Push middle point to pathData
+                    points.push([0, 0]);
+
+                    //Push end point to pathData
+                    points.push([endNode.attr('cx'), endNode.attr('cy')]);
+
+                    //Then draw a ling with the generated pathData
+                    lineHolder.append("path")
+                            .attr('d', curve(points))
+                            .attr('comparativusURN', match.idA + match.urnA + "=" + match.idB + match.urnB)
+                            .attr('class', 'matchLine');
+
+                });
             },
 
             /**
@@ -1152,15 +1227,6 @@ String.prototype.insertAt = function(index, string){
                         
                     });
                 });             
-            },
-
-            /**
-             * Draws the lines between the nodes
-             */
-            drawLines: function(){
-                //Create a holder for the lines
-                var lineHolder = comparativus.vis.svg.append("g")
-                    .attr("transform", "translate(" + comparativus.vis.width / 2  + "," + comparativus.vis.height / 2 + ")");   
             },
 
             /**

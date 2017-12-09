@@ -210,6 +210,20 @@ text{
   stroke-width: 1px;
 }
 
+.matchLine{
+  fill: none;
+  stroke: rgba(0, 0, 0, 0.4);
+  stroke-width: 1px;
+}
+.matchLine.active{
+  stroke: rgba(160, 0, 0, 1.0);
+  stroke-width: 3px;
+}
+.matchLine.selected{
+  stroke: rgba(200, 0, 0, 1.0);
+  stroke-width: 4px;
+}
+
 .node.active{
   stroke-width: 1px;
   fill-opacity: 0.7;

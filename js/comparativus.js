@@ -192,6 +192,8 @@ var comparativus = {
             var m = {l:matchLength, indexA:iA, indexB:iB, textA:sA, textB:sB, r:comparativus.util.levDistRatio(sA, sB)};
             m.urnA = comparativus.urn.fromMatch(tA, m.indexA, m.l);
             m.urnB = comparativus.urn.fromMatch(tB, m.indexB, m.l);
+            m.idA = idA;
+            m.idB = idB;
             comparativus.matches.push(m);
             comparativus.addNodeFromMatch(m, idA, idB);
         }
