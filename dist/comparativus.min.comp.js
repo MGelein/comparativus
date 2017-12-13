@@ -622,8 +622,8 @@ String.prototype.insertAt = function(index, string){
                 //Then set the active class
                 comparativus.ui.setActive($(this).attr('comparativusURN'), true);
             }).mouseleave(function(e){
-                 //Special case for td cells. empty style attribute inline
-                 if($(this).prop('tagName') == "TD"){
+                //Special case for td cells. empty style attribute inline
+                if($(this).prop('tagName') == "TD"){
                     $('[comparativusURN*="' + $(this).attr('comparativusURN') + '"]').attr('style', '');
                 }
                 comparativus.ui.setActive($(this).attr('comparativusURN'), false);
