@@ -203,6 +203,9 @@ ID's
 #fileSelectionBody td{
   vertical-align: middle;
   text-align: center;
+  max-height: 2vh;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 #fileSelectionMenu .row{
   padding-bottom: 8px;
