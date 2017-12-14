@@ -60,6 +60,7 @@ var comparativus = {
      * it does this by triggering the comparisonButton
      */
     _c.autoexec = function(){
+        $('#comparisonButton').removeClass('disabled'); 
         if(comparativus.util.getURLVar('autoexec')) $('#comparisonButton').click();
     }
 

@@ -185,6 +185,17 @@ ID's
   padding: 8px;
 }
 
+#blackout{
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.4);
+  width: 100vw;
+  height: 100vh;
+  z-index: 43;
+  display: block;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
 #comparisonButton{
   margin-top: 2px;
 }
@@ -192,6 +203,9 @@ ID's
 #fileSelectionBody td{
   vertical-align: middle;
   text-align: center;
+}
+#fileSelectionMenu .row{
+  padding-bottom: 8px;
 }
 
 #resultTable{

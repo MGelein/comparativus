@@ -332,7 +332,7 @@
             //If its already loaded, continue
             
             //Start fading in the menu
-            $('#fileSelectionMenu').fadeIn();
+            $('#fileSelectionMenu').parent().fadeIn().offset({top: 0, left: 0});
             //And place it in the middle of the screen
             var leftOffset = ($('body').outerWidth() - $('#fileSelectionMenu').outerWidth()) / 2;
             $('#fileSelectionMenu').offset({left: leftOffset, top: 100});
@@ -368,7 +368,7 @@
                 //Add the selected class and get its id value
                 var id = $(this).toggleClass('selected').val();
                 //Count how many are selected, if enough allow loading of files
-                if($('#fileSelectionBody input.selected').length > 1){
+                if($('#fileSelectionBody input.selected').length > 1 && $('#fileSelectionBody input.selected').length < 3){
                     //If there are enough files, allow loading them
                     $('#loadSelectedButton').removeClass('disabled').unbind('click').click(function(){
                         //In case of debug, ignore the scenario
@@ -384,10 +384,10 @@
                             });
                         }
                         //When the file are starting to load ,fade out the menu
-                        $('#fileSelectionMenu').fadeOut(400, function(){$(this).offset({top:0, left: 0}).hide();});
+                        $('#fileSelectionMenu').parent().fadeOut(400, function(){$(this).offset({top:0, left: 0}).hide();});
                     });
                 }else{
-                    //If we have less than the minimum required files selected (<2)
+                    //If we have less than the minimum required files selected (>2<)
                     $('#loadSelectedButton').removeClass('disabled').addClass('disabled').unbind('click');
                 }
             });
