@@ -766,6 +766,23 @@ String.prototype.insertAt = function(index, string){
             var leftOffset = ($('body').outerWidth() - $('#fileSelectionMenu').outerWidth()) / 2;
             $('#fileSelectionMenu').offset({left: leftOffset, top: 100});
 
+            //Search handler
+            $('#fileSearch').keyup(function(){
+                var query = $('#fileSearch').val();
+                //Hide table rows that do not match, show those that do
+                $('#fileSelectionBody tr').each(function(){
+                    if($(this).text().toLowerCase().indexOf(query) == -1){
+                        $(this).fadeOut(200);
+                    }else{
+                        $(this).fadeIn(200);
+                    }
+                });
+            });
+            //Empty filter on click
+            $('#fileSearch').click(function(){
+                $(this).val('');
+            })
+
 
             //Set the contents of the fileSelectionBody
             var files = comparativus.file.list.files;
