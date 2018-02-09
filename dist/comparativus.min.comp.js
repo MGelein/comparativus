@@ -607,7 +607,7 @@ String.prototype.insertAt = function(index, string){
          */
         addMatchListeners: function(){
             $('[comparativusURN]').unbind('mouseenter mouseleave click').click(function(e){
-                comparativus.ui.toggleSelected($(this).attr('comparativusURN'));
+                comparativus.ui.setSelected($(this).attr('comparativusURN'), !$(this).hasClass('selected'));
                 //Briefly set pointer events to none
                 $(this).css('pointer-events', 'none');
                 //Then trigger a click on the next underlying element
@@ -636,6 +636,23 @@ String.prototype.insertAt = function(index, string){
          */
         toggleSelected: function(urn){
             $('[comparativusURN*="' + urn + '"]').toggleClass('selected');
+        },
+
+        /**
+         * Sets the selected status of the provided urn
+         */
+        setSelected: function(urn, enabled){
+            if(enabled){
+                $('[comparativusURN*="' + urn + '"]').removeClass('selected').addClass('selected').each(function(i , d){
+                  console.log(d, $(d).attr('style'));  
+                });
+                
+            }else{
+                $('[comparativusURN*="' + urn + '"]').removeClass('selected').each(function(i , d){
+                    console.log(d, $(d).attr('style'));  
+                  });
+                  
+            }
         },
 
         /**

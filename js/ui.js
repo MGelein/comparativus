@@ -178,7 +178,7 @@
          */
         addMatchListeners: function(){
             $('[comparativusURN]').unbind('mouseenter mouseleave click').click(function(e){
-                comparativus.ui.toggleSelected($(this).attr('comparativusURN'));
+                comparativus.ui.setSelected($(this).attr('comparativusURN'), !$(this).hasClass('selected'));
                 //Briefly set pointer events to none
                 $(this).css('pointer-events', 'none');
                 //Then trigger a click on the next underlying element
@@ -207,6 +207,17 @@
          */
         toggleSelected: function(urn){
             $('[comparativusURN*="' + urn + '"]').toggleClass('selected');
+        },
+
+        /**
+         * Sets the selected status of the provided urn
+         */
+        setSelected: function(urn, enabled){
+            if(enabled){
+                $('[comparativusURN*="' + urn + '"]').removeClass('selected').addClass('selected');
+            }else{
+                $('[comparativusURN*="' + urn + '"]').removeClass('selected');
+            }
         },
 
         /**
