@@ -643,15 +643,9 @@ String.prototype.insertAt = function(index, string){
          */
         setSelected: function(urn, enabled){
             if(enabled){
-                $('[comparativusURN*="' + urn + '"]').removeClass('selected').addClass('selected').each(function(i , d){
-                  console.log(d, $(d).attr('style'));  
-                });
-                
+                $('[comparativusURN*="' + urn + '"]').removeClass('selected').addClass('selected');
             }else{
-                $('[comparativusURN*="' + urn + '"]').removeClass('selected').each(function(i , d){
-                    console.log(d, $(d).attr('style'));  
-                  });
-                  
+                $('[comparativusURN*="' + urn + '"]').removeClass('selected');
             }
         },
 
