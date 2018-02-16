@@ -175,6 +175,14 @@ CUSTOM CLASSES
 /**
 ID's
 **/
+#resetHolder{
+  position: relative;
+  z-index: 5;
+  display: block;
+  top: -0.2em;
+  left: 0em;
+}
+
 #popover, #settingsHolder, #fileSelectionMenu{
   position: absolute;
   background-color: #fff;

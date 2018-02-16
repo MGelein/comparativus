@@ -463,6 +463,11 @@ String.prototype.insertAt = function(index, string){
                 comparativus.text.prepareAll();
             });
 
+            //Handler for the reset button
+            $('#resetButton').unbind('click').click(function(){
+                $('.selected').removeClass('selected');
+            });
+
             //set popover to have with relative to the main body
             $('[data-toggle="popover"]').unbind('popover').popover({
                 container: 'body'
