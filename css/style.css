@@ -157,6 +157,12 @@ CUSTOM CLASSES
   border: 1px solid #700;
   opacity: 1;
 }
+
+.selectionSummary{
+  border-top: 1px solid #ccc;
+  margin-top: 2px;
+}
+
 /*
 #resultTable td.active{
   background-color: rgb(191, 208, 255);

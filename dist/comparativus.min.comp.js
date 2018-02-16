@@ -449,6 +449,11 @@ String.prototype.insertAt = function(index, string){
         filerow: "",
 
         /**
+         * Holds the HTML for a single selection summary in the selectionSummary div
+         */
+        selectionSummary: "",
+
+        /**
          * This function adds the event listeners to the ui objects
          * and inputs. Basically, all the initialization of the UI
          */
@@ -476,6 +481,8 @@ String.prototype.insertAt = function(index, string){
             //Handler for the reset button
             $('#resetButton').unbind('click').click(function(){
                 $('.selected').removeClass('selected');
+                //Now a little while later, update the overview
+                setTimeout(comparativus.ui.updateOverview, 100);
             });
 
             //set popover to have with relative to the main body
@@ -503,6 +510,11 @@ String.prototype.insertAt = function(index, string){
                 comparativus.ui.filerow = data;
                 //Then do the call if necessary
                 if(doCall) comparativus.ui.showFileSelection();
+            });
+
+            //Load the selectionSummary template
+            $.get({url: './parts/selectionsummary.html', cache:false}).then(function(data){
+                comparativus.ui.selectionSummary = data;
             });
 
             //Assign the page button event handler
@@ -680,6 +692,8 @@ String.prototype.insertAt = function(index, string){
             }else{
                 $('[comparativusURN*="' + urn + '"]').removeClass('selected');
             }
+            //Wait a little, then update the selection, seems to prevent bugs
+            setTimeout(comparativus.ui.updateOverview, 100);
         },
 
         /**
@@ -688,6 +702,43 @@ String.prototype.insertAt = function(index, string){
         setActive: function(urn, enabled){
             if(enabled) $('[comparativusURN*="' + urn + '"]').addClass('active');
             else $('[comparativusURN*="' + urn + '"]').removeClass('active');
+        },
+
+        /**
+         * Updates the selection overview
+         */
+        updateOverview: function(){
+            //List of all selected matches
+            var selectedMatches = [];
+            //Go through all matches and find the selected ones
+            comparativus.matches.forEach(function(cMatch){
+                $('#resultTable .selected').each(function(i, td){
+                    const textID = $(td).attr('textid');
+                    const compURN = $(td).attr('comparativusurn').replace(textID, '');
+                    if(textID == cMatch.idA && compURN == cMatch.urnA
+                    || textID == cMatch.idB && compURN == cMatch.urnB){
+                        if(selectedMatches.indexOf(cMatch) == -1){
+                            selectedMatches.push(cMatch);//Only add a match once
+                        }
+                    }
+                });
+            });
+
+            //Go through each of the selected matches 
+            var html = "";
+            selectedMatches.forEach(function(match){
+                var matchTemplate = comparativus.ui.selectionSummary.replace(/%TEXTA%/g, match.textA);
+                matchTemplate = matchTemplate.replace(/%TEXTB%/g, match.textB);
+                matchTemplate = matchTemplate.replace(/%URNA%/g, match.urnA);
+                matchTemplate = matchTemplate.replace(/%URNB%/g, match.urnB);
+
+                //Add this div to the row   
+                html += matchTemplate;
+            });
+            
+            //Now finally update the DOM
+            $('#selectionOverview').html(html);
+            $('#showSelectionSummaryButton .badge').html(selectedMatches.length);
         },
 
         /**
