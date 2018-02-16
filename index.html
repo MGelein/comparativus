@@ -49,6 +49,10 @@
 
         <!-- Holds the reset selection button -->
         <div id="resetHolder">
+            <button class="btn btn-info" id="showSelectionSummaryButton">
+                <span class="glyphicon glyphicon-chevron-down"></span>&nbsp;
+                Show Selection
+            </button>
             <button class="btn btn-danger" id="resetButton">
                 <span class="glyphicon glyphicon-remove-sign"></span>&nbsp;
                 Reset Selection
@@ -57,6 +61,11 @@
                 <span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;
                 Save Selection to MARKUS <span class="small">(Coming Soon...)</span>
             </button>
+            <div id="selectionSummary" style="display:none;">
+                <div id="selectionOverview">
+
+                </div>
+            </div>
         </div>
 
         <!-- Main Content -->

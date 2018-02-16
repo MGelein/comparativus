@@ -34,6 +34,16 @@
                 comparativus.text.prepareAll();
             });
 
+            //Handler for the show selection but
+            $('#showSelectionSummaryButton').unbind('click').click(function(){
+                //If this is the chevron down (expand) button
+                if($(this).html().indexOf("glyphicon-chevron-down") != -1){
+                    comparativus.ui.showSelectionSummary();
+                }else{
+                    comparativus.ui.hideSelectionSummary();
+                }
+            });
+
             //Handler for the reset button
             $('#resetButton').unbind('click').click(function(){
                 $('.selected').removeClass('selected');
@@ -71,6 +81,24 @@
 
             //Forward the call to show the settings menu
             $('#settingsButton').click(comparativus.ui.showSettingsMenu);
+        },
+
+        /**
+         * Fades in the selection summary div
+         */
+        showSelectionSummary: function(){
+            $('#selectionSummary').fadeIn(400, function(){
+                $('#showSelectionSummaryButton .glyphicon').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+            });
+        },
+
+        /**
+         * Hides the selectionSummary div
+         */
+        hideSelectionSummary: function(){
+            $('#selectionSummary').fadeOut(400, function(){
+                $('#showSelectionSummaryButton .glyphicon').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+            });
         },
 
         /**
