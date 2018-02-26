@@ -101,6 +101,8 @@
         showSelectionSummary: function(){
             $('#selectionSummary').fadeIn(400, function(){
                 $('#showSelectionSummaryButton .glyphicon').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+                var html = $('#showSelectionSummaryButton').html();
+                $('#showSelectionSummaryButton').html(html.replace('Show', 'Hide'));
             });
         },
 
@@ -110,6 +112,8 @@
         hideSelectionSummary: function(){
             $('#selectionSummary').fadeOut(400, function(){
                 $('#showSelectionSummaryButton .glyphicon').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+                var html = $('#showSelectionSummaryButton').html();
+                $('#showSelectionSummaryButton').html(html.replace('Hide', 'Show'));
             });
         },
 

@@ -160,7 +160,11 @@ CUSTOM CLASSES
 
 .selectionSummary{
   border-top: 1px solid #ccc;
-  margin-top: 2px;
+  padding: 3px;
+}
+
+.border-right{
+  border-right: 1px solid #ccc;
 }
 
 /*
