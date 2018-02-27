@@ -66,6 +66,30 @@
             return Object.keys(texts);
         },
 
+
+        /**
+         * Returns the original HTML file now inculding the tags we wanted to export
+         */
+        getSaved: function(){
+            //Make an empty selection of matches we want to export
+            var selectedMatches = [];
+
+            //First get the complete selection of matches that we want to export
+            $('#selectionOverview .selectionSummary').each(function(index, summary){
+                var cells = $(summary).find('.border-right');
+                var cellA = cells.eq(0);
+                var cellB = cells.eq(1);
+                var textA = cellA.attr('text-id');
+                var textB = cellB.attr('text-id');
+                var urnA  = cellA.attr('match-urn');
+                var urnB  = cellB.attr('match-urn');
+                var compA = textA + "-" + urnA;
+                var compB = textB + "-" + urnB;
+            });
+            
+            //comparativus.urn.toIndeces()
+        },
+
         /**
          * REturns a fraction [0-1] of the length this text takes of the totla
          * lenght of all texts compared
