@@ -601,7 +601,14 @@ String.prototype.insertAt = function(index, string){
             //Fade out the old page
             oldPage.removeClass('active').fadeOut();
             newPage.addClass('active').fadeIn();
-        },  
+        },
+
+        /**
+         * Switches to the provided page by name (VIS|TEXT|TABLE)
+         */
+        switchPageByName: function(page){
+            $('#' + page.toLowerCase() + "PageButton").click();
+        },
 
         /**
          * Returns the opening or closing matchmark of a match (dependent on the 
@@ -735,6 +742,8 @@ String.prototype.insertAt = function(index, string){
                 matchTemplate = matchTemplate.replace(/%TEXTB%/g, match.textB);
                 matchTemplate = matchTemplate.replace(/%URNA%/g, match.urnA);
                 matchTemplate = matchTemplate.replace(/%URNB%/g, match.urnB);
+                matchTemplate = matchTemplate.replace(/%IDA%/g, match.idA);
+                matchTemplate = matchTemplate.replace(/%IDB%/g, match.idB);
 
                 //Add this div to the row   
                 html += matchTemplate;
@@ -743,6 +752,53 @@ String.prototype.insertAt = function(index, string){
             //Now finally update the DOM
             $('#selectionOverview').html(html);
             $('#showSelectionSummaryButton .badge').html(selectedMatches.length);
+        },
+
+        /**
+         * Shows the match the provided button belongs to in the visualisation
+         */
+        showInVis: function(button){
+            var textID = $(button).parent().attr('text-id');
+            var matchURN = $(button).parent().attr('match-urn');
+            comparativus.ui.showInPage(textID, matchURN, "VIS");
+        },
+
+        /**
+         * Shows the match the provided button belongs to in the text
+         */
+        showInText: function(button){
+            var textID = $(button).parent().attr('text-id');
+            var matchURN = $(button).parent().attr('match-urn');
+            comparativus.ui.showInPage(textID, matchURN, "TEXT");
+        },
+
+        /**
+         * Shows the match the provided button belongs to in the table
+         */
+        showInTable: function(button){
+            var textID = $(button).parent().attr('text-id');
+            var matchURN = $(button).parent().attr('match-urn');
+            comparativus.ui.showInPage(textID, matchURN, "TABLE");
+        },
+
+        /**
+         * Shows the match described by the provided URN on the provided 
+         * page (VIS|TEXT|TABLE)
+         */
+        showInPage(textid, urn, page){
+            //Switch to the right name
+            comparativus.ui.switchPageByName(page);
+            //If we are in the text page, switch to the right tab
+            if(page.toLowerCase() == 'text'){
+                $('#textPage a[href="#text' + textid + 'Holder"').click();
+            }
+
+            //Once we're on the right page, scroll to the ones we're looking for
+            //and highlight them
+            setTimeout(function(){
+                $('[comparativusurn="' + textid  + urn + '"').addClass('active').get(0).scrollIntoView();
+                window.scrollBy(0, -50);
+            }, 500);
         },
 
         /**

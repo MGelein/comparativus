@@ -170,7 +170,6 @@ CUSTOM CLASSES
 /*
 #resultTable td.active{
   background-color: rgb(191, 208, 255);
-  
 }*/
 
 #resultTable td.selected{
@@ -185,6 +184,12 @@ CUSTOM CLASSES
 /**
 ID's
 **/
+#selectionOverview{
+  max-height: 20vh;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
 #resetHolder{
   position: relative;
   z-index: 5;
