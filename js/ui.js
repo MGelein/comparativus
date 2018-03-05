@@ -15,6 +15,11 @@
         matchrow: "",
 
         /**
+         * Holds the HTML for a single matchmark in a markus document that needs to link to multiple other documents
+         */
+        markusmark: "",
+
+        /**
          * Holds the HTML for a singlefilerow in the fileSelectionMenu
          */
         filerow: "",
@@ -66,6 +71,11 @@
             //Load the matchmark template
             $.get({url: './parts/matchmark.html', cache:false}).then(function(data){
                 comparativus.ui.matchmark = data;
+            });
+
+            //Load the markusmark template
+            $.get({url: './parts/markusmark.html', cache:false}).then(function(data){
+                comparativus.ui.markusmark = data;
             });
 
             //Load the matchrow template
@@ -192,6 +202,18 @@
             var closingClass = "glyphicon glyphicon-chevron-right"
             var mark = comparativus.ui.matchmark.replace(/%MARK%/g, ((opening) ? openingClass : closingClass));
             return mark.replace(/%URN%/g, urnID);
+        },
+
+        /**
+         * Returns the opeining or closung matchmark of a match (dependent on the state
+         * of the passed parameter boolean). Also saves what this matchmark links to
+         */
+        getMarkusMark: function(opening, urnID, linksTo){
+            var openingClass = "glyphicon glyphicon-chevron-left";
+            var closingClass = "glyphicon glyphicon-chevron-right"
+            var mark = comparativus.ui.markusmark.replace(/%MARK%/g, ((opening) ? openingClass : closingClass));
+            mark =  mark.replace(/%URN%/g, urnID);
+            return mark.replace(/%LINKS%/g, linksTo);
         },
 
         /**
