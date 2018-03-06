@@ -1669,6 +1669,12 @@ String.prototype.insertAt = function(index, string){
             do{
                 //First find an occurence
                 cIndex = text.indexOf(c, cIndex + 1);
+                //Break out of the loop if you can't find it
+                if(cIndex == -1) {
+                    console.error("Can't find character '" + c + "' in text for urn: " + urn);
+                    console.log(text);
+                    break;
+                }
                 //Then check preceding '<' and '>'
                 ltIndex = text.lastIndexOf('<', cIndex);
                 gtIndex = text.lastIndexOf('>', cIndex);
@@ -1856,44 +1862,10 @@ String.prototype.insertAt = function(index, string){
                 var closeA = comparativus.ui.getMarkusMark(false, cMatch.compA, cMatch.compB);
                 var closeB = comparativus.ui.getMarkusMark(false, cMatch.compB, cMatch.compA);
 
-                //Now insert the marks into text A, if the exact same matchmark is not yet in there
-                if(textA.indexOf('comparativusURN="' + cMatch.compA + '"') == -1){
-                    texts[cMatch.idA] = textA.substring(0, indecesA[0]) + openA
-                                    +   textA.substring(indecesA[0], indecesA[1]) 
-                                    +   closeA + textA.substring(indecesA[1]);
-                }else{
-                    //Add data to the existing tag
-
-                    //Get ref to the spad and set content
-                    var text = comparativus.util.getScratch();
-                    comparativus.util.setScratch(textA);
-
-                    //Find any existing tag in it
-                    var tag = text.find('[comparativusURN="' + cMatch.compA + '"]');
-                    var list = tag.attr('comparativusLINKS');
-                    list = list ? list : [];
-                    tag.attr('comparativusLINKS', list.length > 0 ? "|" : "" + cMatch.compB);
-                    texts[cMatch.idA] = text.html();
-                }
-                //Same thing for textB
-                if(textB.indexOf('comparativusURN="' + cMatch.compB + '"') == -1){
-                    texts[cMatch.idB] = textB.substring(0, indecesB[0]) + openB
-                                +   textB.substring(indecesB[0], indecesB[1]) 
-                                +   closeB+ textB.substring(indecesB[1]);
-                }else{
-                    //Add data to the existing tag
-
-                    //Get ref to the spad and set content
-                    var text = comparativus.util.getScratch();
-                    comparativus.util.setScratch(textB);
-
-                    //Find any existing tag in it
-                    var tag = text.find('[comparativusURN="' + cMatch.compB + '"]');
-                    var list = tag.attr('comparativusLINKS');
-                    list = list ? list : [];
-                    tag.attr('comparativusLINKS', list.length > 0 ? "|" : "" + cMatch.compA);
-                    texts[cMatch.idB] = text.html();
-                }
+                //Add the mark to the textA
+                texts[cMatch.idA] = comparativus.text.addTagToText(textA, indecesA, openA, closeA, cMatch.compA, cMatch.compB);
+                //Add the mark to the textB
+                texts[cMatch.idB] = comparativus.text.addTagToText(textB, indecesB, openB, closeB, cMatch.compB, cMatch.compA);
             }
 
             //Now that all matches have been added, the texts should be done
@@ -1901,6 +1873,30 @@ String.prototype.insertAt = function(index, string){
             nWin.document.write("<pre>" +
             texts[Object.keys(texts)[1]]
             + "</pre>");
+        },
+
+        /**
+         * Adds the provided match to the provided text
+         * and returns the text once the marks have been added
+         */
+        addTagToText: function(text, indeces, openMark, closeMark, compA, compB){
+            //Now insert the marks into text A, if the exact same matchmark is not yet in there
+            if(text.indexOf('comparativusURN="' + compA + '"') == -1){
+                var result =  text.substring(0, indeces[0]) + openMark + text.substring(indeces[0], indeces[1]) + closeMark + text.substring(indeces[1]);
+                return result;
+            }else{//Add data to the existing tag
+                //Get ref to the span and set content
+                var sp = comparativus.util.getScratch();
+                comparativus.util.setScratch(text);
+
+                //Find any existing tag in it
+                var tag = sp.find('[comparativusURN="' + compA + '"]');
+                var list = tag.attr('comparativusLINKS');
+                list = list ? list : [];
+                tag.attr('comparativusLINKS', list.length > 0 ? "|" : "" + compB);
+                var result = sp.html();
+                return result;
+            }
         },
 
         /**

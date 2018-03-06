@@ -51,6 +51,12 @@
             do{
                 //First find an occurence
                 cIndex = text.indexOf(c, cIndex + 1);
+                //Break out of the loop if you can't find it
+                if(cIndex == -1) {
+                    console.error("Can't find character '" + c + "' in text for urn: " + urn);
+                    console.log(text);
+                    break;
+                }
                 //Then check preceding '<' and '>'
                 ltIndex = text.lastIndexOf('<', cIndex);
                 gtIndex = text.lastIndexOf('>', cIndex);
