@@ -1880,20 +1880,19 @@ String.prototype.insertAt = function(index, string){
          * and returns the text once the marks have been added
          */
         addTagToText: function(text, indeces, openMark, closeMark, compA, compB){
+            //Get ref to the span and set content
+            var sp = comparativus.util.getScratch();
+            comparativus.util.setScratch(text);
+            //Try to find the tag if it has already been added
+            var tag = sp.find('[comparativusURN="' + compA + '"]');
+
             //Now insert the marks into text A, if the exact same matchmark is not yet in there
-            if(text.indexOf('comparativusURN="' + compA + '"') == -1){
+            if(tag.length < 1){
                 var result =  text.substring(0, indeces[0]) + openMark + text.substring(indeces[0], indeces[1]) + closeMark + text.substring(indeces[1]);
                 return result;
             }else{//Add data to the existing tag
-                //Get ref to the span and set content
-                var sp = comparativus.util.getScratch();
-                comparativus.util.setScratch(text);
-
-                //Find any existing tag in it
-                var tag = sp.find('[comparativusURN="' + compA + '"]');
                 var list = tag.attr('comparativusLINKS');
-                list = list ? list : [];
-                tag.attr('comparativusLINKS', list.length > 0 ? "|" : "" + compB);
+                tag.attr('comparativusLINKS', list + "|" + compB);
                 var result = sp.html();
                 return result;
             }
