@@ -315,6 +315,21 @@ var comparativus = {
          */
         isDebug: function(){
             return (window.location.href.indexOf('localhost') != -1);
+        },
+
+        /**
+         * Sets the scracthpad div to the provided content string. This is useful for JQuery manipulation
+         * @param {String} text the html content to set this div to
+         */
+        setScratch: function(text){
+            $('#scratchpad').html(text);
+        },
+
+        /**
+         * Returns a JQ ref to the scratchpad div
+         */
+        getScratch: function(){
+            return $('#scratchpad');
         }
     };
 })(comparativus);
@@ -1847,11 +1862,16 @@ String.prototype.insertAt = function(index, string){
                                     +   textA.substring(indecesA[0], indecesA[1]) 
                                     +   closeA + textA.substring(indecesA[1]);
                 }else{
-                    //Add data to the exsiting tag
-                    var text = $($.parseHTML(textA));
+                    //Add data to the existing tag
+
+                    //Get ref to the spad and set content
+                    var text = comparativus.util.getScratch();
+                    comparativus.util.setScratch(textA);
+
+                    //Find any existing tag in it
                     var tag = text.find('[comparativusURN="' + cMatch.compA + '"]');
-                    console.log(text);
                     var list = tag.attr('comparativusLINKS');
+                    list = list ? list : [];
                     tag.attr('comparativusLINKS', list.length > 0 ? "|" : "" + cMatch.compB);
                     texts[cMatch.idA] = text.html();
                 }
@@ -1861,11 +1881,16 @@ String.prototype.insertAt = function(index, string){
                                 +   textB.substring(indecesB[0], indecesB[1]) 
                                 +   closeB+ textB.substring(indecesB[1]);
                 }else{
-                    //Add data to the exsiting tag
-                    var text = $($.parseHTML(textB));
+                    //Add data to the existing tag
+
+                    //Get ref to the spad and set content
+                    var text = comparativus.util.getScratch();
+                    comparativus.util.setScratch(textB);
+
+                    //Find any existing tag in it
                     var tag = text.find('[comparativusURN="' + cMatch.compB + '"]');
-                    console.log(tag);
                     var list = tag.attr('comparativusLINKS');
+                    list = list ? list : [];
                     tag.attr('comparativusLINKS', list.length > 0 ? "|" : "" + cMatch.compA);
                     texts[cMatch.idB] = text.html();
                 }

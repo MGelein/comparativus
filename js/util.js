@@ -64,6 +64,21 @@
          */
         isDebug: function(){
             return (window.location.href.indexOf('localhost') != -1);
+        },
+
+        /**
+         * Sets the scracthpad div to the provided content string. This is useful for JQuery manipulation
+         * @param {String} text the html content to set this div to
+         */
+        setScratch: function(text){
+            $('#scratchpad').html(text);
+        },
+
+        /**
+         * Returns a JQ ref to the scratchpad div
+         */
+        getScratch: function(){
+            return $('#scratchpad');
         }
     };
 })(comparativus);
