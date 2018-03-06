@@ -1157,9 +1157,9 @@ String.prototype.insertAt = function(index, string){
         /**
          * Saves the file with the provided id back to the markus server.
          */
-        saveToID: function (id) {
+        saveToID: function (id, data) {
             //Create a new File Object to send in the POST method
-            var file = new File([comparativus.text.getByID(id).data], "foo.txt", {
+            var file = new File([data], "foo.txt", {
                 type: "text/plain",
             });
 
@@ -1833,8 +1833,8 @@ String.prototype.insertAt = function(index, string){
                     urnA: cellA.attr('match-urn'),
                     urnB: cellB.attr('match-urn'),
                 }
-                cMatch.compA = cMatch.idA + cMatch.urnA;
-                cMatch.compB = cMatch.idB + cMatch.urnB;
+                cMatch.compA = cMatch.idA + "@" + cMatch.urnA;
+                cMatch.compB = cMatch.idB + "@" + cMatch.urnB;
                 selectedMatches.push(cMatch);
                 //Add the id's of the two texts if they haven't been added yet
                 if (usedTexts.indexOf(cMatch.idA) == -1) usedTexts.push(cMatch.idA);

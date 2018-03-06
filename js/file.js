@@ -124,9 +124,9 @@
         /**
          * Saves the file with the provided id back to the markus server.
          */
-        saveToID: function (id) {
+        saveToID: function (id, data) {
             //Create a new File Object to send in the POST method
-            var file = new File([comparativus.text.getByID(id).data], "foo.txt", {
+            var file = new File([data], "foo.txt", {
                 type: "text/plain",
             });
 

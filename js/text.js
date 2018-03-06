@@ -87,8 +87,8 @@
                     urnA: cellA.attr('match-urn'),
                     urnB: cellB.attr('match-urn'),
                 }
-                cMatch.compA = cMatch.idA + cMatch.urnA;
-                cMatch.compB = cMatch.idB + cMatch.urnB;
+                cMatch.compA = cMatch.idA + "@" + cMatch.urnA;
+                cMatch.compB = cMatch.idB + "@" + cMatch.urnB;
                 selectedMatches.push(cMatch);
                 //Add the id's of the two texts if they haven't been added yet
                 if (usedTexts.indexOf(cMatch.idA) == -1) usedTexts.push(cMatch.idA);
