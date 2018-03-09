@@ -1159,7 +1159,7 @@ String.prototype.insertAt = function(index, string){
          */
         saveToID: function (id, data) {
             //Create a new File Object to send in the POST method
-            var file = new File([data], "foo.txt", {
+            var file = new File([data], id + ".html", {
                 type: "text/plain",
             });
 
@@ -1867,12 +1867,15 @@ String.prototype.insertAt = function(index, string){
                 //Add the mark to the textB
                 texts[cMatch.idB] = comparativus.text.addTagToText(textB, indecesB, openB, closeB, cMatch.compB, cMatch.compA);
             }
-
-            //Now that all matches have been added, the texts should be done
-            var nWin = window.open();
-            nWin.document.write("<pre>" +
-            texts[Object.keys(texts)[1]]
-            + "</pre>");
+            /*
+            //Now that all matches have been added, the texts should be done*/
+            var ids = Object.keys(texts);
+            for(var i = 0; i < ids.length; i++){
+                var nWin = window.open();
+                nWin.document.write("<pre>" +
+                texts[Object.keys(texts)[1]]
+                + "</pre>");
+            }
         },
 
         /**

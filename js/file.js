@@ -126,7 +126,7 @@
          */
         saveToID: function (id, data) {
             //Create a new File Object to send in the POST method
-            var file = new File([data], "foo.txt", {
+            var file = new File([data], id + ".html", {
                 type: "text/plain",
             });
 
