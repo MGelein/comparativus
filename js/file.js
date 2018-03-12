@@ -31,15 +31,19 @@
             var idA = '5a15793ed272f335aab275af'
             comparativus.file.setLoadedStatus(idA, false);
             $.ajax('data/Mencius.txt', {
-                cache: false, success: function (data, plain) {
-                    comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data, plain);
+                cache: false, success: function (data) {
+                    comparativus.util.setScratch(data);
+                    var sp = comparativus.util.getScratch();
+                    comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data, sp.text());
                 }
             });
             var idB = '5a1579a3d272f335aab275b0';
             comparativus.file.setLoadedStatus(idB, false);
             $.ajax('data/ZGZY.txt', {
-                cache: false, success: function (data, plain) {
-                    comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data, plain);
+                cache: false, success: function (data) {
+                    comparativus.util.setScratch(data);
+                    var sp = comparativus.util.getScratch();
+                    comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data, sp.text());
                 }
             });
         },

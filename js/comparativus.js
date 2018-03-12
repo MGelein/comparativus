@@ -44,7 +44,7 @@ var comparativus = {
      * Called to start the comparison between the two texts. This
      */
     _c.startComparison = function () {
-        console.log("[comparativus.js]: Start Comparison");
+        //console.log("[comparativus.js]: Start Comparison");
         comparativus.minMatchLength = comparativus.ui.getMinMatchSize();
 
         comparativus.matches = [];
@@ -70,7 +70,7 @@ var comparativus = {
      * two ids that have been provided below.
      */
     _c.runSingleComparison = function (idA, idB) {
-        console.log("[comparativus.js]: Running comparison on: " + idA + " and " + idB);
+        //console.log("[comparativus.js]: Running comparison on: " + idA + " and " + idB);
         var dictA = comparativus.dicts[idA];
         var dictB = comparativus.dicts[idB];
         comparativus.nodes[idA] = [];
@@ -80,7 +80,7 @@ var comparativus = {
         var overlap = [];
         var overlapSeedAmt = 0;
         var totalSeedAmt = 0;
-        console.log("[comparativus.js]: Found " + seedAmt + " seeds in dictA");
+        //console.log("[comparativus.js]: Found " + seedAmt + " seeds in dictA");
         for (var i = 0; i < seedAmt; i++) {
             totalSeedAmt += dictA[seeds[i]].length;
             if (seeds[i] in dictB) {
@@ -97,11 +97,11 @@ var comparativus = {
             totalSeedAmt += dictB[seeds[i]].length;
         }
         //console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
-        console.log("[comparativus.js]: Comparison done, showing results");
+        //console.log("[comparativus.js]: Comparison done, showing results");
         comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt);
         comparativus.ui.showResultTable(comparativus.matches, idA, idB);
         comparativus.text.toDecorate = 2;
-        console.log("[comparativus.js]: Starting text decoration");
+        //console.log("[comparativus.js]: Starting text decoration");
         comparativus.text.decorate(idA, comparativus.nodes[idA]);
         comparativus.text.decorate(idB, comparativus.nodes[idB]);
 
@@ -250,7 +250,7 @@ var comparativus = {
             matchAIndex = occA[i];
             for (var j = 0; j < maxB; j++) {
                 matchBIndex = occB[j];
-                console.log("[comparativus.js]: Expanding a single match");
+                //console.log("[comparativus.js]: Expanding a single match");
                 expandMatch(matchAIndex, matchBIndex, idA, idB);
             }
         }

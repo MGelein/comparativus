@@ -44,7 +44,7 @@ var comparativus = {
      * Called to start the comparison between the two texts. This
      */
     _c.startComparison = function () {
-        console.log("[comparativus.js]: Start Comparison");
+        //console.log("[comparativus.js]: Start Comparison");
         comparativus.minMatchLength = comparativus.ui.getMinMatchSize();
 
         comparativus.matches = [];
@@ -70,7 +70,7 @@ var comparativus = {
      * two ids that have been provided below.
      */
     _c.runSingleComparison = function (idA, idB) {
-        console.log("[comparativus.js]: Running comparison on: " + idA + " and " + idB);
+        //console.log("[comparativus.js]: Running comparison on: " + idA + " and " + idB);
         var dictA = comparativus.dicts[idA];
         var dictB = comparativus.dicts[idB];
         comparativus.nodes[idA] = [];
@@ -80,7 +80,7 @@ var comparativus = {
         var overlap = [];
         var overlapSeedAmt = 0;
         var totalSeedAmt = 0;
-        console.log("[comparativus.js]: Found " + seedAmt + " seeds in dictA");
+        //console.log("[comparativus.js]: Found " + seedAmt + " seeds in dictA");
         for (var i = 0; i < seedAmt; i++) {
             totalSeedAmt += dictA[seeds[i]].length;
             if (seeds[i] in dictB) {
@@ -97,11 +97,11 @@ var comparativus = {
             totalSeedAmt += dictB[seeds[i]].length;
         }
         //console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
-        console.log("[comparativus.js]: Comparison done, showing results");
+        //console.log("[comparativus.js]: Comparison done, showing results");
         comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt);
         comparativus.ui.showResultTable(comparativus.matches, idA, idB);
         comparativus.text.toDecorate = 2;
-        console.log("[comparativus.js]: Starting text decoration");
+        //console.log("[comparativus.js]: Starting text decoration");
         comparativus.text.decorate(idA, comparativus.nodes[idA]);
         comparativus.text.decorate(idB, comparativus.nodes[idB]);
 
@@ -250,7 +250,7 @@ var comparativus = {
             matchAIndex = occA[i];
             for (var j = 0; j < maxB; j++) {
                 matchBIndex = occB[j];
-                console.log("[comparativus.js]: Expanding a single match");
+                //console.log("[comparativus.js]: Expanding a single match");
                 expandMatch(matchAIndex, matchBIndex, idA, idB);
             }
         }
@@ -1078,15 +1078,19 @@ String.prototype.insertAt = function(index, string){
             var idA = '5a15793ed272f335aab275af'
             comparativus.file.setLoadedStatus(idA, false);
             $.ajax('data/Mencius.txt', {
-                cache: false, success: function (data, plain) {
-                    comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data, plain);
+                cache: false, success: function (data) {
+                    comparativus.util.setScratch(data);
+                    var sp = comparativus.util.getScratch();
+                    comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data, sp.text());
                 }
             });
             var idB = '5a1579a3d272f335aab275b0';
             comparativus.file.setLoadedStatus(idB, false);
             $.ajax('data/ZGZY.txt', {
-                cache: false, success: function (data, plain) {
-                    comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data, plain);
+                cache: false, success: function (data) {
+                    comparativus.util.setScratch(data);
+                    var sp = comparativus.util.getScratch();
+                    comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data, sp.text());
                 }
             });
         },
@@ -1781,6 +1785,7 @@ String.prototype.insertAt = function(index, string){
          * Adds a new text to the text storage
          */
         add: function (text_id, text_name, text_content, text_plain) {
+            console.log(text_plain);
             texts[text_id] = {
                 name: text_name,    //the name of the text
                 data: text_content, //the html content of the text precleaned
