@@ -132,7 +132,7 @@ CUSTOM CLASSES
   margin: 0px;
 }
 
-.matchMark{
+.matchMark, .matchMarkStart, .matchMarkEnd{
   opacity: 0.5;
   background-color: #C00;
   color: #fff;
@@ -146,6 +146,10 @@ CUSTOM CLASSES
   margin-right: 2px;
   padding-left: 0.5em;
   padding-right: 0.5em;
+}
+
+.matchMarkStart, .matchMarkEnd{
+  background-color: #0C0;
 }
 
 .matchMark.active{
