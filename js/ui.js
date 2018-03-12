@@ -79,11 +79,11 @@
             });
 
             //Load the markusmark template
-            $.get({url: './parts/markusmarkopen.html', cache:false}).then(function(data){
+            $.get({url: './parts/markusmarkstart.html', cache:false}).then(function(data){
                 comparativus.ui.markusmarkopen = data;
             });
             //Load the markusmark template
-            $.get({url: './parts/markusmarkclose.html', cache:false}).then(function(data){
+            $.get({url: './parts/markusmarkend.html', cache:false}).then(function(data){
                 comparativus.ui.markusmarkclose = data;
             });
 
@@ -218,7 +218,7 @@
          * of the passed parameter boolean). Also saves what this matchmark links to
          */
         getMarkusMark: function(opening, urnID, linksTo){
-            var mark = opening ? markusmarkopen : markusmarkclose;
+            var mark = opening ? comparativus.ui.markusmarkopen : comparativus.ui.markusmarkclose;
             mark =  mark.replace(/%URN%/g, urnID);
             return mark.replace(/%LINKS%/g, linksTo);
         },

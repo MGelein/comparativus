@@ -125,10 +125,8 @@
             //Now that all matches have been added, the texts should be done*/
             var ids = Object.keys(texts);
             for(var i = 0; i < ids.length; i++){
-                var nWin = window.open();
-                nWin.document.write("<pre>" +
-                texts[Object.keys(texts)[1]]
-                + "</pre>");
+                const id = ids[i];
+                comparativus.file.saveByName(comparativus.text.getByID(id).name, texts[id]);
             }
         },
 

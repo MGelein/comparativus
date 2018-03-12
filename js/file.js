@@ -124,7 +124,7 @@
         /**
          * Saves the file with the provided id back to the markus server.
          */
-        saveToID: function (filename, fileData) {
+        saveByName: function (fileName, fileData) {
             //Create a new File Object to send in the POST method
             var blob = new Blob([fileData], {type: "text/plain;charset=utf-8"});
             var file = new File([blob], fileName)

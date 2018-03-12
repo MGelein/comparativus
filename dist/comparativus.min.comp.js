@@ -523,11 +523,11 @@ String.prototype.insertAt = function(index, string){
             });
 
             //Load the markusmark template
-            $.get({url: './parts/markusmarkopen.html', cache:false}).then(function(data){
+            $.get({url: './parts/markusmarkstart.html', cache:false}).then(function(data){
                 comparativus.ui.markusmarkopen = data;
             });
             //Load the markusmark template
-            $.get({url: './parts/markusmarkclose.html', cache:false}).then(function(data){
+            $.get({url: './parts/markusmarkend.html', cache:false}).then(function(data){
                 comparativus.ui.markusmarkclose = data;
             });
 
@@ -662,7 +662,7 @@ String.prototype.insertAt = function(index, string){
          * of the passed parameter boolean). Also saves what this matchmark links to
          */
         getMarkusMark: function(opening, urnID, linksTo){
-            var mark = opening ? markusmarkopen : markusmarkclose;
+            var mark = opening ? comparativus.ui.markusmarkopen : comparativus.ui.markusmarkclose;
             mark =  mark.replace(/%URN%/g, urnID);
             return mark.replace(/%LINKS%/g, linksTo);
         },
@@ -1164,7 +1164,7 @@ String.prototype.insertAt = function(index, string){
         /**
          * Saves the file with the provided id back to the markus server.
          */
-        saveToID: function (filename, fileData) {
+        saveByName: function (fileName, fileData) {
             //Create a new File Object to send in the POST method
             var blob = new Blob([fileData], {type: "text/plain;charset=utf-8"});
             var file = new File([blob], fileName)
@@ -1876,10 +1876,8 @@ String.prototype.insertAt = function(index, string){
             //Now that all matches have been added, the texts should be done*/
             var ids = Object.keys(texts);
             for(var i = 0; i < ids.length; i++){
-                var nWin = window.open();
-                nWin.document.write("<pre>" +
-                texts[Object.keys(texts)[1]]
-                + "</pre>");
+                const id = ids[i];
+                comparativus.file.saveByName(comparativus.text.getByID(id).name, texts[id]);
             }
         },
 
