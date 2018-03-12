@@ -1,7 +1,7 @@
 /**
 CSS for the matchmarks from comparativus
 **/
-.matchMark{
+.matchMarkEnd, .matchMarkStart{
     opacity: 0.5;
     background-color: #C00;
     color: #fff;
@@ -17,6 +17,6 @@ CSS for the matchmarks from comparativus
     padding-right: 0.5em;
   }
   
-  .matchMark.active{
+  .matchMarkEnd.active, .matchMarkStart.active{
     opacity: 1;
   }

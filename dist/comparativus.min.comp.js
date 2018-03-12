@@ -461,7 +461,12 @@ String.prototype.insertAt = function(index, string){
         /**
          * Holds the HTML for a single matchmark in a markus document that needs to link to multiple other documents
          */
-        markusmark: "",
+        markusmarkopen: "",
+
+        /**
+         * Holds the HTML for a single closing matchmark for Markus export
+         */
+        markusmarkclose: "",
 
         /**
          * Holds the HTML for a singlefilerow in the fileSelectionMenu
@@ -518,8 +523,12 @@ String.prototype.insertAt = function(index, string){
             });
 
             //Load the markusmark template
-            $.get({url: './parts/markusmark.html', cache:false}).then(function(data){
-                comparativus.ui.markusmark = data;
+            $.get({url: './parts/markusmarkopen.html', cache:false}).then(function(data){
+                comparativus.ui.markusmarkopen = data;
+            });
+            //Load the markusmark template
+            $.get({url: './parts/markusmarkclose.html', cache:false}).then(function(data){
+                comparativus.ui.markusmarkclose = data;
             });
 
             //Load the matchrow template
@@ -653,9 +662,7 @@ String.prototype.insertAt = function(index, string){
          * of the passed parameter boolean). Also saves what this matchmark links to
          */
         getMarkusMark: function(opening, urnID, linksTo){
-            var openingClass = "glyphicon glyphicon-chevron-left";
-            var closingClass = "glyphicon glyphicon-chevron-right"
-            var mark = comparativus.ui.markusmark.replace(/%MARK%/g, ((opening) ? openingClass : closingClass));
+            var mark = opening ? markusmarkopen : markusmarkclose;
             mark =  mark.replace(/%URN%/g, urnID);
             return mark.replace(/%LINKS%/g, linksTo);
         },
@@ -1887,15 +1894,15 @@ String.prototype.insertAt = function(index, string){
             var sp = comparativus.util.getScratch();
             comparativus.util.setScratch(text);
             //Try to find the tag if it has already been added
-            var tag = sp.find('[comparativusURN="' + compA + '"]');
+            var tag = sp.find('[matchMarkStart_id="' + compA + '"]');
 
             //Now insert the marks into text A, if the exact same matchmark is not yet in there
             if(tag.length < 1){
                 var result =  text.substring(0, indeces[0]) + openMark + text.substring(indeces[0], indeces[1]) + closeMark + text.substring(indeces[1]);
                 return result;
             }else{//Add data to the existing tag
-                var list = tag.attr('comparativusLINKS');
-                tag.attr('comparativusLINKS', list + "|" + compB);
+                var list = tag.attr('data-comparativuslinks');
+                tag.attr('data-comparativuslinks', list + "|" + compB);
                 var result = sp.html();
                 return result;
             }

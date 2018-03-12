@@ -141,15 +141,15 @@
             var sp = comparativus.util.getScratch();
             comparativus.util.setScratch(text);
             //Try to find the tag if it has already been added
-            var tag = sp.find('[comparativusURN="' + compA + '"]');
+            var tag = sp.find('[matchMarkStart_id="' + compA + '"]');
 
             //Now insert the marks into text A, if the exact same matchmark is not yet in there
             if(tag.length < 1){
                 var result =  text.substring(0, indeces[0]) + openMark + text.substring(indeces[0], indeces[1]) + closeMark + text.substring(indeces[1]);
                 return result;
             }else{//Add data to the existing tag
-                var list = tag.attr('comparativusLINKS');
-                tag.attr('comparativusLINKS', list + "|" + compB);
+                var list = tag.attr('data-comparativuslinks');
+                tag.attr('data-comparativuslinks', list + "|" + compB);
                 var result = sp.html();
                 return result;
             }
