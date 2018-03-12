@@ -342,6 +342,8 @@
             var html = "";
             selectedMatches.forEach(function(match){
                 var matchTemplate = comparativus.ui.selectionSummary.replace(/%TEXTA%/g, match.textA);
+                matchTemplate = matchTemplate.replace(/%RATIO%/g, match.r);
+                matchTemplate = matchTemplate.replace(/%LENGTH%/g, match.l);
                 matchTemplate = matchTemplate.replace(/%TEXTB%/g, match.textB);
                 matchTemplate = matchTemplate.replace(/%URNA%/g, match.urnA);
                 matchTemplate = matchTemplate.replace(/%URNB%/g, match.urnB);
@@ -494,17 +496,22 @@
                 
                 //Now add the template row to the table
                 parts.push(mRow);
-
-                //And a new line for its TSV counter part
-                tsvParts.push(cMatch.indexA + '\t' + cMatch.indexB + '\t' + cMatch.l + '\t' + cMatch.r + '\t' + cMatch.textA + '\t' + cMatch.textB + '\t' + cMatch.r);
             });
 
             //Add the result to the page
             $("#resultTable").html(parts.join() + "</tbody>");
 
             //create the downloadButtons
-            $('#downloadTSVButton').click(function(){createTSVFile(tsvParts);});
-            $('#downloadJSONButton').click(function(){comparativus.file.createJSON(matches);});
+            $('#downloadTSVButton').unbind('click').click(function(){
+                var selMatches = comparativus.text.getSelectedMatches();
+                if(selMatches.length == 0) selMatches = matches;
+                comparativus.file.createTSV(selMatches);
+            });
+            $('#downloadJSONButton').unbind('click').click(function(){
+                var selMatches = comparativus.text.getSelectedMatches();
+                if(selMatches.length == 0) selMatches = matches;
+                comparativus.file.createJSON(selMatches);
+            });
         },
 
         /**

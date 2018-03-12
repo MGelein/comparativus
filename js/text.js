@@ -67,6 +67,37 @@
             return Object.keys(texts);
         },
 
+        /**
+         * Returns an array of the selectedMatches in the selectionsummary
+         */
+        getSelectedMatches: function(){
+            //Make an empty selection of matches we want to export
+            var selectedMatches = [];
+
+            //First get the complete selection of matches that we want to export
+            $('#selectionOverview .selectionSummary').each(function (index, summary) {
+                var cells = $(summary).find('.border-right');
+                var cellA = cells.eq(0);
+                var cellB = cells.eq(1);
+                var cMatch = {
+                    idA: cellA.attr('text-id'),
+                    idB: cellB.attr('text-id'),
+                    textA: cellA.attr('text'),
+                    textB: cellB.attr('text'),
+                    l: cellA.attr('length'),
+                    r: cellA.attr('ratio'),
+                    urnA: cellA.attr('match-urn'),
+                    urnB: cellB.attr('match-urn'),
+                }
+                cMatch.compA = cMatch.idA + "@" + cMatch.urnA;
+                cMatch.compB = cMatch.idB + "@" + cMatch.urnB;
+                selectedMatches.push(cMatch);
+            });
+
+            //Now return the result Array
+            return selectedMatches;
+        },
+
 
         /**
          * Returns the original HTML file now inculding the tags we wanted to export

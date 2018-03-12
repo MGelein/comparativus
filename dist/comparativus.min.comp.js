@@ -793,6 +793,8 @@ String.prototype.insertAt = function(index, string){
             var html = "";
             selectedMatches.forEach(function(match){
                 var matchTemplate = comparativus.ui.selectionSummary.replace(/%TEXTA%/g, match.textA);
+                matchTemplate = matchTemplate.replace(/%RATIO%/g, match.r);
+                matchTemplate = matchTemplate.replace(/%LENGTH%/g, match.l);
                 matchTemplate = matchTemplate.replace(/%TEXTB%/g, match.textB);
                 matchTemplate = matchTemplate.replace(/%URNA%/g, match.urnA);
                 matchTemplate = matchTemplate.replace(/%URNB%/g, match.urnB);
@@ -945,17 +947,22 @@ String.prototype.insertAt = function(index, string){
                 
                 //Now add the template row to the table
                 parts.push(mRow);
-
-                //And a new line for its TSV counter part
-                tsvParts.push(cMatch.indexA + '\t' + cMatch.indexB + '\t' + cMatch.l + '\t' + cMatch.r + '\t' + cMatch.textA + '\t' + cMatch.textB + '\t' + cMatch.r);
             });
 
             //Add the result to the page
             $("#resultTable").html(parts.join() + "</tbody>");
 
             //create the downloadButtons
-            $('#downloadTSVButton').click(function(){createTSVFile(tsvParts);});
-            $('#downloadJSONButton').click(function(){comparativus.file.createJSON(matches);});
+            $('#downloadTSVButton').unbind('click').click(function(){
+                var selMatches = comparativus.text.getSelectedMatches();
+                if(selMatches.length == 0) selMatches = matches;
+                comparativus.file.createTSV(selMatches);
+            });
+            $('#downloadJSONButton').unbind('click').click(function(){
+                var selMatches = comparativus.text.getSelectedMatches();
+                if(selMatches.length == 0) selMatches = matches;
+                comparativus.file.createJSON(selMatches);
+            });
         },
 
         /**
@@ -1326,7 +1333,14 @@ String.prototype.insertAt = function(index, string){
          * Generates a TSV save file. Use the generated TSV parts to make the
          * file
          */
-        createTSV: function (tsvParts) {
+        createTSV: function (matches) {
+            var tsvParts = ["urnA\turnB\ttextA\ttextB\tlength\tratio"];
+            matches.forEach(function(match, index){
+                const compA = match.idA + "@" + match.urnA;
+                const compB = match.idB + "@" + match.urnB;
+                tsvParts.push(compA + "\t" + compB + "\t" + match.textA + "\t" + match.textB + "\t" + match.l + "\t" + match.r);
+            });
+            //Now download the file
             comparativus.file.download(comparativus.file.getDownloadName('.tsv'),
                 'data:text/tsv;charset=utf-8,' + encodeURI(tsvParts.join('\n')));
         }
@@ -1832,6 +1846,37 @@ String.prototype.insertAt = function(index, string){
          */
         getAllIDs: function () {
             return Object.keys(texts);
+        },
+
+        /**
+         * Returns an array of the selectedMatches in the selectionsummary
+         */
+        getSelectedMatches: function(){
+            //Make an empty selection of matches we want to export
+            var selectedMatches = [];
+
+            //First get the complete selection of matches that we want to export
+            $('#selectionOverview .selectionSummary').each(function (index, summary) {
+                var cells = $(summary).find('.border-right');
+                var cellA = cells.eq(0);
+                var cellB = cells.eq(1);
+                var cMatch = {
+                    idA: cellA.attr('text-id'),
+                    idB: cellB.attr('text-id'),
+                    textA: cellA.attr('text'),
+                    textB: cellB.attr('text'),
+                    l: cellA.attr('length'),
+                    r: cellA.attr('ratio'),
+                    urnA: cellA.attr('match-urn'),
+                    urnB: cellB.attr('match-urn'),
+                }
+                cMatch.compA = cMatch.idA + "@" + cMatch.urnA;
+                cMatch.compB = cMatch.idB + "@" + cMatch.urnB;
+                selectedMatches.push(cMatch);
+            });
+
+            //Now return the result Array
+            return selectedMatches;
         },
 
 

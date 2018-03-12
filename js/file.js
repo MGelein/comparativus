@@ -276,7 +276,14 @@
          * Generates a TSV save file. Use the generated TSV parts to make the
          * file
          */
-        createTSV: function (tsvParts) {
+        createTSV: function (matches) {
+            var tsvParts = ["urnA\turnB\ttextA\ttextB\tlength\tratio"];
+            matches.forEach(function(match, index){
+                const compA = match.idA + "@" + match.urnA;
+                const compB = match.idB + "@" + match.urnB;
+                tsvParts.push(compA + "\t" + compB + "\t" + match.textA + "\t" + match.textB + "\t" + match.l + "\t" + match.r);
+            });
+            //Now download the file
             comparativus.file.download(comparativus.file.getDownloadName('.tsv'),
                 'data:text/tsv;charset=utf-8,' + encodeURI(tsvParts.join('\n')));
         }
