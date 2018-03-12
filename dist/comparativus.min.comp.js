@@ -714,14 +714,16 @@ String.prototype.insertAt = function(index, string){
          */
         addMatchListeners: function(){
             $('[comparativusURN]').unbind('mouseenter mouseleave click').click(function(e){
-                console.log(e);
                 comparativus.ui.setSelected($(this).attr('comparativusURN'), !$(this).hasClass('selected'));
-                //Briefly set pointer events to none
-                $(this).css('pointer-events', 'none');
-                //Then trigger a click on the next underlying element
-                $(document.elementFromPoint(e.pageX, e.pageY)).click();
-                //Then set back pointer events to auto
-                $(this).css('pointer-events', 'auto');
+                //Do this underneath trick only if we are currently in vis
+                if($('#visualisationPage').hasClass('active')){
+                    //Briefly set pointer events to none
+                    $(this).css('pointer-events', 'none');
+                    //Then trigger a click on the next underlying element
+                    $(document.elementFromPoint(e.pageX, e.pageY)).click();
+                    //Then set back pointer events to auto
+                    $(this).css('pointer-events', 'auto');
+                }
             }).mouseenter(function(e){
                 //Special case for td cells. highlight in matching text color
                 if($(this).prop('tagName') == "TD"){
