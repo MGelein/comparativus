@@ -86,7 +86,7 @@ var comparativus = {
             if (seeds[i] in dictB) {
                 overlapSeedAmt += dictA[seeds[i]].length + dictB[seeds[i]].length;
                 overlap.push(seeds[i]);
-                console.log("[comparativus.js]: Expanding all matches");
+                //console.log("[comparativus.js]: Expanding all matches");
                 comparativus.expandAllMatches(dictA[seeds[i]], dictB[seeds[i]], idA, idB);
             }
         }

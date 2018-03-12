@@ -263,6 +263,7 @@
          */
         addMatchListeners: function(){
             $('[comparativusURN]').unbind('mouseenter mouseleave click').click(function(e){
+                console.log(e);
                 comparativus.ui.setSelected($(this).attr('comparativusURN'), !$(this).hasClass('selected'));
                 //Briefly set pointer events to none
                 $(this).css('pointer-events', 'none');

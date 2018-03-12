@@ -86,7 +86,7 @@ var comparativus = {
             if (seeds[i] in dictB) {
                 overlapSeedAmt += dictA[seeds[i]].length + dictB[seeds[i]].length;
                 overlap.push(seeds[i]);
-                console.log("[comparativus.js]: Expanding all matches");
+                //console.log("[comparativus.js]: Expanding all matches");
                 comparativus.expandAllMatches(dictA[seeds[i]], dictB[seeds[i]], idA, idB);
             }
         }
@@ -714,6 +714,7 @@ String.prototype.insertAt = function(index, string){
          */
         addMatchListeners: function(){
             $('[comparativusURN]').unbind('mouseenter mouseleave click').click(function(e){
+                console.log(e);
                 comparativus.ui.setSelected($(this).attr('comparativusURN'), !$(this).hasClass('selected'));
                 //Briefly set pointer events to none
                 $(this).css('pointer-events', 'none');
@@ -1785,7 +1786,6 @@ String.prototype.insertAt = function(index, string){
          * Adds a new text to the text storage
          */
         add: function (text_id, text_name, text_content, text_plain) {
-            console.log(text_plain);
             texts[text_id] = {
                 name: text_name,    //the name of the text
                 data: text_content, //the html content of the text precleaned

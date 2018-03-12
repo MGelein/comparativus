@@ -21,7 +21,6 @@
          * Adds a new text to the text storage
          */
         add: function (text_id, text_name, text_content, text_plain) {
-            console.log(text_plain);
             texts[text_id] = {
                 name: text_name,    //the name of the text
                 data: text_content, //the html content of the text precleaned
