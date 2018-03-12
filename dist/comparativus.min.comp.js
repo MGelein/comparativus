@@ -795,6 +795,8 @@ String.prototype.insertAt = function(index, string){
                 var matchTemplate = comparativus.ui.selectionSummary.replace(/%TEXTA%/g, match.textA);
                 matchTemplate = matchTemplate.replace(/%RATIO%/g, match.r);
                 matchTemplate = matchTemplate.replace(/%LENGTH%/g, match.l);
+                matchTemplate = matchTemplate.replace(/%INDEXA%/g, match.indexA);
+                matchTemplate = matchTemplate.replace(/%INDEXB%/g, match.indexB);
                 matchTemplate = matchTemplate.replace(/%TEXTB%/g, match.textB);
                 matchTemplate = matchTemplate.replace(/%URNA%/g, match.urnA);
                 matchTemplate = matchTemplate.replace(/%URNB%/g, match.urnB);
@@ -1867,6 +1869,8 @@ String.prototype.insertAt = function(index, string){
                     textB: cellB.attr('text'),
                     l: cellA.attr('length'),
                     r: cellA.attr('ratio'),
+                    indexA: cellA.attr('index'),
+                    indexB: cellB.attr('index'),
                     urnA: cellA.attr('match-urn'),
                     urnB: cellB.attr('match-urn'),
                 }

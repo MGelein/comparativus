@@ -344,6 +344,8 @@
                 var matchTemplate = comparativus.ui.selectionSummary.replace(/%TEXTA%/g, match.textA);
                 matchTemplate = matchTemplate.replace(/%RATIO%/g, match.r);
                 matchTemplate = matchTemplate.replace(/%LENGTH%/g, match.l);
+                matchTemplate = matchTemplate.replace(/%INDEXA%/g, match.indexA);
+                matchTemplate = matchTemplate.replace(/%INDEXB%/g, match.indexB);
                 matchTemplate = matchTemplate.replace(/%TEXTB%/g, match.textB);
                 matchTemplate = matchTemplate.replace(/%URNA%/g, match.urnA);
                 matchTemplate = matchTemplate.replace(/%URNB%/g, match.urnB);

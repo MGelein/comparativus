@@ -86,6 +86,8 @@
                     textB: cellB.attr('text'),
                     l: cellA.attr('length'),
                     r: cellA.attr('ratio'),
+                    indexA: cellA.attr('index'),
+                    indexB: cellB.attr('index'),
                     urnA: cellA.attr('match-urn'),
                     urnB: cellB.attr('match-urn'),
                 }
