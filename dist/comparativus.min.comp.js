@@ -1164,22 +1164,20 @@ String.prototype.insertAt = function(index, string){
         /**
          * Saves the file with the provided id back to the markus server.
          */
-        saveToID: function (id, data) {
+        saveToID: function (filename, fileData) {
             //Create a new File Object to send in the POST method
-            var file = new File([data], id + ".html", {
-                type: "text/plain",
-            });
+            var blob = new Blob([fileData], {type: "text/plain;charset=utf-8"});
+            var file = new File([blob], fileName)
 
             //Create new FormData to submit
-            var data = new FormData();
-            data.append("upload", file);
-            console.log("The file is currently: " + file);
+            var uploadData = new FormData();
+            uploadData.append(file);
 
             //Now do the actual AJAX call
             $.ajax({
                 url: '/auth/upload',
                 type: 'POST',
-                data: data,
+                data: uploadData,
                 cache: false,
                 dataType: 'json',
                 processData: false, // Don't process the files
@@ -1192,7 +1190,7 @@ String.prototype.insertAt = function(index, string){
                     console.log("error during file upload");
                     console.log(textStatus, jqXHR, errorThrown);
                 }
-            }, function () { });
+            });
         },
 
         /**
