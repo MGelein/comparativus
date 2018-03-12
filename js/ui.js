@@ -579,8 +579,8 @@
                         //Get all the ids we have to load
                             $('#fileSelectionBody input.selected').each(function(index, input){
                                 var id = $(input).val();
-                                comparativus.file.loadFromID(id, function(data){
-                                    comparativus.text.add(id, comparativus.file.getTitleFromID(id), data);
+                                comparativus.file.loadFromID(id, function(data, plain){
+                                    comparativus.text.add(id, comparativus.file.getTitleFromID(id), data, plain);
                                 });
                             });
                         }

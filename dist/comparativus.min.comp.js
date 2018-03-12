@@ -10,7 +10,7 @@ var comparativus = {
     author: "Mees Gelein"
 };
 
-(function(_c){
+(function (_c) {
     /**
      * The minimum lenght a match should be to be added to the results.
      * This read either from the URL Get variables, or parsed from the UI
@@ -43,7 +43,8 @@ var comparativus = {
     /**
      * Called to start the comparison between the two texts. This
      */
-    _c.startComparison = function(){
+    _c.startComparison = function () {
+        console.log("[comparativus.js]: Start Comparison");
         comparativus.minMatchLength = comparativus.ui.getMinMatchSize();
 
         comparativus.matches = [];
@@ -59,16 +60,17 @@ var comparativus = {
      * It checks a URL var and then decides if the comparison needs to be run,
      * it does this by triggering the comparisonButton
      */
-    _c.autoexec = function(){
-        $('#comparisonButton').removeClass('disabled'); 
-        if(comparativus.util.getURLVar('autoexec')) $('#comparisonButton').click();
+    _c.autoexec = function () {
+        $('#comparisonButton').removeClass('disabled');
+        if (comparativus.util.getURLVar('autoexec')) $('#comparisonButton').click();
     }
 
     /**
      * Runs the comparison between a single set of texts signified by their
      * two ids that have been provided below.
      */
-    _c.runSingleComparison = function(idA, idB){
+    _c.runSingleComparison = function (idA, idB) {
+        console.log("[comparativus.js]: Running comparison on: " + idA + " and " + idB);
         var dictA = comparativus.dicts[idA];
         var dictB = comparativus.dicts[idB];
         comparativus.nodes[idA] = [];
@@ -78,24 +80,28 @@ var comparativus = {
         var overlap = [];
         var overlapSeedAmt = 0;
         var totalSeedAmt = 0;
-        for(var i = 0; i < seedAmt; i++){
-        totalSeedAmt += dictA[seeds[i]].length;
-            if(seeds[i] in dictB){
+        console.log("[comparativus.js]: Found " + seedAmt + " seeds in dictA");
+        for (var i = 0; i < seedAmt; i++) {
+            totalSeedAmt += dictA[seeds[i]].length;
+            if (seeds[i] in dictB) {
                 overlapSeedAmt += dictA[seeds[i]].length + dictB[seeds[i]].length;
                 overlap.push(seeds[i]);
+                console.log("[comparativus.js]: Expanding all matches");
                 comparativus.expandAllMatches(dictA[seeds[i]], dictB[seeds[i]], idA, idB);
             }
         }
         //also add all seeds of text B to the total amount of seeds
         seeds = Object.keys(dictB);
         seedAmt = seeds.length;
-        for(var i = 0; i < seedAmt; i++){
-        totalSeedAmt += dictB[seeds[i]].length;
+        for (var i = 0; i < seedAmt; i++) {
+            totalSeedAmt += dictB[seeds[i]].length;
         }
         //console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
+        console.log("[comparativus.js]: Comparison done, showing results");
         comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt);
         comparativus.ui.showResultTable(comparativus.matches, idA, idB);
         comparativus.text.toDecorate = 2;
+        console.log("[comparativus.js]: Starting text decoration");
         comparativus.text.decorate(idA, comparativus.nodes[idA]);
         comparativus.text.decorate(idB, comparativus.nodes[idB]);
 
@@ -113,17 +119,17 @@ var comparativus = {
      * @param {Integer} iA 
      * @param {Integer} iB 
      */
-    var expandMatch = function(iA, iB, idA, idB){
+    var expandMatch = function (iA, iB, idA, idB) {
         //first check if this match is inside another match
         var max = comparativus.matches.length;
         var cMatch;
-        for(var i = 0; i < max; i++){
+        for (var i = 0; i < max; i++) {
             cMatch = comparativus.matches[i];
-            if((iA < cMatch.indexA + cMatch.l) && (iA > cMatch.indexA)){
-                if((iB < cMatch.indexB + cMatch.l) && (iB > cMatch.indexB)){
-                //console.log("Embedded match, ignore");
-                //this matching seed is inside of a match we already found
-                return;
+            if ((iA < cMatch.indexA + cMatch.l) && (iA > cMatch.indexA)) {
+                if ((iB < cMatch.indexB + cMatch.l) && (iB > cMatch.indexB)) {
+                    //console.log("Embedded match, ignore");
+                    //this matching seed is inside of a match we already found
+                    return;
                 }
             }
         }
@@ -131,31 +137,31 @@ var comparativus = {
 
         //Start at a predetermined size of 10, then expand or diminish to fit
         var matchLength = 10;
-        var tA = comparativus.text.getByID(idA).plain;
-        var tB = comparativus.text.getByID(idB).plain;
+        var tA = comparativus.text.getByID(idA).clean;
+        var tB = comparativus.text.getByID(idB).clean;
         var sA = tA.substr(iA, matchLength);
         var sB = tB.substr(iB, matchLength);
         var strikes = 0;
 
         //diminish to the left (if the 10 char expansion made the levDist to low)
-        while(comparativus.util.levDistRatio(sA, sB) < 0.8 && matchLength > 0){
-            matchLength --;
+        while (comparativus.util.levDistRatio(sA, sB) < 0.8 && matchLength > 0) {
+            matchLength--;
             sA = tA.substr(iA, matchLength);
             sB = tB.substr(iB, matchLength);
         }
 
         //expand right
-        while(strikes < 3){
-            if(comparativus.util.levDistRatio(sA, sB) < 0.8){
-                strikes ++;
-            }else{
+        while (strikes < 3) {
+            if (comparativus.util.levDistRatio(sA, sB) < 0.8) {
+                strikes++;
+            } else {
                 strikes = 0;
             }
             matchLength++;
             sA = tA.substr(iA, matchLength);
             sB = tB.substr(iB, matchLength);
             //Build a fail safe in case one of the indeces overflows the text length
-            if(iA + matchLength > tA.length || iB + matchLength > tB.length) break;
+            if (iA + matchLength > tA.length || iB + matchLength > tB.length) break;
         }
         //take off the three chars we added to much.
         matchLength -= 3;
@@ -164,17 +170,17 @@ var comparativus = {
         sB = tB.substr(iB, matchLength);
 
         //expand left
-        while(strikes < 3){
-            if(comparativus.util.levDistRatio(sA, sB) < 0.8){
-                strikes ++;
-            }else{
+        while (strikes < 3) {
+            if (comparativus.util.levDistRatio(sA, sB) < 0.8) {
+                strikes++;
+            } else {
                 strikes = 0;
             }
             //By increasing lenght and decreasing index we're basically expanding left
             matchLength++;
-            iA --;
-            iB --;
-            if(iA < 0 || iB < 0){
+            iA--;
+            iB--;
+            if (iA < 0 || iB < 0) {
                 iA = iB = 0;
                 break;
             }
@@ -189,8 +195,8 @@ var comparativus = {
 
         //now it has been fully expanded. Add it to the matches object if the length
         //is greater than minLength
-        if(matchLength >= comparativus.minMatchLength){
-            var m = {l:matchLength, indexA:iA, indexB:iB, textA:sA, textB:sB, r:comparativus.util.levDistRatio(sA, sB)};
+        if (matchLength >= comparativus.minMatchLength) {
+            var m = { l: matchLength, indexA: iA, indexB: iB, textA: sA, textB: sB, r: comparativus.util.levDistRatio(sA, sB) };
             m.urnA = comparativus.urn.fromMatch(tA, m.indexA, m.l);
             m.urnB = comparativus.urn.fromMatch(tB, m.indexB, m.l);
             m.idA = idA;
@@ -204,51 +210,52 @@ var comparativus = {
      * Adds new nodes to the list of them. 
      * @param {Match} match 
      */
-    _c.addNodeFromMatch= function(match, idA, idB){
-        var nA = {index: match.indexA, urn: match.urnA, 'match': match};
-        var nB = {index: match.indexB, urn: match.urnB, 'match': match};
+    _c.addNodeFromMatch = function (match, idA, idB) {
+        var nA = { index: match.indexA, urn: match.urnA, 'match': match };
+        var nB = { index: match.indexB, urn: match.urnB, 'match': match };
         var i = 0;
         //First check if node A is unique
         var max = comparativus.nodes[idA].length;
         var unique = true;
-        for(i = 0; i < max; i++){
-            if(comparativus.nodes[idA][i].index == nA.index){
+        for (i = 0; i < max; i++) {
+            if (comparativus.nodes[idA][i].index == nA.index) {
                 unique = false;
                 break;
             }
         }
-        if(unique) comparativus.nodes[idA].push(nA);
+        if (unique) comparativus.nodes[idA].push(nA);
 
         //Then check if node B is unique
         max = comparativus.nodes[idB].length;
         unique = true;
-        for(i = 0; i < max; i++){
-            if(comparativus.nodes[idB][i].index == nB.index){
+        for (i = 0; i < max; i++) {
+            if (comparativus.nodes[idB][i].index == nB.index) {
                 unique = false;
                 break;
             }
         }
-        if(unique) comparativus.nodes[idB].push(nB);
+        if (unique) comparativus.nodes[idB].push(nB);
     }
 
 
     /**
      * Expands all occurrences for a matching seed found in the dictionary
      */
-    _c.expandAllMatches = function(occA, occB, idA, idB){
+    _c.expandAllMatches = function (occA, occB, idA, idB) {
         var maxA = occA.length;
         var maxB = occB.length;
         var matchAIndex;
         var matchBIndex;
-        for(var i = 0; i < maxA; i++){
+        for (var i = 0; i < maxA; i++) {
             matchAIndex = occA[i];
-            for(var j = 0; j < maxB; j++){
+            for (var j = 0; j < maxB; j++) {
                 matchBIndex = occB[j];
+                console.log("[comparativus.js]: Expanding a single match");
                 expandMatch(matchAIndex, matchBIndex, idA, idB);
             }
-        }   
+        }
     };
-    
+
 })(comparativus);;(function(_c){
     /**
      * Defines the utility object with some useful
@@ -403,7 +410,7 @@ String.prototype.insertAt = function(index, string){
               'stripWhiteSpace': $('#stripWhiteSpace').val(),
               'stripPunctuation': $('#stripPunctuation').val()
             };
-            message('prepareText', {'id': id, 'text': comparativus.text.getByID(id).data, 'config': config});          
+            message('prepareText', {'id': id, 'text': comparativus.text.getByID(id).plain, 'config': config});          
         },
 
         /**
@@ -412,7 +419,7 @@ String.prototype.insertAt = function(index, string){
          * the provided name
          */
         buildDictionary: function(id){
-            message('buildDictionary', {'id':id , text: comparativus.text.getByID(id).plain});
+            message('buildDictionary', {'id':id , text: comparativus.text.getByID(id).clean});
         },
 
         /**
@@ -1023,8 +1030,8 @@ String.prototype.insertAt = function(index, string){
                         //Get all the ids we have to load
                             $('#fileSelectionBody input.selected').each(function(index, input){
                                 var id = $(input).val();
-                                comparativus.file.loadFromID(id, function(data){
-                                    comparativus.text.add(id, comparativus.file.getTitleFromID(id), data);
+                                comparativus.file.loadFromID(id, function(data, plain){
+                                    comparativus.text.add(id, comparativus.file.getTitleFromID(id), data, plain);
                                 });
                             });
                         }
@@ -1071,15 +1078,15 @@ String.prototype.insertAt = function(index, string){
             var idA = '5a15793ed272f335aab275af'
             comparativus.file.setLoadedStatus(idA, false);
             $.ajax('data/Mencius.txt', {
-                cache: false, success: function (data) {
-                    comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data);
+                cache: false, success: function (data, plain) {
+                    comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data, plain);
                 }
             });
             var idB = '5a1579a3d272f335aab275b0';
             comparativus.file.setLoadedStatus(idB, false);
             $.ajax('data/ZGZY.txt', {
-                cache: false, success: function (data) {
-                    comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data);
+                cache: false, success: function (data, plain) {
+                    comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data, plain);
                 }
             });
         },
@@ -1158,7 +1165,8 @@ String.prototype.insertAt = function(index, string){
             comparativus.file.setLoadedStatus(id, false);
             $.get("http://dh.chinese-empires.eu/auth/get/" + id, function (data) {
                 comparativus.util.setScratch(data);
-                callback(comparativus.util.getScratch().html());
+                var sp = comparativus.util.getScratch();
+                callback(sp.html(), sp.text());
             });
         },
 
@@ -1392,7 +1400,7 @@ String.prototype.insertAt = function(index, string){
              */
             getNodeAngle: function(node, id){
                 //Extract the necessary data. Index ratio is [0-1] for place in text
-                var indexRatio = node.index / comparativus.text.getByID(id).plain.length;
+                var indexRatio = node.index / comparativus.text.getByID(id).clean.length;
                 //Angles are the starting angle and angle of the arc of the text
                 var angles = $('[text-id="' + id + '"]').attr('angle').split("+");
                 //return the result
@@ -1553,7 +1561,7 @@ String.prototype.insertAt = function(index, string){
                         .attr("x", -w2 + 40)
                         .attr("y", -h2 + legendY + 48)
                         .attr("class", "small")
-                        .text(text.plain.length + " characters");
+                        .text(text.clean.length + " characters");
 
                     legendY += 50;
                 });
@@ -1772,11 +1780,12 @@ String.prototype.insertAt = function(index, string){
         /**
          * Adds a new text to the text storage
          */
-        add: function (text_id, text_name, text_content) {
+        add: function (text_id, text_name, text_content, text_plain) {
             texts[text_id] = {
                 name: text_name,    //the name of the text
                 data: text_content, //the html content of the text precleaned
-                plain: ""           //the cleaned stripped text
+                plain: text_plain,  //the plain text without tags
+                clean: ""           //the cleaned text
             }
             //Then change the ui now that we've saved it
             comparativus.ui.addFileTab(text_id, text_name, text_content);
@@ -1785,10 +1794,10 @@ String.prototype.insertAt = function(index, string){
         },
 
         /**
-         * Sets the plain text of a specified text
+         * Sets the clean text of a specified text
          */
-        setByID: function (id, plain) {
-            texts[id].plain = plain;
+        setByID: function (id, clean) {
+            texts[id].clean = clean;
         },
 
         /**
@@ -1912,9 +1921,9 @@ String.prototype.insertAt = function(index, string){
         getPercentLength: function (id) {
             var totalLength = 0;
             Object.keys(texts).forEach(function (text_id) {
-                totalLength += texts[text_id].plain.length;
+                totalLength += texts[text_id].clean.length;
             });
-            return texts[id].plain.length / totalLength;
+            return texts[id].clean.length / totalLength;
         },
 
         /**
@@ -2050,8 +2059,8 @@ function initFiles(){
         if(!comparativus.util.isDebug()){
             //Load the files from the GET URL variables
             filesVar.split(',').forEach(function(id){
-                comparativus.file.loadFromID(id, function(data){
-                    comparativus.text.add(id, comparativus.file.getTitleFromID(id), data);
+                comparativus.file.loadFromID(id, function(data, plain){
+                    comparativus.text.add(id, comparativus.file.getTitleFromID(id), data, plain);
                 });
             });
         }else{

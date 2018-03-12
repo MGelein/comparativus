@@ -74,7 +74,7 @@
              */
             getNodeAngle: function(node, id){
                 //Extract the necessary data. Index ratio is [0-1] for place in text
-                var indexRatio = node.index / comparativus.text.getByID(id).plain.length;
+                var indexRatio = node.index / comparativus.text.getByID(id).clean.length;
                 //Angles are the starting angle and angle of the arc of the text
                 var angles = $('[text-id="' + id + '"]').attr('angle').split("+");
                 //return the result
@@ -235,7 +235,7 @@
                         .attr("x", -w2 + 40)
                         .attr("y", -h2 + legendY + 48)
                         .attr("class", "small")
-                        .text(text.plain.length + " characters");
+                        .text(text.clean.length + " characters");
 
                     legendY += 50;
                 });

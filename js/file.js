@@ -31,15 +31,15 @@
             var idA = '5a15793ed272f335aab275af'
             comparativus.file.setLoadedStatus(idA, false);
             $.ajax('data/Mencius.txt', {
-                cache: false, success: function (data) {
-                    comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data);
+                cache: false, success: function (data, plain) {
+                    comparativus.text.add(idA, comparativus.file.getTitleFromID(idA), data, plain);
                 }
             });
             var idB = '5a1579a3d272f335aab275b0';
             comparativus.file.setLoadedStatus(idB, false);
             $.ajax('data/ZGZY.txt', {
-                cache: false, success: function (data) {
-                    comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data);
+                cache: false, success: function (data, plain) {
+                    comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data, plain);
                 }
             });
         },
@@ -118,7 +118,8 @@
             comparativus.file.setLoadedStatus(id, false);
             $.get("http://dh.chinese-empires.eu/auth/get/" + id, function (data) {
                 comparativus.util.setScratch(data);
-                callback(comparativus.util.getScratch().html());
+                var sp = comparativus.util.getScratch();
+                callback(sp.html(), sp.text());
             });
         },
 

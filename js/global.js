@@ -55,8 +55,8 @@ function initFiles(){
         if(!comparativus.util.isDebug()){
             //Load the files from the GET URL variables
             filesVar.split(',').forEach(function(id){
-                comparativus.file.loadFromID(id, function(data){
-                    comparativus.text.add(id, comparativus.file.getTitleFromID(id), data);
+                comparativus.file.loadFromID(id, function(data, plain){
+                    comparativus.text.add(id, comparativus.file.getTitleFromID(id), data, plain);
                 });
             });
         }else{

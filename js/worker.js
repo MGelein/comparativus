@@ -46,7 +46,7 @@
               'stripWhiteSpace': $('#stripWhiteSpace').val(),
               'stripPunctuation': $('#stripPunctuation').val()
             };
-            message('prepareText', {'id': id, 'text': comparativus.text.getByID(id).data, 'config': config});          
+            message('prepareText', {'id': id, 'text': comparativus.text.getByID(id).plain, 'config': config});          
         },
 
         /**
@@ -55,7 +55,7 @@
          * the provided name
          */
         buildDictionary: function(id){
-            message('buildDictionary', {'id':id , text: comparativus.text.getByID(id).plain});
+            message('buildDictionary', {'id':id , text: comparativus.text.getByID(id).clean});
         },
 
         /**

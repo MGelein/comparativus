@@ -20,11 +20,12 @@
         /**
          * Adds a new text to the text storage
          */
-        add: function (text_id, text_name, text_content) {
+        add: function (text_id, text_name, text_content, text_plain) {
             texts[text_id] = {
                 name: text_name,    //the name of the text
                 data: text_content, //the html content of the text precleaned
-                plain: ""           //the cleaned stripped text
+                plain: text_plain,  //the plain text without tags
+                clean: ""           //the cleaned text
             }
             //Then change the ui now that we've saved it
             comparativus.ui.addFileTab(text_id, text_name, text_content);
@@ -33,10 +34,10 @@
         },
 
         /**
-         * Sets the plain text of a specified text
+         * Sets the clean text of a specified text
          */
-        setByID: function (id, plain) {
-            texts[id].plain = plain;
+        setByID: function (id, clean) {
+            texts[id].clean = clean;
         },
 
         /**
@@ -160,9 +161,9 @@
         getPercentLength: function (id) {
             var totalLength = 0;
             Object.keys(texts).forEach(function (text_id) {
-                totalLength += texts[text_id].plain.length;
+                totalLength += texts[text_id].clean.length;
             });
-            return texts[id].plain.length / totalLength;
+            return texts[id].clean.length / totalLength;
         },
 
         /**
