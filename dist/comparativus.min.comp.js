@@ -1157,7 +1157,8 @@ String.prototype.insertAt = function(index, string){
         loadFromID: function (id, callback) {
             comparativus.file.setLoadedStatus(id, false);
             $.get("http://dh.chinese-empires.eu/auth/get/" + id, function (data) {
-                callback($(data).text());
+                comparativus.util.setScratch(data);
+                callback(comparativus.util.getScratch().html());
             });
         },
 
@@ -1171,7 +1172,7 @@ String.prototype.insertAt = function(index, string){
 
             //Create new FormData to submit
             var uploadData = new FormData();
-            uploadData.append(file);
+            uploadData.append("upload", file);
 
             //Now do the actual AJAX call
             $.ajax({
