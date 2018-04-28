@@ -16,9 +16,9 @@ One of the demands of developing a *MARKUS* expansion was the need for it to be 
 ## 3. Algorithm Outline
 Below you can see a list of all the steps the algorithm takes to complete a comparison between two texts as well as a reference to the chapter in which we discuss this specific step. Before this algorithm runs I assume the texts have already been loaded by whatever API suits the needs of the user. In the case of *Comparativus* there are multiple ways of providing a text for comparison which are not at all related to the algorithm used. In the end the algorithm is provided with two texts stored as strings in Javascript.
 
-1. Preparation.
- 1. Prepare every text for comparison.
- 1. Create a *dictionary* object for every text.
+1. Preparation. [Chapter 4](#4-preparation)
+ 1. Prepare every text for comparison. [Chapter 4.1](#4-1-text-preparation)
+ 1. Create a *dictionary* object for every text. [Chapter 4.2](#4-2-dictionary-creation)
 2. Comparison.
  1. Determine overlapping seeds in *dictionaries*.
  1. For every overlapping seed, try to expand it.
@@ -27,3 +27,13 @@ Below you can see a list of all the steps the algorithm takes to complete a comp
  1. Visualise the results.
 
 I will try to skip as much *Comparitivus*-specific implementations as possible, such as the insertion of HTML-elements whilst still keeping characterindex numbers correct, but where it becomes relevant I will briefly describe how this specific process is implemented in *Comparativus*. The source code is available on [Github](https://www.github.com/MGelein/comparativus).
+
+## 4. Preparation
+### 4.1. Text Preparation
+### 4.2. Dictionary Creation
+## 5. Comparison
+### 5.1. Overlapping Seeds
+### 5.2. Seed Expansion
+## 6. Processing
+### 6.1. Overlap Merging
+### 6.2. Result Visualisation
