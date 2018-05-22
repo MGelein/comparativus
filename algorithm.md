@@ -19,12 +19,12 @@ Below you can see a list of all the steps the algorithm takes to complete a comp
 1. Preparation. [Chapter 4](#4-preparation)
  1. Prepare every text for comparison. [Chapter 4.1](#4-1-text-preparation)
  1. Create a *dictionary* object for every text. [Chapter 4.2](#4-2-dictionary-creation)
-2. Comparison.
- 1. Determine overlapping seeds in *dictionaries*.
- 1. For every overlapping seed, try to expand it.
-3. Processing.
- 1. Merge overlapping matches.
- 1. Visualise the results.
+2. Comparison. [Chapter 5](#5-comparison)
+ 1. Determine overlapping seeds in *dictionaries*. [Chapter 5.1](#5-1-overlapping-seeds)
+ 1. For every overlapping seed, try to expand it. [Chapter 5.2](#5-2-seed-expansion)
+3. Processing. [Chapter 6][#6-processing]
+ 1. Merge overlapping matches. [Chapter 6.1](#6-1-overlap-merging)
+ 1. Visualise the results. [Chapter 6.2](#6-2-result-visualisation)
 
 I will try to skip as much *Comparitivus*-specific implementations as possible, such as the insertion of HTML-elements whilst still keeping characterindex numbers correct, but where it becomes relevant I will briefly describe how this specific process is implemented in *Comparativus*. The source code is available on [Github](https://www.github.com/MGelein/comparativus).
 
@@ -79,6 +79,29 @@ for(var i = 0; i < ngramsA.length; i++){
 We loop through every possible n-gram in both texts and if we find a n-gram that is present in both texts, we pass the occurence indeces of that n-gram through to the `expandMatches` function. This function simple checks to see if a n-gram has multiple occurences, in which case it will try to expand every occurence of the n-gram in text A against every occurence of that same n-gram in text B.
 
 ### 5.2. Seed Expansion
+The expansion of a match starts with a single n-gram occurence in both text A and text B with their respective indeces. Up untill this point the algorithm has only done exact matching. This is the step where we introduce the 'fuzziness' of the matching algorithm.
+
+In this function we will use an iterative approach to expand the string both to the left and to the right of the matching index. Every time this matchlength increases we grab a new substring from both texts and compare using Levenshtein distance. We then normalize this edit distance using the total matchLength to get a ratio of similarity between the two substrings. For example: The strings 'cat' and 'bat' have a Levenshtein distance of one. Their similarity ratio is this edit distance divided by the matchlength: i.e. one third.
+
+Once we have this similarity ratio we compare it to a pre-set threshold, in the case of *Comparativus* this is `0.8`. If the number is lower than the provided threshold we award one strike, after three strikes we stop trying to expand in that direction and revert the expansion by three characters. If the number is equal or higher than the threshold we set the strikes back to zero and continue our expansion in that direction. 
+
+We try to expand both left and right and continue untill we have built up three consecutive strikes. This is our fully expanded match. For this expanded match we have an index number in text A, an index number in text B, a match length, a ratio of the match. To gain some speed in the browser we then compare the given matchlength agains the minimum matchlength the user has provided in the UI. If a match is shorter than the minimum length, it does not qualify as a valid match. Such an optimization is ofcourse only necessary in a browser environment where you want to give the next processing step as little to do as possible. Once the match is valid its data is all stored in a match object that is pushed into a global matches array. This process is repeated for every n-gram match in the dictionaries provided in the previous step. Once all the seeds have been processed we have the first version of the list of matches between text A and text B. The next step is to process this information.
+
 ## 6. Processing
+Now that the actual comparison is done we need to filter and process the matches that have been found. This step may take on a different form depending on your requirements for the final product. In a more quantative approach the matches array produced by the last step might be your final result. However, since *Comparativus* has been developed with a non-expert user in mind, we do some further processing.
+
 ### 6.1. Overlap Merging
+ Usually a lot of overlapping matches have been found due to the way the matching n-grams work. If a match is longer than your initial seed size, K, you are bound to have multiple matching n-grams within one match. In turn this means that after expansion you can have multiple matches that are ideally identical or at least very similar. To prevent this we compare every match against every other match and see if they have overlap using the index numbers and match lengths. If the provided matches have overlap they are merged together and their ratio and matchlength are updated to reflect that change. 
+
+ With the overlap removed from the array we now have the final version of the matches array. Further processing is only done to help the user analyse the results by presenting the data in multiple ways.
+
 ### 6.2. Result Visualisation
+In *Comparativus* the results of the comparison are presented in three different ways: We present the data in a table, in the text and in a chord-diagram. For every presentation method we need a slightly different way of processing the array of matches. 
+
+The easiest of all three visualisation is the table view. The table is generated simply by creating a separate row in the table for every entry in the array, with the columns corresponding to the fields of a match object. If you look at the actual table in *Comparativus* you will also see some 'URNs' as described in the preparation step. These refer to the location of the match in the text. The reason I'm not simply using index numbers is related to my next visualisation.
+
+For the text visualisation we have one fundamental problem. First of all, we have done the comparison using a cleaned and stripped text. So any index numbers in the matches array naturally don't correspond to their correct index one we put the all the removed characters back in. This is why we convert that index number into the URN-inspired format described in the preparation step. For example, index 512 might be converted to `p[12]` which means, the 12th letter 'p'. This also solves our second problem: To visualise the matches in the text we surround the matching phrases with HTML `span` elements. But once again, inserting these elements into the text changes the relative index of the following insertion points. Using the 'URNs' as described I can safely assume `p[12]` will remain `p[12]` even after we have inserted all kinds of elements, whitespace and punctuation.
+
+The final visualisation method using in *Comparativus* is the chord diagram. The chord diagram is a lightly altered version of a standard D3 chord diagram with added interactivity to allow selection and highlighting of the matches in the diagram. The most involved part of this process is converting the data from the matches array to a JSON object in a format that is expected by the chord-diagram. Most notably this means converting every match into a nodeA, nodeB and linkAB structure. The JSON data used for this step can also be downloaded separately.
+
+Once all this visualisation is done the process finishes and the user is left with the results to do with as pleases them. They can export this data back into MARKUS, save the data as a file onto their harddisk, or analyze the data further using the provided visualisations.
