@@ -561,14 +561,22 @@
              * Once we're ready to continue, do so
              */
             $('#uploadReady').unbind('click').click(function(){
-                comparativus.ui.hideUploadMenu();
                 //If we chose to upload, use that
                 if(files.a && files.b){
                     comparativus.file.addUploadFile(files.a.data, files.a.name);
                     comparativus.file.addUploadFile(files.b.data, files.b.name);
+                    comparativus.ui.hideUploadMenu();
                 }else{
-                    comparativus.file.addUploadFile($('#fileUploadAreaA').val(), "textA");
-                    comparativus.file.addUploadFile($('#fileUploadAreaB').val(), "textB");
+                    let textA = $('#fileUploadAreaA').val().trim();
+                    let textB = $('#fileUploadAreaB').val().trim();
+                    if(textA.length < 3 || textB.length < 3){
+                        if(textA.length < 3) comparativus.util.jello("#fileUploadAreaA");
+                        if(textB.length < 3) comparativus.util.jello("#fileUploadAreaB");
+                    }else{
+                        comparativus.file.addUploadFile(textA, "textA");
+                        comparativus.file.addUploadFile(textB, "textB");
+                        comparativus.ui.hideUploadMenu();
+                    }
                 }
             });
         },

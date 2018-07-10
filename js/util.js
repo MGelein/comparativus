@@ -59,6 +59,16 @@
         },
 
         /**
+         * This function will give the jello animation to the provided element and remove it again
+         */
+        jello: function(elementID){
+            $(elementID).addClass('animated jello');
+            setTimeout(function(){
+                $(elementID).removeClass('animated jello');
+            }, 400);
+        },
+
+        /**
          * Checks if we're running under a localhost environment
          * @returns {boolean}
          */
