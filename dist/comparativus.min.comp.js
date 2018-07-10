@@ -984,6 +984,8 @@ String.prototype.insertAt = function(index, string){
             var leftOffset = ($('body').outerWidth() - $('#uploadMenu').outerWidth()) / 2;
             $('#uploadMenu').offset({left: leftOffset, top: 100});
 
+            //Object of files
+            const files = {}
             $('#fileUploadInputA, #fileUploadInputB').unbind('change').change(function(evt){
                 const f = evt.target.files[0];
                 //If we have a file, load it
@@ -991,7 +993,15 @@ String.prototype.insertAt = function(index, string){
                     const reader = new FileReader();
                     //Load handler
                     reader.onload = function(e){
-                        comparativus.file.addUploadFile(e.target.result, f.name);
+                        var obj = {
+                            data: e.target.result,
+                            name: f.name
+                        }
+                        if(evt.target.id.indexOf("nputA") > -1){
+                            files.a = obj
+                        }else{
+                            files.b = obj;
+                        }
                     }
                     //Start reading the file
                     reader.readAsText(f);
@@ -1003,6 +1013,14 @@ String.prototype.insertAt = function(index, string){
              */
             $('#uploadReady').unbind('click').click(function(){
                 comparativus.ui.hideUploadMenu();
+                //If we chose to upload, use that
+                if(files.a && files.b){
+                    comparativus.file.addUploadFile(files.a.data, files.a.name);
+                    comparativus.file.addUploadFile(files.b.data, files.b.name);
+                }else{
+                    comparativus.file.addUploadFile($('#fileUploadAreaA').val(), "textA");
+                    comparativus.file.addUploadFile($('#fileUploadAreaB').val(), "textB");
+                }
             });
         },
 
