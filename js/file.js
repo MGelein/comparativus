@@ -49,6 +49,17 @@
         },
 
         /**
+         * Adds a file to be uploaded
+         * @param {String} data the data of the file
+         * @param {String} title the name of the file
+         */
+        addUploadFile: function(data, title){
+            comparativus.util.setScratch(data);
+            var sp = comparativus.util.getScratch();
+            comparativus.text.add((new Date()).getTime(), title, data, sp.text());
+        },
+
+        /**
          * Sets the loaded status of a file.
          */
         setLoadedStatus: function (id, status) {

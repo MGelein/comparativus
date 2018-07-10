@@ -540,7 +540,6 @@
                     const reader = new FileReader();
                     //Load handler
                     reader.onload = function(e){
-                        console.log(e.target.result);
                     }
                     //Start reading the file
                     reader.readAsText(f);

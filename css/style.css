@@ -212,7 +212,7 @@ ID's
   padding: 8px;
 }
 
-#fileUploadArea{
+#uploadMenu textarea{
   width: 100%;
   height: 10vh;
 }
