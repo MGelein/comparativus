@@ -533,19 +533,26 @@
             var leftOffset = ($('body').outerWidth() - $('#uploadMenu').outerWidth()) / 2;
             $('#uploadMenu').offset({left: leftOffset, top: 100});
 
-            $('#fileUploadInputA').unbind('change').change(function(evt){
+            $('#fileUploadInputA, #fileUploadInputB').unbind('change').change(function(evt){
                 const f = evt.target.files[0];
                 //If we have a file, load it
                 if(f){
                     const reader = new FileReader();
                     //Load handler
                     reader.onload = function(e){
+                        comparativus.file.addUploadFile(e.target.result, f.name);
                     }
                     //Start reading the file
                     reader.readAsText(f);
                 }
             });
 
+            /**
+             * Once we're ready to continue, do so
+             */
+            $('#uploadReady').unbind('click').click(function(){
+                comparativus.ui.hideUploadMenu();
+            });
         },
 
         /**
