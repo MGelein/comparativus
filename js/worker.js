@@ -82,7 +82,7 @@
                     comparativus.worker.buildDictionary(params.id);
                     break;
             }
-          }
+        }
     };
            
 })(comparativus);

@@ -446,7 +446,7 @@ String.prototype.insertAt = function(index, string){
                     comparativus.worker.buildDictionary(params.id);
                     break;
             }
-          }
+        }
     };
            
 })(comparativus);;/**
@@ -968,6 +968,46 @@ String.prototype.insertAt = function(index, string){
         },
 
         /**
+         * Hides the file selection menu
+         */
+        hideFileSelection: function(){
+            $('#fileSelectionMenu').fadeOut().parent().fadeOut(400, function(){$(this).offset({top:0, left: 0}).hide();});
+        },
+
+        /**
+         * Shows the uploadMenu
+         */
+        showUploadMenu: function(){
+            //Start fading in the menu
+            $('#uploadMenu').fadeIn().parent().fadeIn().offset({top: 0, left: 0});
+            //And place it in the middle of the screen
+            var leftOffset = ($('body').outerWidth() - $('#uploadMenu').outerWidth()) / 2;
+            $('#uploadMenu').offset({left: leftOffset, top: 100});
+
+            $('#fileUploadInputA').unbind('change').change(function(evt){
+                const f = evt.target.files[0];
+                //If we have a file, load it
+                if(f){
+                    const reader = new FileReader();
+                    //Load handler
+                    reader.onload = function(e){
+                        console.log(e.target.result);
+                    }
+                    //Start reading the file
+                    reader.readAsText(f);
+                }
+            });
+
+        },
+
+        /**
+         * Hides the upload menu
+         */
+        hideUploadMenu: function(){
+            $('#uploadMenu').fadeOut().parent().fadeOut(400, function(){$(this).offset({top:0, left: 0}).hide();});
+        },
+
+        /**
          * Shows the file selection menu
          */
         showFileSelection: function(){
@@ -979,7 +1019,7 @@ String.prototype.insertAt = function(index, string){
             //If its already loaded, continue
             
             //Start fading in the menu
-            $('#fileSelectionMenu').parent().fadeIn().offset({top: 0, left: 0});
+            $('#fileSelectionMenu').fadeIn().parent().fadeIn().offset({top: 0, left: 0});
             //And place it in the middle of the screen
             var leftOffset = ($('body').outerWidth() - $('#fileSelectionMenu').outerWidth()) / 2;
             $('#fileSelectionMenu').offset({left: leftOffset, top: 100});
@@ -999,7 +1039,14 @@ String.prototype.insertAt = function(index, string){
             //Empty filter on click
             $('#fileSearch').click(function(){
                 $(this).val('');
-            })
+            });
+
+            //Add upload or paste functionality
+            $('#uploadButton').unbind('click').click(function(){
+                //When we upload a file, fade out the menu
+                comparativus.ui.hideFileSelection();
+                comparativus.ui.showUploadMenu();
+            });
 
 
             //Set the contents of the fileSelectionBody
@@ -1048,7 +1095,7 @@ String.prototype.insertAt = function(index, string){
                             });
                         }
                         //When the file are starting to load ,fade out the menu
-                        $('#fileSelectionMenu').parent().fadeOut(400, function(){$(this).offset({top:0, left: 0}).hide();});
+                        comparativus.ui.hideFileSelection();
                     });
                 }else{
                     //If we have less than the minimum required files selected (>2<)
