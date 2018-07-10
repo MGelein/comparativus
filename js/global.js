@@ -6,7 +6,7 @@ $(document).ready(function (){
     initModules();
 
     //Based on the debug variable, decide where we load the list of files from
-    var listFilesURL = "http://dh.chinese-empires.eu/auth/list_files/";
+    var listFilesURL = "https://dh.chinese-empires.eu/auth/list_files/";
     if(comparativus.util.isDebug()) listFilesURL = "./data/list_files.json";
     
     //Then load the list files from the right location
