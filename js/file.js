@@ -131,7 +131,7 @@
          */
         loadFromID: function (id, callback) {
             comparativus.file.setLoadedStatus(id, false);
-            $.get("http://dh.chinese-empires.eu/auth/get/" + id, function (data) {
+            $.get("https://dh.chinese-empires.eu/auth/get/" + id, function (data) {
                 comparativus.util.setScratch(data);
                 var sp = comparativus.util.getScratch();
                 callback(sp.html(), sp.text());
