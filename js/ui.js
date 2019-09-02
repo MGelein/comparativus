@@ -246,8 +246,14 @@
         /**
          * Sets the similarity spane value to the provided value
          */
-        setSimilarityScore: function(val){
-            $('#simScore').html(val);
+        setSimilarityScore: function(idA, idB, val){
+            const text = "<em>" + comparativus.file.getTitleFromID(idA) + " &amp; " 
+            + comparativus.file.getTitleFromID(idB) + ":</em> " + val + "<br>";
+            $('#simScore').html($('#simScore').html() + text);
+        },
+
+        clearSimScores: function(){
+            $('#simScore').html('');
         },
 
         /**

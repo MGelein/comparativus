@@ -57,7 +57,8 @@ var comparativus = {
         }
         //Empty the result table
         $('#resultTable').html('');
-
+        comparativus.ui.clearSimScores();
+        
         //Now check every text against every other text
         for(let i = 0; i < ids.length; i++){
             for(let j = i + 1; j < ids.length; j++){
@@ -123,7 +124,7 @@ var comparativus = {
         }
         //console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
         //console.log("[comparativus.js]: Comparison done, showing results");
-        comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt);
+        comparativus.ui.setSimilarityScore(idA, idB, overlapSeedAmt / totalSeedAmt);
     };
 
     /**
