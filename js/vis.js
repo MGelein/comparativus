@@ -160,16 +160,16 @@
                     //All nodes for this text
                     var nodes = comparativus.nodes[id];
                     //Node color
-                    var nColor = comparativus.vis.color(index + 2);
+                    var nColor = comparativus.vis.color(index);
                     
                     //Now draw each node onto the circle
                     nodes.forEach(function(node){
                         var angle = comparativus.vis.getNodeAngle(node, id);
                         nodeHolder.append("circle")
-                            .style("stroke", d3.rgb(nColor).darker())
+                            .style("stroke", "black")
                             .style("fill", nColor)
-                            .attr("stroke-width", 0)
-                            .attr("fill-opacity", 0.5)
+                            .attr("stroke-width", 1)
+                            .attr("fill-opacity", 1)
                             .attr("class", "node")
                             .attr("cx", (Math.sin(angle) * (h2 - 50)))
                             .attr("cy", - (Math.cos(angle) * (h2 - 50)))

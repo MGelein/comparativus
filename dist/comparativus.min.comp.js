@@ -1397,54 +1397,9 @@ String.prototype.insertAt = function(index, string){
         createJSON: function (matches, doDownload) {
             //if not specified set to true
             if (doDownload === undefined) doDownload = true;
-            //convert the matches object to nodes and links
-            var jsonFile = {};
-            jsonFile.texts = comparativus.text.getJSON();
-            jsonFile.nodes = [];
-            jsonFile.links = [];
-            var max = matches.length;
-            var unique = true;
-            var cMatch; var cNode = {}; var cLink = {};
-
-            //this function is used to check for duplicates
-            var addNode = function (n) {
-                for (var j = 0; j < jsonFile.nodes.length; j++) {
-                    if (jsonFile.nodes[j].id == n.id) return;
-                }
-                jsonFile.nodes.push(cNode);
-            }
-            for (var i = 0; i < max; i++) {
-                cMatch = matches[i];
-
-                //add node A
-                cNode = {};
-                cNode.group = 0;
-                cNode.l = cMatch.l;
-                cNode.index = cMatch.indexA;
-                cNode.id = 'A' + cMatch.indexA;
-                cNode.text = cMatch.textA;
-                addNode(cNode);
-
-                //add node B
-                cNode = {};
-                cNode.group = 3;
-                cNode.l = cMatch.l;
-                cNode.index = cMatch.indexB;
-                cNode.id = 'B' + cMatch.indexB;
-                cNode.text = cMatch.textB;
-                addNode(cNode);
-
-                //add the link
-                cLink = {};
-                cLink.source = 'A' + cMatch.indexA;
-                cLink.target = 'B' + cMatch.indexB;
-                cLink.l = cMatch.l;
-                cLink.r = cMatch.r;
-                jsonFile.links.push(cLink);
-            }
             if (doDownload) {
                 comparativus.file.download(comparativus.file.getDownloadName('.json'),
-                    "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonFile)));
+                    "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(matches)));
             }
             //return the json String for internal use
             return jsonFile;
@@ -1628,16 +1583,16 @@ String.prototype.insertAt = function(index, string){
                     //All nodes for this text
                     var nodes = comparativus.nodes[id];
                     //Node color
-                    var nColor = comparativus.vis.color(index + 2);
+                    var nColor = comparativus.vis.color(index);
                     
                     //Now draw each node onto the circle
                     nodes.forEach(function(node){
                         var angle = comparativus.vis.getNodeAngle(node, id);
                         nodeHolder.append("circle")
-                            .style("stroke", d3.rgb(nColor).darker())
+                            .style("stroke", "black")
                             .style("fill", nColor)
-                            .attr("stroke-width", 0)
-                            .attr("fill-opacity", 0.5)
+                            .attr("stroke-width", 1)
+                            .attr("fill-opacity", 1)
                             .attr("class", "node")
                             .attr("cx", (Math.sin(angle) * (h2 - 50)))
                             .attr("cy", - (Math.cos(angle) * (h2 - 50)))
