@@ -1012,8 +1012,8 @@ String.prototype.insertAt = function(index, string){
             $('#uploadMenu').offset({left: leftOffset, top: 100});
 
             //Object of files
-            const files = {}
-            $('#fileUploadInputA, #fileUploadInputB').unbind('change').change(function(evt){
+            const files = [];
+            $('#fileUploadInput').unbind('change').change(function(evt){
                 const f = evt.target.files[0];
                 //If we have a file, load it
                 if(f){
@@ -1024,11 +1024,13 @@ String.prototype.insertAt = function(index, string){
                             data: e.target.result,
                             name: f.name
                         }
-                        if(evt.target.id.indexOf("nputA") > -1){
-                            files.a = obj
-                        }else{
-                            files.b = obj;
+                        files.push(obj);
+                        $('#uploadedFiles').html('');
+                        let listF = "";
+                        for(let i = 0; i < files.length; i++){
+                            listF += files[i].name + "<br>";
                         }
+                        $('#uploadedFiles').html(listF);
                     }
                     //Start reading the file
                     reader.readAsText(f);
@@ -1040,9 +1042,10 @@ String.prototype.insertAt = function(index, string){
              */
             $('#uploadReady').unbind('click').click(function(){
                 //If we chose to upload, use that
-                if(files.a && files.b){
-                    comparativus.file.addUploadFile(files.a.data, files.a.name);
-                    comparativus.file.addUploadFile(files.b.data, files.b.name);
+                if(files.length > 1){
+                    for(let i = 0; i < files.length; i++){
+                        comparativus.file.addUploadFile(files[i].data, files[i].name);
+                    }
                     comparativus.ui.hideUploadMenu();
                 }else{
                     let textA = $('#fileUploadAreaA').val().trim();
