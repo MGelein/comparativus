@@ -51,8 +51,35 @@ var comparativus = {
         comparativus.nodes = {};
 
         var ids = comparativus.text.getAllIDs();
-        //Run comparison on the first two, this should change based on the amount of texts
-        comparativus.runSingleComparison(ids[0], ids[1]);
+        //Clear all saved nodes
+        for(let i = 0; i < ids.length; i++){
+            comparativus.nodes[ids[i]] = [];
+        }
+        //Empty the result table
+        $('#resultTable').html('');
+
+        //Now check every text against every other text
+        for(let i = 0; i < ids.length; i++){
+            for(let j = i + 1; j < ids.length; j++){
+                //Run a comparison between every selected ID
+                console.log("[comparativus.js]: Comparing " + ids[i] + " and " + ids[j]);
+                comparativus.runSingleComparison(ids[i], ids[j]);
+            }
+        }
+        //Show the results table of all the matches
+        comparativus.ui.showResultTable(comparativus.matches);
+        comparativus.text.toDecorate = ids.length;
+        //console.log("[comparativus.js]: Starting text decoration");
+        for(let i = 0; i < ids.length; i++){
+            comparativus.text.decorate(ids[i], comparativus.nodes[ids[i]]);
+        }
+        //Show that we're done
+        comparativus.ui.setComparisonButtonText('(Re)Compare Texts');
+        comparativus.ui.showLoadingAnimation(false);
+        //Re-add listeners now that we're done with the comparison
+        comparativus.ui.init();
+        comparativus.vis.draw();
+        comparativus.ui.addMatchListeners();
     }
 
     /**
@@ -73,8 +100,6 @@ var comparativus = {
         //console.log("[comparativus.js]: Running comparison on: " + idA + " and " + idB);
         var dictA = comparativus.dicts[idA];
         var dictB = comparativus.dicts[idB];
-        comparativus.nodes[idA] = [];
-        comparativus.nodes[idB] = [];
         var seeds = Object.keys(dictA);
         var seedAmt = seeds.length;
         var overlap = [];
@@ -99,19 +124,6 @@ var comparativus = {
         //console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
         //console.log("[comparativus.js]: Comparison done, showing results");
         comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt);
-        comparativus.ui.showResultTable(comparativus.matches, idA, idB);
-        comparativus.text.toDecorate = 2;
-        //console.log("[comparativus.js]: Starting text decoration");
-        comparativus.text.decorate(idA, comparativus.nodes[idA]);
-        comparativus.text.decorate(idB, comparativus.nodes[idB]);
-
-        //Show that we're done
-        comparativus.ui.setComparisonButtonText('(Re)Compare Texts');
-        comparativus.ui.showLoadingAnimation(false);
-        //Re-add listeners now that we're done with the comparison
-        comparativus.ui.init();
-        comparativus.vis.draw();
-        comparativus.ui.addMatchListeners();
     };
 
     /**
@@ -917,20 +929,18 @@ String.prototype.insertAt = function(index, string){
          * Loads the provided array of matches into 
          * the result table
          */
-        showResultTable: function(matches, idA, idB){            
+        showResultTable: function(matches){            
             //Stringbuilder that will hold the HTML for the data table
             var parts = [];
 
             //Add the table header
             var tableHeader = "<thead><tr>"
-                         + "<th>IndexA</th>"
-                         + "<th>IndexB</th>"
+                         + "<th>TextA</th>"
+                         + "<th>TextB</th>"
                          + "<th>Length</th>"
                          + "<th>Ratio</th>"
                          + "</tr></thead>"
                          + "<tbody>";
-            tableHeader = tableHeader.replace("IndexA", comparativus.text.getByID(idA).name);
-            tableHeader = tableHeader.replace("IndexB", comparativus.text.getByID(idB).name);
             parts.push(tableHeader);
             
             //Stringbuilder for the parts of a TSV file
@@ -943,16 +953,16 @@ String.prototype.insertAt = function(index, string){
             matches.forEach(function(cMatch){
                 //Get the link id
                 var linkID = 'A' + cMatch.indexA + 'B' + cMatch.indexB;
-                var compURNA = idA + cMatch.urnA;
-                var compURNB = idB + cMatch.urnB;
+                var compURNA = cMatch.idA + cMatch.urnA;
+                var compURNB = cMatch.idB + cMatch.urnB;
                 //Add a new line for that match, by replacing the variables in the template
                 var mRow = comparativus.ui.matchrow.replace(/%LENGTH%/g, cMatch.l);
                 mRow = mRow.replace(/%TEXTA%/g, cMatch.textA);
                 mRow = mRow.replace(/%TEXTB%/g, cMatch.textB);
-                mRow = mRow.replace(/%TEXTIDA%/g, idA);
-                mRow = mRow.replace(/%TEXTIDB%/g, idB);
-                mRow = mRow.replace(/%URNA%/g, cMatch.urnA);
-                mRow = mRow.replace(/%URNB%/g, cMatch.urnB);
+                mRow = mRow.replace(/%TEXTIDA%/g, cMatch.idA);
+                mRow = mRow.replace(/%TEXTIDB%/g, cMatch.idB);
+                mRow = mRow.replace(/%URNA%/g, comparativus.text.getByID(cMatch.idA).name + " | " + cMatch.urnA);
+                mRow = mRow.replace(/%URNB%/g, comparativus.text.getByID(cMatch.idB).name + " | " + cMatch.urnB);
                 mRow = mRow.replace(/%COMPURNA%/g, compURNA);
                 mRow = mRow.replace(/%COMPURNB%/g, compURNB);
                 mRow = mRow.replace(/%RATIO%/g, cMatch.r.toPrecision(4));
@@ -962,7 +972,7 @@ String.prototype.insertAt = function(index, string){
             });
 
             //Add the result to the page
-            $("#resultTable").html(parts.join() + "</tbody>");
+            $("#resultTable").html($('#resultTable').html() + parts.join() + "</tbody>");
 
             //create the downloadButtons
             $('#downloadTSVButton').unbind('click').click(function(){
@@ -1121,7 +1131,7 @@ String.prototype.insertAt = function(index, string){
                 //Add the selected class and get its id value
                 var id = $(this).toggleClass('selected').val();
                 //Count how many are selected, if enough allow loading of files
-                if($('#fileSelectionBody input.selected').length > 1 && $('#fileSelectionBody input.selected').length < 3){
+                if($('#fileSelectionBody input.selected').length > 1){
                     //If there are enough files, allow loading them
                     $('#loadSelectedButton').removeClass('disabled').unbind('click').click(function(){
                         //In case of debug, ignore the scenario
@@ -1192,6 +1202,15 @@ String.prototype.insertAt = function(index, string){
                     comparativus.util.setScratch(data);
                     var sp = comparativus.util.getScratch();
                     comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data, sp.text());
+                }
+            });
+            var idC = '58d4f09a1873291a029c97e7';
+            comparativus.file.setLoadedStatus(idC, false);
+            $.ajax('data/Zuozhuan.txt', {
+                cache: false, success: function (data) {
+                    comparativus.util.setScratch(data);
+                    var sp = comparativus.util.getScratch();
+                    comparativus.text.add(idC, comparativus.file.getTitleFromID(idC), data, sp.text());
                 }
             });
         },

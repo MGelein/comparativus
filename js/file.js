@@ -46,6 +46,15 @@
                     comparativus.text.add(idB, comparativus.file.getTitleFromID(idB), data, sp.text());
                 }
             });
+            var idC = '58d4f09a1873291a029c97e7';
+            comparativus.file.setLoadedStatus(idC, false);
+            $.ajax('data/Zuozhuan.txt', {
+                cache: false, success: function (data) {
+                    comparativus.util.setScratch(data);
+                    var sp = comparativus.util.getScratch();
+                    comparativus.text.add(idC, comparativus.file.getTitleFromID(idC), data, sp.text());
+                }
+            });
         },
 
         /**
@@ -230,54 +239,9 @@
         createJSON: function (matches, doDownload) {
             //if not specified set to true
             if (doDownload === undefined) doDownload = true;
-            //convert the matches object to nodes and links
-            var jsonFile = {};
-            jsonFile.texts = comparativus.text.getJSON();
-            jsonFile.nodes = [];
-            jsonFile.links = [];
-            var max = matches.length;
-            var unique = true;
-            var cMatch; var cNode = {}; var cLink = {};
-
-            //this function is used to check for duplicates
-            var addNode = function (n) {
-                for (var j = 0; j < jsonFile.nodes.length; j++) {
-                    if (jsonFile.nodes[j].id == n.id) return;
-                }
-                jsonFile.nodes.push(cNode);
-            }
-            for (var i = 0; i < max; i++) {
-                cMatch = matches[i];
-
-                //add node A
-                cNode = {};
-                cNode.group = 0;
-                cNode.l = cMatch.l;
-                cNode.index = cMatch.indexA;
-                cNode.id = 'A' + cMatch.indexA;
-                cNode.text = cMatch.textA;
-                addNode(cNode);
-
-                //add node B
-                cNode = {};
-                cNode.group = 3;
-                cNode.l = cMatch.l;
-                cNode.index = cMatch.indexB;
-                cNode.id = 'B' + cMatch.indexB;
-                cNode.text = cMatch.textB;
-                addNode(cNode);
-
-                //add the link
-                cLink = {};
-                cLink.source = 'A' + cMatch.indexA;
-                cLink.target = 'B' + cMatch.indexB;
-                cLink.l = cMatch.l;
-                cLink.r = cMatch.r;
-                jsonFile.links.push(cLink);
-            }
             if (doDownload) {
                 comparativus.file.download(comparativus.file.getDownloadName('.json'),
-                    "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonFile)));
+                    "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(matches)));
             }
             //return the json String for internal use
             return jsonFile;

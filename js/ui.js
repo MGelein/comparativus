@@ -456,20 +456,18 @@
          * Loads the provided array of matches into 
          * the result table
          */
-        showResultTable: function(matches, idA, idB){            
+        showResultTable: function(matches){            
             //Stringbuilder that will hold the HTML for the data table
             var parts = [];
 
             //Add the table header
             var tableHeader = "<thead><tr>"
-                         + "<th>IndexA</th>"
-                         + "<th>IndexB</th>"
+                         + "<th>TextA</th>"
+                         + "<th>TextB</th>"
                          + "<th>Length</th>"
                          + "<th>Ratio</th>"
                          + "</tr></thead>"
                          + "<tbody>";
-            tableHeader = tableHeader.replace("IndexA", comparativus.text.getByID(idA).name);
-            tableHeader = tableHeader.replace("IndexB", comparativus.text.getByID(idB).name);
             parts.push(tableHeader);
             
             //Stringbuilder for the parts of a TSV file
@@ -482,16 +480,16 @@
             matches.forEach(function(cMatch){
                 //Get the link id
                 var linkID = 'A' + cMatch.indexA + 'B' + cMatch.indexB;
-                var compURNA = idA + cMatch.urnA;
-                var compURNB = idB + cMatch.urnB;
+                var compURNA = cMatch.idA + cMatch.urnA;
+                var compURNB = cMatch.idB + cMatch.urnB;
                 //Add a new line for that match, by replacing the variables in the template
                 var mRow = comparativus.ui.matchrow.replace(/%LENGTH%/g, cMatch.l);
                 mRow = mRow.replace(/%TEXTA%/g, cMatch.textA);
                 mRow = mRow.replace(/%TEXTB%/g, cMatch.textB);
-                mRow = mRow.replace(/%TEXTIDA%/g, idA);
-                mRow = mRow.replace(/%TEXTIDB%/g, idB);
-                mRow = mRow.replace(/%URNA%/g, cMatch.urnA);
-                mRow = mRow.replace(/%URNB%/g, cMatch.urnB);
+                mRow = mRow.replace(/%TEXTIDA%/g, cMatch.idA);
+                mRow = mRow.replace(/%TEXTIDB%/g, cMatch.idB);
+                mRow = mRow.replace(/%URNA%/g, comparativus.text.getByID(cMatch.idA).name + " | " + cMatch.urnA);
+                mRow = mRow.replace(/%URNB%/g, comparativus.text.getByID(cMatch.idB).name + " | " + cMatch.urnB);
                 mRow = mRow.replace(/%COMPURNA%/g, compURNA);
                 mRow = mRow.replace(/%COMPURNB%/g, compURNB);
                 mRow = mRow.replace(/%RATIO%/g, cMatch.r.toPrecision(4));
@@ -501,7 +499,7 @@
             });
 
             //Add the result to the page
-            $("#resultTable").html(parts.join() + "</tbody>");
+            $("#resultTable").html($('#resultTable').html() + parts.join() + "</tbody>");
 
             //create the downloadButtons
             $('#downloadTSVButton').unbind('click').click(function(){
@@ -660,7 +658,7 @@
                 //Add the selected class and get its id value
                 var id = $(this).toggleClass('selected').val();
                 //Count how many are selected, if enough allow loading of files
-                if($('#fileSelectionBody input.selected').length > 1 && $('#fileSelectionBody input.selected').length < 3){
+                if($('#fileSelectionBody input.selected').length > 1){
                     //If there are enough files, allow loading them
                     $('#loadSelectedButton').removeClass('disabled').unbind('click').click(function(){
                         //In case of debug, ignore the scenario

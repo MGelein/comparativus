@@ -51,8 +51,35 @@ var comparativus = {
         comparativus.nodes = {};
 
         var ids = comparativus.text.getAllIDs();
-        //Run comparison on the first two, this should change based on the amount of texts
-        comparativus.runSingleComparison(ids[0], ids[1]);
+        //Clear all saved nodes
+        for(let i = 0; i < ids.length; i++){
+            comparativus.nodes[ids[i]] = [];
+        }
+        //Empty the result table
+        $('#resultTable').html('');
+
+        //Now check every text against every other text
+        for(let i = 0; i < ids.length; i++){
+            for(let j = i + 1; j < ids.length; j++){
+                //Run a comparison between every selected ID
+                console.log("[comparativus.js]: Comparing " + ids[i] + " and " + ids[j]);
+                comparativus.runSingleComparison(ids[i], ids[j]);
+            }
+        }
+        //Show the results table of all the matches
+        comparativus.ui.showResultTable(comparativus.matches);
+        comparativus.text.toDecorate = ids.length;
+        //console.log("[comparativus.js]: Starting text decoration");
+        for(let i = 0; i < ids.length; i++){
+            comparativus.text.decorate(ids[i], comparativus.nodes[ids[i]]);
+        }
+        //Show that we're done
+        comparativus.ui.setComparisonButtonText('(Re)Compare Texts');
+        comparativus.ui.showLoadingAnimation(false);
+        //Re-add listeners now that we're done with the comparison
+        comparativus.ui.init();
+        comparativus.vis.draw();
+        comparativus.ui.addMatchListeners();
     }
 
     /**
@@ -73,8 +100,6 @@ var comparativus = {
         //console.log("[comparativus.js]: Running comparison on: " + idA + " and " + idB);
         var dictA = comparativus.dicts[idA];
         var dictB = comparativus.dicts[idB];
-        comparativus.nodes[idA] = [];
-        comparativus.nodes[idB] = [];
         var seeds = Object.keys(dictA);
         var seedAmt = seeds.length;
         var overlap = [];
@@ -99,19 +124,6 @@ var comparativus = {
         //console.log('Total seed Amt: ' + totalSeedAmt + ' and overlap seed Amt: ' + overlapSeedAmt + " > Similarity Score: " + overlapSeedAmt / totalSeedAmt);
         //console.log("[comparativus.js]: Comparison done, showing results");
         comparativus.ui.setSimilarityScore(overlapSeedAmt / totalSeedAmt);
-        comparativus.ui.showResultTable(comparativus.matches, idA, idB);
-        comparativus.text.toDecorate = 2;
-        //console.log("[comparativus.js]: Starting text decoration");
-        comparativus.text.decorate(idA, comparativus.nodes[idA]);
-        comparativus.text.decorate(idB, comparativus.nodes[idB]);
-
-        //Show that we're done
-        comparativus.ui.setComparisonButtonText('(Re)Compare Texts');
-        comparativus.ui.showLoadingAnimation(false);
-        //Re-add listeners now that we're done with the comparison
-        comparativus.ui.init();
-        comparativus.vis.draw();
-        comparativus.ui.addMatchListeners();
     };
 
     /**
