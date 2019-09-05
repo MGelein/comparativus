@@ -252,11 +252,14 @@
          * file
          */
         createTSV: function (matches) {
-            var tsvParts = ["urnA\turnB\ttextA\ttextB\tlength\tratio"];
+            var tsvParts = ["fileA\tfileB\turnA\turnB\ttextA\ttextB\tlength\tratio"];
             matches.forEach(function(match, index){
+                const titleA = comparativus.file.getTitleFromID(match.idA);
+                const titleB = comparativus.file.getTitleFromID(match.idB);
+                console.log(titleA, titleB);
                 const compA = match.idA + "@" + match.urnA;
                 const compB = match.idB + "@" + match.urnB;
-                tsvParts.push(compA + "\t" + compB + "\t" + match.textA + "\t" + match.textB + "\t" + match.l + "\t" + match.r);
+                tsvParts.push(titleA + "\t" + titleB + "\t" + compA + "\t" + compB + "\t" + match.textA + "\t" + match.textB + "\t" + match.l + "\t" + match.r);
             });
             //Now download the file
             comparativus.file.download(comparativus.file.getDownloadName('.tsv'),
