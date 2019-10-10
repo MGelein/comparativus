@@ -55,7 +55,7 @@
          * the provided name
          */
         buildDictionary: function(id){
-            message('buildDictionary', {'id':id , text: comparativus.text.getByID(id).clean});
+            message('buildDictionary', {'id':id , text: comparativus.text.getByID(id).clean, 'kSize': comparativus.kSize});
         },
 
         /**

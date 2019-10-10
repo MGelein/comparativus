@@ -21,6 +21,10 @@ var comparativus = {
      */
     _c.matches = [];
     /**
+     * the K-size used in the dictionary creation
+     */
+    _c.kSize = 4;
+    /**
      * Contains the araray of nodes (unique matches) that have been found. Prevents doubling of data when
      * one sequence has multiple matches in the other document
      */

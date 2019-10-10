@@ -21,6 +21,10 @@ var comparativus = {
      */
     _c.matches = [];
     /**
+     * the K-size used in the dictionary creation
+     */
+    _c.kSize = 4;
+    /**
      * Contains the araray of nodes (unique matches) that have been found. Prevents doubling of data when
      * one sequence has multiple matches in the other document
      */
@@ -442,7 +446,7 @@ String.prototype.insertAt = function(index, string){
          * the provided name
          */
         buildDictionary: function(id){
-            message('buildDictionary', {'id':id , text: comparativus.text.getByID(id).clean});
+            message('buildDictionary', {'id':id , text: comparativus.text.getByID(id).clean, 'kSize': comparativus.kSize});
         },
 
         /**
@@ -608,6 +612,15 @@ String.prototype.insertAt = function(index, string){
                 var html = $('#showSelectionSummaryButton').html();
                 $('#showSelectionSummaryButton').html(html.replace('Hide', 'Show'));
             });
+        },
+
+        /**
+         * Updates the KValue that is sent to the dictionary creation
+         * @param {Event} event 
+         */
+        checkKSize: function(event){
+            var kVal = $("#kSize").val();
+            comparativus.kSize = kVal;
         },
 
         /**

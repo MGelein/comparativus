@@ -12,6 +12,7 @@ self.onmessage = function(event){
   //Switch based on the action
   switch(action){
     case 'buildDictionary':
+        K = params.kSize;
         buildDictionary(params.id, params.text);
         break;
     case 'prepareText':

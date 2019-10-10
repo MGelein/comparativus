@@ -137,6 +137,15 @@
         },
 
         /**
+         * Updates the KValue that is sent to the dictionary creation
+         * @param {Event} event 
+         */
+        checkKSize: function(event){
+            var kVal = $("#kSize").val();
+            comparativus.kSize = kVal;
+        },
+
+        /**
          * Shows the settings menu and binds listeners where necessary
          */
         showSettingsMenu: function (event) {
